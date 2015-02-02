@@ -6,5 +6,7 @@ import (
 )
 
 func main() {
-	fmt.Printf(stringutil.Reverse("Hello, world.\n"))
+	greeting := "Hello, world"
+	doubleReveresed := stringutil.Reverse(stringutil.Reverse(greeting))
+	fmt.Printf("%s\n", doubleReveresed)
 }
