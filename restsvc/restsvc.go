@@ -120,6 +120,13 @@ func (HelloResource) Get(values url.Values, headers http.Header) (int, interface
     return http.StatusOK, data, http.Header{"Content-type": {"application/json"}}
 }
 
+func (HelloResource) Post(values url.Values, headers http.Header) (int, interface{}, http.Header) {
+	for k:= range values {
+		fmt.Println("key: ", k, " value ", values[k])
+	}
+	return http.StatusOK, nil, nil
+}
+
 func (api *API) Start(port int) {
     portString := fmt.Sprintf(":%d", port)
     err := http.ListenAndServe(portString, nil)
