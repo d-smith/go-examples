@@ -9,6 +9,26 @@ must include. Ok, I peeked at sleepy... seriously go here for the good stuff:
 https://github.com/dougblack/sleepy
 
 This code is a learning exercise.
+
+2nd experiment - played with an alternative way of getting the handler method,
+by switching on the resource type:
+
+switch t := resource.(type) {
+	case GetSupported:
+		if request.Method == "GET" {
+			handler = t.Get
+		}
+	case PostSupported:
+		if(request.Method == "POST") {
+			handler = t.Post
+		}
+}
+		
+This also works, but I think the code reads better by first considering the HTTP method,
+then determining if the resource can handle the method.		
+
+Next refactors - Use of http status codes, not constants.
+
 */
 
 
@@ -22,9 +42,11 @@ import (
 	"log"
 )
 
-func response(rw http.ResponseWriter, request *http.Request) {
-	rw.Write([]byte("Hello world."))
-}
+const (
+	GET = "GET"
+	POST = "POST"
+)
+
 
 type GetSupported interface {
 	Get(url.Values, http.Header) (int, interface{}, http.Header)
@@ -40,21 +62,23 @@ type PostSupported interface {
 type API struct {} 
 
 
-//TODO - can I use a type switch here? (see Effective Go)
 func (api *API) requestHandler(resource interface{}) http.HandlerFunc {
 	return func(rw http.ResponseWriter, request *http.Request) {
 		
         
-		request.ParseForm()  //TODO: error handling
+		if request.ParseForm() != nil {
+			rw.WriteHeader(http.StatusInternalServerError)
+			return	
+		}
 		
 		var handler func(url.Values, http.Header) (int, interface{}, http.Header)
 		
 		switch request.Method {
-			case "GET":
+			case GET:
 				if resource, ok := resource.(GetSupported); ok {
 					handler = resource.Get	
 				}
-			case "POST":
+			case POST:
 				if resource, ok := resource.(PostSupported); ok {
 					handler = resource.Post	
 				} 
@@ -62,7 +86,7 @@ func (api *API) requestHandler(resource interface{}) http.HandlerFunc {
 		
 		
 		if handler == nil {
-			rw.WriteHeader(500)
+			rw.WriteHeader(http.StatusMethodNotAllowed)
 			return
 		}
 		
@@ -70,7 +94,7 @@ func (api *API) requestHandler(resource interface{}) http.HandlerFunc {
 		
 		content, err := json.Marshal(data)
 		if err != nil {
-			rw.WriteHeader(500)
+			rw.WriteHeader(http.StatusInternalServerError)
 			return
 		}
 		
@@ -93,7 +117,7 @@ type HelloResource struct {}
 
 func (HelloResource) Get(values url.Values, headers http.Header) (int, interface{}, http.Header) {
     data := map[string]string{"hello": "world"}
-    return 200, data, http.Header{"Content-type": {"application/json"}}
+    return http.StatusOK, data, http.Header{"Content-type": {"application/json"}}
 }
 
 func (api *API) Start(port int) {
