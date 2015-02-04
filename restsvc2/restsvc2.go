@@ -13,14 +13,14 @@ const (
 	POST = "POST"
 )
 
-type HttpHandler func(*http.Request) (int, interface{}, http.Header)
+type HttpHandler func(http.ResponseWriter, *http.Request)
 
 type GetSupported interface {
-	Get(*http.Request) (int, interface{}, http.Header)
+	Get(http.ResponseWriter, *http.Request)
 }
 
 type PostSupported interface {
-	Post(*http.Request) (int, interface{}, http.Header)
+	Post(http.ResponseWriter, *http.Request)
 }
 
 type API struct{}
@@ -58,15 +58,9 @@ func (api *API) requestHandler(resource interface{}) http.HandlerFunc {
 			return
 		}
 
-		code, data, header := handler(request)
+		handler(rw, request)
 
-		content, err := json.Marshal(data)
-		if err != nil {
-			rw.WriteHeader(http.StatusInternalServerError)
-			return
-		}
-
-		writeResponse(code, content, header, rw)
+		
 
 	}
 }
@@ -85,9 +79,17 @@ func (api *API) Start(port int) {
 
 type HelloResource struct{}
 
-func (HelloResource) Get(*http.Request) (int, interface{}, http.Header) {
+func (HelloResource) Get(rw http.ResponseWriter, req *http.Request) {
 	data := map[string]string{"hello": "world"}
-	return http.StatusOK, data, http.Header{"Content-type": {"application/json"}}
+	header := http.Header{"Content-type": {"application/json"}}
+
+	content, err := json.Marshal(data)
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	writeResponse(http.StatusOK, content, header, rw)
 }
 
 type HelloObj struct {
@@ -95,21 +97,22 @@ type HelloObj struct {
 	Y int
 }
 
-func (HelloResource) Post(request *http.Request) (int, interface{}, http.Header) {
+func (HelloResource) Post(rw http.ResponseWriter, request *http.Request) {
 	body, err := ioutil.ReadAll(request.Body)
 	if err != nil {
-		return http.StatusInternalServerError, nil, nil
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 
 	var hello HelloObj
 	err = json.Unmarshal(body, &hello)
 	if err != nil {
-		return http.StatusInternalServerError, nil, nil
+		rw.WriteHeader(http.StatusInternalServerError)
 	}
 
-	log.Println(hello	)
+	log.Println(hello)
 
-	return http.StatusOK, "Good to go", nil
+	writeResponse(http.StatusOK, []byte("Good to go"), nil, rw)
+
 }
 
 func main() {
