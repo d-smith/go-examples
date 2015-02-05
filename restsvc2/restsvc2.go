@@ -99,6 +99,7 @@ type HelloObj struct {
 
 func (HelloResource) Post(rw http.ResponseWriter, request *http.Request) {
 	body, err := ioutil.ReadAll(request.Body)
+	request.Body.Close()
 	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
 	}
