@@ -2,15 +2,21 @@ package main
 
 import (
 	"encoding/json"
+	"expvar"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"net"
 	"net/http"
 )
 
 const (
 	GET  = "GET"
 	POST = "POST"
+)
+
+var (
+	counts = expvar.NewMap("counters")
 )
 
 type HttpHandler func(http.ResponseWriter, *http.Request)
@@ -60,12 +66,25 @@ func (api *API) requestHandler(resource interface{}) http.HandlerFunc {
 
 		handler(rw, request)
 
-		
-
 	}
 }
 
+func counterName(method string, path string) string {
+	return fmt.Sprintf("%s::%s", GET, path)
+}
+
+func incCounter(method string, path string) {
+	//TODO - design this to handle concurrency
+	//...and how to increment	
+}
+
+func initCountersForResource(path string) {
+	counts.Add(counterName(GET, path), 0)
+	counts.Add(counterName(POST, path), 0)
+}
+
 func (api *API) AddResource(resource interface{}, path string) {
+	initCountersForResource(path)
 	http.HandleFunc(path, api.requestHandler(resource))
 }
 
@@ -78,6 +97,11 @@ func (api *API) Start(port int) {
 }
 
 type HelloResource struct{}
+
+const (
+	helloGets  = "HelloGets"
+	helloPosts = "HelloPosts"
+)
 
 func (HelloResource) Get(rw http.ResponseWriter, req *http.Request) {
 	data := map[string]string{"hello": "world"}
@@ -116,7 +140,20 @@ func (HelloResource) Post(rw http.ResponseWriter, request *http.Request) {
 
 }
 
+func serverMonitorInterface() {
+	sock, err := net.Listen("tcp", "localhost:8123")
+	if err != nil {
+		panic(err)
+	}
+	go func() {
+		http.Serve(sock, nil)
+	}()
+}
+
 func main() {
+	// start a monitor another port
+	serverMonitorInterface()
+
 	helloResource := new(HelloResource)
 
 	var api = new(API)
