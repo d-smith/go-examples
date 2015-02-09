@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"log"
-	"net"
 	"net/http"
 )
 
@@ -74,8 +73,8 @@ func counterName(method string, path string) string {
 }
 
 func incCounter(method string, path string) {
-	//TODO - design this to handle concurrency
-	//...and how to increment	
+	counter := counterName(method, path)
+	counts.Add(counter, 1)
 }
 
 func initCountersForResource(path string) {
@@ -104,6 +103,7 @@ const (
 )
 
 func (HelloResource) Get(rw http.ResponseWriter, req *http.Request) {
+	incCounter(GET, "/hello")
 	data := map[string]string{"hello": "world"}
 	header := http.Header{"Content-type": {"application/json"}}
 
@@ -140,20 +140,9 @@ func (HelloResource) Post(rw http.ResponseWriter, request *http.Request) {
 
 }
 
-func serverMonitorInterface() {
-	sock, err := net.Listen("tcp", "localhost:8123")
-	if err != nil {
-		panic(err)
-	}
-	go func() {
-		http.Serve(sock, nil)
-	}()
-}
+
 
 func main() {
-	// start a monitor another port
-	serverMonitorInterface()
-
 	helloResource := new(HelloResource)
 
 	var api = new(API)
