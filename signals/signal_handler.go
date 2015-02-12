@@ -7,23 +7,28 @@ import (
 	"time"
 )
 
+var finishedChannel = make(chan bool)
+var stopped = false
+
 func doStuff() {
-	for {
+	for ; stopped == false; {
 		fmt.Println("Doing some stuff...")
 		time.Sleep(2 * time.Second)
 	}
+	fmt.Println("shutdown complete")
+	finishedChannel <- true
 }
 
 func main() {
 	go doStuff()
 	
 	signalChannel := make(chan os.Signal, 1)
-	finishedChannel := make(chan bool)
+	
 	signal.Notify(signalChannel, os.Interrupt)
 	go func() {
 		for _ = range signalChannel {
 			fmt.Println("Received interrupt - shutting down")
-			finishedChannel <- true
+			stopped = true
 		}
 	}()
 	<- finishedChannel
