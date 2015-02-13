@@ -1,3 +1,5 @@
+//This example is from the go by example site
+
 package main
 
 import (
