@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"flag"
 )
 
 const (
@@ -143,10 +144,18 @@ func (HelloResource) Post(rw http.ResponseWriter, request *http.Request) {
 
 
 func main() {
+	
+	var port = flag.Int("port", -1, "Port to listen on")
+	flag.Parse()
+	if *port == -1 {
+		fmt.Println("Must specify a -port argument")
+		return
+	}
+	
 	helloResource := new(HelloResource)
 
 	var api = new(API)
 	api.AddResource(helloResource, "/hello")
 	log.Println("...starting...")
-	api.Start(3000)
+	api.Start(*port)
 }
