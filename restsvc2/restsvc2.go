@@ -5,9 +5,10 @@ import (
 	"expvar"
 	"fmt"
 	"io/ioutil"
-	"log"
+	log "github.com/Sirupsen/logrus"
 	"net/http"
 	"flag"
+	"time"
 )
 
 const (
@@ -18,6 +19,10 @@ const (
 var (
 	counts = expvar.NewMap("counters")
 )
+
+func init() {
+	log.SetFormatter(&log.JSONFormatter{})
+}
 
 type HttpHandler func(http.ResponseWriter, *http.Request)
 
@@ -103,7 +108,15 @@ const (
 	helloPosts = "HelloPosts"
 )
 
+func timeTrack(start time.Time, name string) {
+	elapsed := time.Since(start)
+	log.WithFields(log.Fields{
+			"calltime" : elapsed.Nanoseconds(),
+			"service" : name,}).Info()
+}
+
 func (HelloResource) Get(rw http.ResponseWriter, req *http.Request) {
+	defer timeTrack(time.Now(), "/hello")
 	incCounter(GET, "/hello")
 	data := map[string]string{"hello": "world"}
 	header := http.Header{"Content-type": {"application/json"}}
