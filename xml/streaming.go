@@ -6,30 +6,21 @@ import (
 	"strings"
 )
 
-func streaming() {
 
-	xmlLiteral := `
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:schemas-xtrac-fmr-com:b2b">
-   <soapenv:Header>
-	<urn:Cookie>261765034988290296725527451071864505174</urn:Cookie>
-   </soapenv:Header>
-   <soapenv:Body>
-      <urn:AddNote>
-         <urn:WorkItemNo>W019039-27NOV01</urn:WorkItemNo>
-         <urn:Name></urn:Name>
-         <urn:ControlNo>123</urn:ControlNo>
-         <urn:Memo>some notes</urn:Memo>
-         <urn:Note>c e-flat f-sharp a</urn:Note>
-         <urn:Foo a='1' b='2'/>
-      </urn:AddNote>
-   </soapenv:Body>
-</soapenv:Envelope>
-	`
+func streaming(xmlLiteral string) {
+
+	
 
 	reader := strings.NewReader(xmlLiteral)
 	decoder := xml.NewDecoder(reader)
+	depth := 1
+	maxDepth := 1
+	startElement := false
+	endElement := false
 
 	for {
+		
+		
 		t, _ := decoder.Token()
 		if t == nil {
 			break
@@ -39,14 +30,35 @@ func streaming() {
 		default:
 			fmt.Println("Not sure what we're dealing with here")
 		case xml.StartElement:
+			
+			
 			fmt.Println("StartElement")
 			fmt.Printf("\tElement: %s\n", t.(xml.StartElement).Name)
+			
+			endElement = false
+			if startElement == true {
+				
+				depth += 1
+				fmt.Println("start element true, depth now ", depth)
+				if depth > maxDepth {
+					maxDepth += 1
+				}
+			} else {
+				startElement = true
+			}
+			
 			attrs := t.(xml.StartElement).Attr
 			for _,attr := range attrs {
 				fmt.Printf("\t attr: %s\n", attr)
 			}
 		case xml.EndElement:
 			fmt.Println("EndElement")
+			startElement = false
+			if endElement == true {
+				depth -= 1
+			} else {
+				endElement = true
+			}
 		case xml.CharData:
 			fmt.Println("CharData")
 		case xml.Comment:
@@ -57,5 +69,7 @@ func streaming() {
 			fmt.Println("Directive")
 		}
 	}
+	
+	fmt.Println("max depth: ", maxDepth)
 
 }
