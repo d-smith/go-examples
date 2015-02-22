@@ -44,7 +44,8 @@ func main() {
 	xml2()
 	streaming(xmlLiteral)
 	streaming(xml2Literal)
-	xpathSamples(xmlLiteral,"/Envelope/Body/AddNote/Memo")
-	xpathSamples(xmlLiteral3,"/docRoot/collection/thing[2]") 
+	xpathSampleFindOne(xmlLiteral,"/Envelope/Body/AddNote/Memo")
+	xpathSampleFindOne(xmlLiteral3,"/docRoot/collection/thing[2]") 
+	xpathSampleFindMany(xmlLiteral3,"/docRoot/collection/thing")
 }
 
