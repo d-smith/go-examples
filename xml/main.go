@@ -30,9 +30,21 @@ func main() {
 	<a><b><c><d><e></e></d></c></b></a>
 	`
 	
+	xmlLiteral3 := `
+	<docRoot>
+		<collection>
+			<thing name='a'>a</thing>
+			<thing name='b'>b</thing>
+			<thing name='c'>c</thing>
+		</collection>
+	</docRoot>
+	`
+	
 	xml1()
 	xml2()
 	streaming(xmlLiteral)
 	streaming(xml2Literal)
+	xpathSamples(xmlLiteral,"/Envelope/Body/AddNote/Memo")
+	xpathSamples(xmlLiteral3,"/docRoot/collection/thing[2]") 
 }
 
