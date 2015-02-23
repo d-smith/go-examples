@@ -14,7 +14,7 @@ func map1() {
 		fmt.Println(err.Error())
 		return
 	}
-	
+
 	data := make(map[string]string)
 	data["foo"] = "Foo"
 	data["bar"] = "Bar"
@@ -22,10 +22,10 @@ func map1() {
 	tmpl.Execute(os.Stdout, data)
 }
 
-func map2() { 
+func map2() {
 	//TODO - get the commas right via use of array and index=0 test
-	sampleTemplate := 
-	`
+	sampleTemplate :=
+		`
 { {{range $key,$value := . }}{ "{{$key}}" : "{{$value}}" },{{end}} }
 	`
 	tmpl, err := template.New("test").Parse(sampleTemplate)
@@ -33,15 +33,37 @@ func map2() {
 		fmt.Println(err.Error())
 		return
 	}
-	
+
 	data := make(map[string]string)
 	data["foo"] = "Foo"
 	data["bar"] = "Bar"
+
+	tmpl.Execute(os.Stdout, data)
+}
+
+func map3() {
+	sampleTemplate :=
+		`
+{ {{range $key,$value := .foo }}{ "{{$key}}" : "{{$value}}" },{{end}} }
+	`
+
+	tmpl, err := template.New("test").Parse(sampleTemplate)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	data := make(map[string]interface{})
+	kvpairs := make(map[string]string)
+	kvpairs["foo"] = "Foo"
+	kvpairs["bar"] = "Bar"
+	data["foo"] = kvpairs
 	
 	tmpl.Execute(os.Stdout, data)
- }
+}
 
 func main() {
 	map1()
 	map2()
+	map3()
 }
