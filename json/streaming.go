@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
+	"encoding/xml"
 	"fmt"
 	"io"
 	"log"
+	"os"
 	"strings"
 )
 
@@ -32,6 +34,19 @@ func printItem(indent int, key string, val interface{}) {
 			printItem(indent+1, k, v)
 		}
 
+	}
+}
+
+func writeToStdout(val interface{}) {
+	enc := json.NewEncoder(os.Stdout)
+	enc.Encode(val)
+}
+
+func writeXMLToStdout(val interface{}) {
+	fmt.Println("encode xml")
+	enc := xml.NewEncoder(os.Stdout)
+	if err := enc.Encode(val); err != nil {
+		fmt.Println(err.Error())
 	}
 }
 
@@ -111,6 +126,9 @@ func main() {
 			log.Fatal(err)
 		}
 	}
+
+	writeToStdout(data)
+	writeXMLToStdout(data)
 
 	for k, v := range data {
 		printItem(0, k, v)
