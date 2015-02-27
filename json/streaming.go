@@ -50,7 +50,7 @@ func writeXMLToStdout(val interface{}) {
 	}
 }
 
-func main() {
+func streamingMain() {
 	jsonDoc := `
 {  
    "tasks":[  
