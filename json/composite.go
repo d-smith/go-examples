@@ -46,6 +46,12 @@ func compositeMain() {
 					"address":"localhost:3000",
 					"pingUri":"/hello",
 					"up":true
+				},
+				{
+					"name":"s2",
+					"address":"localhost:3100",
+					"pingUri":"/hello",
+					"up":true
 				}
 				]
 			}
