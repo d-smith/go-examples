@@ -3,6 +3,16 @@ package main
 import (
 	"time"
 	"github.com/quipo/statsd"
+	"math/rand"
+)
+
+func init() {
+	rand.Seed(123123213)
+}
+
+const (
+	maxTime = 100
+	minTime = 10
 )
 
 func main() {
@@ -15,7 +25,6 @@ func main() {
 
     // not buffered: send immediately
     for {
-    	startTime := time.Now()
 	    statsdclient.Incr("mymetric", 4)
 	
 	    // buffered: aggregate in memory before flushing
@@ -28,8 +37,8 @@ func main() {
 	    
 	    stats.Gauge("circuit-breaker-1", 0)
 	    
-	    time.Sleep(5 * time.Second)
-	    stats.PrecisionTiming("loop.time", time.Since(startTime))
+	    time.Sleep(300 * time.Millisecond)
+	    stats.Timing("loop.time", rand.Int63n(maxTime- minTime) + minTime)
     }
 }
 
