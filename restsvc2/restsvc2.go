@@ -14,6 +14,7 @@ import (
 const (
 	GET  = "GET"
 	POST = "POST"
+	PUT = "PUT"
 )
 
 var (
@@ -34,6 +35,10 @@ type PostSupported interface {
 	Post(http.ResponseWriter, *http.Request)
 }
 
+type PutSupported interface {
+	Put(http.ResponseWriter, *http.Request)
+}
+
 type API struct{}
 
 func getHandlerForMethod(method string, resource interface{}) (handler HttpHandler) {
@@ -46,6 +51,10 @@ func getHandlerForMethod(method string, resource interface{}) (handler HttpHandl
 		if resource, ok := resource.(PostSupported); ok {
 			handler = resource.Post
 		}
+	case PUT:
+		if resource, ok := resource.(PutSupported); ok {
+			handler = resource.Put
+		}	
 	}
 	return
 }
@@ -86,6 +95,7 @@ func incCounter(method string, path string) {
 func initCountersForResource(path string) {
 	counts.Add(counterName(GET, path), 0)
 	counts.Add(counterName(POST, path), 0)
+	counts.Add(counterName(PUT, path), 0)
 }
 
 func (api *API) AddResource(resource interface{}, path string) {
@@ -106,6 +116,7 @@ type HelloResource struct{}
 const (
 	helloGets  = "HelloGets"
 	helloPosts = "HelloPosts"
+	helloPuts = "HelloPuts"
 )
 
 func timeTrack(start time.Time, name string) {
@@ -154,7 +165,17 @@ func (HelloResource) Post(rw http.ResponseWriter, request *http.Request) {
 
 }
 
-
+func (HelloResource) Put(rw http.ResponseWriter, request *http.Request) {
+	body, err := ioutil.ReadAll(request.Body)
+	request.Body.Close()
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+	}
+	
+	log.Info("Post body: " + string(body))
+	
+	writeResponse(http.StatusOK, []byte("Yeah ok"), nil, rw)
+}
 
 func main() {
 	
