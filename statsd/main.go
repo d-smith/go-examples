@@ -17,7 +17,7 @@ const (
 
 func main() {
 	prefix := "myproject."
-    statsdclient := statsd.NewStatsdClient("172.20.20.10:8125", prefix)
+    statsdclient := statsd.NewStatsdClient("172.20.20.30:8125", prefix)
     statsdclient.CreateSocket()
     interval := time.Second * 2 // aggregate stats and flush every 2 seconds
     stats := statsd.NewStatsdBuffer(interval, statsdclient)
