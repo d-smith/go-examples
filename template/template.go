@@ -42,13 +42,14 @@ func map2() {
 	tmpl.Execute(os.Stdout, data)
 }
 
+//NameVal is a simple structure to carry name/value pairs.
 type NameVal struct {
 	Name string
 	Val  string
 }
 
 func mapToKVPair(data map[string]string) []*NameVal {
-	pairs := make([]*NameVal, 0)
+	var pairs []*NameVal
 	for k, v := range data {
 		pair := new(NameVal)
 		pair.Name = k
