@@ -11,11 +11,12 @@ import (
 	"time"
 )
 
+//SyncMain is the entry point for synchronized concurrency example
 func SyncMain() {
 	var state = make(map[int]int)
 	var mutex = &sync.Mutex{}
 
-	var ops int64 = 0
+	var ops int64
 
 	for r := 0; r < 100; r++ {
 		go func() {
