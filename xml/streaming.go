@@ -38,10 +38,10 @@ func streaming(xmlLiteral string) {
 			endElement = false
 			if startElement == true {
 				
-				depth += 1
+				depth++
 				fmt.Println("start element true, depth now ", depth)
 				if depth > maxDepth {
-					maxDepth += 1
+					maxDepth++
 				}
 			} else {
 				startElement = true
@@ -55,7 +55,7 @@ func streaming(xmlLiteral string) {
 			fmt.Println("EndElement")
 			startElement = false
 			if endElement == true {
-				depth -= 1
+				depth--
 			} else {
 				endElement = true
 			}
