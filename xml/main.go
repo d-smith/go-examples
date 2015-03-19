@@ -47,5 +47,8 @@ func main() {
 	xpathSampleFindOne(xmlLiteral,"/Envelope/Body/AddNote/Memo")
 	xpathSampleFindOne(xmlLiteral3,"/docRoot/collection/thing[2]") 
 	xpathSampleFindMany(xmlLiteral3,"/docRoot/collection/thing")
+	
+	xpathSampleFindOne(workItemRuleResponse, "/Envelope/Body/retrieveRuntimeWorkItemRuleResponse/retrieveRuntimeWorkItemRuleReturn/node")
+	xpathSampleFindOne(workItemRuleResponse, "/Envelope/Body")
 }
 
