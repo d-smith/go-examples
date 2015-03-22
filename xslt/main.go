@@ -3,9 +3,13 @@ package main
 
 /*
 #cgo CFLAGS: -I/usr/include/libxml2
-#cgo LDFLAGS: -L/usr/lib -l xml2
+#cgo LDFLAGS: -L/usr/lib -l xml2 -l xslt
 #include <stdlib.h>
 #include <libxml/parser.h>
+#include <libxslt/xslt.h>
+#include <libxslt/xsltInternals.h>
+#include <libxslt/transform.h>
+#include <libxslt/xsltutils.h>
 
 static void
 print_element_names(xmlNode * a_node)
@@ -19,6 +23,11 @@ print_element_names(xmlNode * a_node)
 
         print_element_names(cur_node->children);
     }
+}
+
+static void
+print_stylesheet_result(xmlDocPtr res, xsltStylesheetPtr styleSheet) {
+	xsltSaveResultToFile(stdout, res, styleSheet);
 }
 */
 import "C"
@@ -64,7 +73,17 @@ func main() {
 	
 	C.print_element_names(root)
 	
-	fmt.Println("free doc")
+	//XSLT
+	fmt.Println("Read style sheet from file")
+	xsltFileName := C.CString("./xml2json.xslt")
+	defer C.free(unsafe.Pointer(xsltFileName))
+	styleSheet := C.xsltParseStylesheetFile( (*C.xmlChar) (unsafe.Pointer(xsltFileName)))
+	res := C.xsltApplyStylesheet(styleSheet, doc, nil);
+	C.print_stylesheet_result(res, styleSheet);
+	
+	fmt.Println("free C stuff")
+	C.xsltFreeStylesheet(styleSheet)
+	C.xmlFreeDoc(res)
 	C.xmlFreeDoc(doc)
 	fmt.Println("done")
 }
