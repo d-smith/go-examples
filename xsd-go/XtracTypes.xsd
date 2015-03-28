@@ -1,0 +1,2065 @@
+<xsd:schema xmlns:xt="http://xmlns.fmr.com/systems/dev/xtrac/2004/06/types" xmlns:xsd="http://www.w3.org/2001/XMLSchema" targetNamespace="http://xmlns.fmr.com/systems/dev/xtrac/2004/06/types" elementFormDefault="qualified" attributeFormDefault="unqualified">
+	<!--
+	============================================================
+			Overview
+	============================================================
+	Content:
+		This document contains all XTRAC types.  Only simple types
+		are contained in this document.
+ 
+	Conventions:
+	
+		0 - Refer to the CSA cookbook for standards, conventions, etc. for XSD design.
+		
+		1- When a "one-off" type is required for compatibility with
+			 an XTRAC 5.3 or older database, the type begins with the
+			 name of the standard type ends with the "one-off" 
+			 description (example, Name and NameFirst.
+ 
+	One-Offs:
+		This is a list of types that we would like to deprecate but
+		are required because of current XTRAC database inconsistencies.
+		NameFirst_T
+		NameLast_T
+		NameMiddle_T
+		DescriptionQueue_T
+		TypeCode1_T
+		TypeCode2_T
+	-->
+	<!--
+	============================================================
+			Imports
+	============================================================
+	-->
+	<!--
+	============================================================
+			Types
+	============================================================
+	-->
+	<xsd:simpleType name="AccessGroupValue_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type will be used to selectively retrive access group record  or super access group records or both
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(All|AccessGroup|SuperAccessGroup)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="AccessGroupType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type will be used to represent different access group type 
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(All|View|Work)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="AccountNumber_T">
+		<xsd:annotation>
+			<xsd:documentation>Account number associated with work item
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="18"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="Address_T">
+		<xsd:annotation>
+			<xsd:documentation>Type used to represent any address attribute </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="AdditionalInformationType_T">
+		<xsd:annotation>
+			<xsd:documentation>Type used to represent any additional information on a work item
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="AdminComponentName_T">
+		<xsd:annotation>
+			<xsd:documentation>
+	                     XTRAC admin component names
+	                        </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Queue|Node|Business Calendar|Value Group|Custom Field|Item Type|Party|Status|Work Item Rule|Common Field Group|Dynamic Field Rule|Subtype|URL|Exception Policy|External Service|Access Group|Super Access Group|Transfer Rule|Priority Rule|Notification Filter Rule|Sampling Rule|Suspend Rule|Work Item Update Rule|Work Selection Rule|Integration Rule|Rule List Group|MetadataRule|Split Rule|MetadataSelectionRule|MetadataRule|QueueCompleteRule|ProcessCompleteRule|MilestoneRule|Work List Rule)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="AdminGroup_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for any data field containing an admin group 
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="4"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="Amount_T">
+		<xsd:annotation>
+			<xsd:documentation>Amount associated with work item
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:decimal">
+			<xsd:totalDigits value="18"/>
+			<xsd:fractionDigits value="2"/>
+			<!--<xsd:maxLength value="18"/>-->
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="ApplicationType_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--================================================ -->
+	<xsd:simpleType name="AppServerName_T">
+		<xsd:annotation>
+			<xsd:documentation>Type used to represent app server name</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="ApprovalQueueName_T">
+		<xsd:annotation>
+			<xsd:documentation>Type to represent an approval queue name.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="ApprovalQueueType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				This type is used to represent approval queue types.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(approvalGroups|corrTypes|nodes)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="ArchivePurgeLimit_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Type used to represent limit for archive purge days out
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="730"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="ArchiveSchedulerFrequency_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Type used to represent a frequency for Archive Scheduler
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="730"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="ArchiveSchedulerType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent a frequency base for Archive Scheduler
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Archive|Transfer)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="ArchiveStatusCode_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				TransferToArchived :TODO add documentation
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(TransferToArchived)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="BatchJobId_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to store the batch job ID
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="BatchJobMemo_T">
+		<xsd:annotation>
+			<xsd:documentation>Batch job memo</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="BatchJobName_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				 Type used to represent different delete batch jobs, WakeBatchClient, PrintTicklers jobs
+            </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(DeleteCorrespondence|DeleteAccessGroup|DeleteItemRule|DeleteNode|DeleteOperatorProfile|DeleteSecurityGroup|DeleteTsfDef|DeleteValueGroup|DeleteValidValues|DeleteStatusCodes|DeleteQueueGroups|DeleteWorkQueue|DeleteEntitlementSets|DeleteTriggerRules|DeletePrinters|DeleteBusinessCalendar|DeleteURLDefinition|DeleteCommonFieldGroup|DeleteExternalService|DeleteExceptionPolicy|DeleteEmailFormFieldMapping|PrintTicklers|WakeBatchClient)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="BatchStatusCode_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Type used to represent status codes for batch jobs
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="255"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="BatchTraceModeLimit_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent trace mode value limit
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="9"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="BusinessPartnerName_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent a business partner name
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="60"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="BodyFormat_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type will be used to selectively retrieve correspondence body text types
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(RTF|XML|PDF|DOCX)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="Client_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					FIMS required type used to represent business unit ownership
+					Example, FIMS_RETAIL, FIMS_FILI, etc.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="12"/>
+			<xsd:pattern value="([a-zA-Z0-9_])+"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="CMSFolderId_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Thunderhead Root Folder ID
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="32"/>
+			<xsd:pattern value="([0-9])+"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="CollectionValue_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type will be used for list references service for 
+				returning different set of records based on the value:
+				All with return the complete list and not use del_i as a filter
+				Deleted with return the records where del_i = Y or 1
+				Active will return the records where del_i = N or 0
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(All|Deleted|Active)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="ColumnLabel_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for accepting header value for print 
+				list
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="175"/>
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="ColumnWidth_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Type used to define the column width for
+					print list service
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="PositiveInteger_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Type used to define any positive integer.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="Comment_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Comment text
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2000"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="ComponentName_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				XTRAC admin component names
+				   </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(AccessGroup|ApprovalGroup|BusinessCalendar|CommonFieldGroup|CorrespondenceApprovalGroup|CorrespondenceType|CustomField|EntitlementSet|ExceptionPolicy|ExternalService|InternalMessageTemplate|ItemType|LetterTemplate|Template|Node|Operator|ParagraphTemplate|ParagraphType|Party|PreDefinedField|Printer|PrinterGroup|Queue|QueueGroup|SecurityGroup|Status|URL|Value Group|WorkItemRule|SourceSystem|WorkListRule|WorkSelectionRule)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Connection_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for any data field that contains a connection string such as is used in Source System
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="256"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="ControlNumber_T">
+		<xsd:annotation>
+			<xsd:documentation>Control number associated with a note
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="14"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="CorrApproval_T">
+		<xsd:annotation>
+			<xsd:documentation>Approval specification for correspondence templates</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Always|Modified|Never)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ============================================= -->
+	<xsd:simpleType name="CorrelationId_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Used by the asynch external service to call back Xtrac so that Xtrac can relate to what to do
+				This field consists of transactionId, a "|" and the serviceId which uniquely identify the request
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="50"/>
+			<xsd:minLength value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ============================================= -->
+	<xsd:simpleType name="CorrespondenceId_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(C|I)\d{1,6}-\d{2}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\d{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="Criteria_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for accepting criteria for print list
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="175"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="CustomerId_T">
+		<xsd:annotation>
+			<xsd:documentation>Customer Id associated with work item
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="9"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="CustomerIdFormat_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(SSN|TIN|SIN|Other)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="DataType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Type used for datatype for the component
+					</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Boolean|Character|Decimal|Date|Identifier|Integer|Currency|Phone|Value Group|Hyperlink|Multi-Line|Multi-Select)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="DataValue_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for accepting data value for print 
+				list
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="7500"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="Date_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type for a date in "MM/DD/YYYY" format
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(0[1-9]|10|11|12)/(0[1-9]|[1-2][0-9]|3[0-1])/\d{4}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="DateTime_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent any Oracle date/time such as
+				last modified date in "MM/DD/YYYY HH:MM:SS" format.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(0[1-9]|10|11|12)/(0[1-9]|[1-2][0-9]|3[0-1])/\d{4} (0\d{1}|1\d{1}|2[0-3]):[0-5][0-9]:[0-5][0-9]"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="DependenciesInfo_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent dependencies information
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="3000"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="DependencyFieldType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to differentiate the field as a valid value, value group, value associated to a value group, custom field of data type boolean, character etc.
+			 </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(CustomField|ValidValue|ValueGroup|ValueGroupValue)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Description_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent any description attribute that is the standard length of 60 characters
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="60"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ============================================= -->
+	<xsd:simpleType name="Description30_T">
+		<xsd:annotation>
+			<xsd:documentation>Type used to represent any descriptoin attribute that is a length of 30</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ============================================= -->
+	<xsd:simpleType name="DisplayMaskType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+		Type used for display Mask type for the component
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(CurrentDateTime|TenDigitPhoneNumber|AccountNumber|CorrectLength|CorrectLengthNoSeparator|TwoDigit|UnsignedSixDigitDecimal|FourteenDigitPhoneNumber|GreaterThanOrEqualToTodaysDate|GreaterThanOrEqualToTodaysDateYYYY|MarketTradeDate|MarketTradeDateYYYY|UnsignedSixDigitMoney|NoWhitespace|NoCheck|NoCheckNoSeparator|Numeric|UnsignedValue|TwoDigitNoSeparator|AnyDateYYYY|UnsignedSixDigitNoSeparatorDecimal|OnOff|SevenDigitPhoneNumber|FourDigitPhoneNumber|FiveDigitPhoneNumber|SignedValue|Shares|SignedSixDigitDecimal|TodaysDate|TrueFalse|TodaysDateYYYY|SignedSixDigitNoSeparatorDecimal|WorkItemIdentifier|YesNo|SignedSixDigitMoney|NoMaskDefined|AnyDate|CurrentCalendarDay([0-9]|[1-8][0-9]|[9][0])|CurrentBusinessDay([0-9]|[1-5][0-9]|[6][0-5]))"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ============================================= -->
+	<xsd:simpleType name="DocumentId_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for representing document id
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="200"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ============================================= -->
+	<xsd:simpleType name="DocumentSimple_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				FIMS required type that determines retention periods
+				(Example, PCHK2)				
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="8"/>
+			<xsd:pattern value="([a-zA-Z0-9_])+"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ============================================= -->
+	<xsd:simpleType name="DuplicateSearchRulePriorDays_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Type used to represent limit for priority points
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="9999"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ============================================= -->
+	<xsd:simpleType name="DuplicateSearchRuleNumberOfItemReturnValue_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent limit for priority points
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="9999"/>
+			<xsd:minInclusive value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ============================================= -->
+	<xsd:simpleType name="DynamicFieldRuleXML_T">
+		<xsd:annotation>
+			<xsd:documentation>Dynamic field rule XML which is 
+				used to evaluate a DFR
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1000000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ============================================= -->
+	<xsd:simpleType name="EmailAddress_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for any data field that contains an email address
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="256"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="AsyncWaitTime_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			 		Type used to represent how many minutes
+						a service must wait, If the call to the
+						external service is failed. Minimum time
+						1 min(validated through code) and maximum time is 1440060 mins
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="1440060"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="ExternalServicePort_T">
+		<xsd:annotation>
+			<xsd:documentation>
+						Type used to represent service port name 
+						for the external service component.
+					</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="100"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="ExternalServiceOperation_T">
+		<xsd:annotation>
+			<xsd:documentation>
+						Type used to represent service operation 
+		                name for the external service component.
+					</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="100"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="ExternalServiceRequest_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				 Input / return mapping XML for the external service  	
+				 size is appromatiely 10MB. Web service expects this 
+				 data to come in CDATA tag, so that it can be ignored 
+				 by the handlers.
+		       </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10000000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="Event_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Type will be used to selectively event for rule
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(BeforeCreate|AfterCreate|AllEvents||AddNote|AddCorrespondence|AddDocument|AfterReceived|AfterUpdate|AddWork|Batch|BatchUpdate|DefinedSearch|Entry|Initialize|NBATCH|Nightly|RecordsManagement|Resolution|SupportUpdate|TransfertoArchive|TransferItem|UpdateCorrespondence|UPDATE|UpdateWorkItem|WorkList|WorkSelection|Manual)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="EventContextFilterType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+						Type used for filtering requests for events for different rules types
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(AttributeBasedAccessRule|DefinedSearch|Priority|RecordsManagement|Sampling|Split|Suspend|Transfer|WorkItemUpdate|WorkList|WorkSelection|NotificationFilter|Archive|Purge|CorrespondenceGeneration|InterBusinessRouting|ParagraphSelection|DuplicateSearch|Integration|SystemWorkList|SystemWorkSelection|EsetWorkList|EsetWorkSelection|ProcessComplete|QueueComplete|HyperlinkCondition|Milestone|EmailFieldMapping|MetadataFieldSelectionCondition|MetadataFieldCondition)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="ErrorThresholdLimit_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Type used to represent a number which will be used as error threshold .	
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="10"/>
+			<xsd:minInclusive value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="FeatureName_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Generic Type will be used  for passing feature name. The possible values
+			are list of all the features
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(CorrTypeGroup|RuleListGroup|PersonalQueue)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="FieldContextFilterType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+						Type used for filtering requests for fields for different rules types
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(AttributeBasedAccessRule|AttributeBasedAccessAction|B2B|DefinedSearch|DefinedSearchFields|MappedFields|Priority|PublishedFields|RecordsManagement|Sampling|SearchFields|Split|Suspend|Transfer|StandardWorkItem|WorkItem|WorkItemUpdate|WorkList|WorkListDisplayFields|WorkSelection|WorkSelectionFilterFields|AllField|CustomField|PreDefined|RuleList|NotificationFilter|Archive|CorrespondenceGeneration|InterBusinessRouting|ParagraphSelection|Purge|UpdateFields|DuplicateSearch|SearchResults|SplitParent|SplitChild|Integration|CommonFieldGroup|SuspendUntilDate|Integration|ExternalServiceRequest|ExternalServiceResponse|HyperlinkCondition|HyperlinkAction|EsetWorkList|EsetWorkSelection|SystemWorkList|SystemWorkSelection|ProcessComplete|QueueComplete|Milestone|EmailFieldMapping|SuspendUntilShared|MetadataFieldSelectionCondition|MetadataFieldCondition|MetadataAction)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="FieldFilterType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for filtering requests for lists of Fields values.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(PDF|CF|Both)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="FieldState_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Stores the different states which a particular work item field can have
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Required|Optional|Protected)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="SourceType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Stores weather the field is being set to a literal or a field value
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Literal|Field)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="FieldType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Stores the field types
+			C --> Combo field
+			T --> Text field
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Combo|Text)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="FieldVal_T">
+		<xsd:annotation>
+			<xsd:documentation>Field value : maximum size is 
+				7500 characters
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="7500"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="GroupName_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent an access group name as well as value group names.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="8"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Help_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Type used for any data field that contains a Help Text Fields
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="360"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="IBRStatusCode_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Type used for various IBR status 
+			Frozen:TODO add documentation
+			Active:TODO add documentation
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Active|Frozen)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="InterBusinessRoutingProcess_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Type used for Inter Business Routing Process_T.
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(continueProcessing|continueToSyncPoint|freeze)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="IntervalFilter_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Type used to represent a frequency base for component. 
+					Days	-	for the number of Days
+					Weeks	-	for the number of Weeks
+					Months	-	for the number of Months
+					Years	-	for the number of Years			
+					Can be used in any component where we need the calender frequency/schedule
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Days|Weeks|Months|Years)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="JobStatus_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Type used to represent the possible status for batch jobs
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(processing|Finished)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="LinkRelationship_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Link Relationship:
+				Primary : The workitem which initiated a link 
+				Secondary : The workitem to which the link was initiated
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Primary|Secondary)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="LinkType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Different link types
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Document|Duplicate|InterBusinessRouting|Merge|Sample|Split|WorkItem)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="RetryLimit_T">
+		<xsd:annotation>
+			<xsd:documentation>
+		 		Type used to represent the number of 
+		 		tries needs to made to the external 
+		 		service	if the external service is not 
+	           		responding.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="5"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="RetryInterval_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent the time before 
+				making the retry for the external service,
+				if external service is not responding. 	
+				Number represents the number of minutes 
+				here.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="1440"/>
+			<xsd:minInclusive value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="SplitLevelLimit_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Split level limit for Organization
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="1"/>
+			<xsd:maxInclusive value="99"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="SplitChildFieldMappingAction_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Action specified for a Field Mapping.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Copy|DoNotCopy)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="SplitCountLimit_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Split count limit for Organization
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:minInclusive value="1"/>
+			<xsd:maxInclusive value="999"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="WorkItemClassification_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Stores the different types of work item rules:
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(UserDefined|Standard)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="WorkItemFieldValidValue_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				This will store the  value associated with a value group
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2000"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="WorkItemRuleOption_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Inddicates whetther the child work items are Preset or AnyItem.In case of AnyItem user chooses them based on the available WI Rule.    
+			Allowable values are:
+			AnyItem - a manual split and any item type can be selected
+			PresetItem - a manual split or an Automatic Split and only present item types can be selected.
+
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(PresetItem|AnyItem)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="MailZone_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for storing mail zone
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="6"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Memo_T">
+		<xsd:annotation>
+			<xsd:documentation>Standard-length memo</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="60"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="MetadataEventType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+                        Type to represent metadata rule event types for use at runtime
+                </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(AddAndAssociateAttachment|EditMetadata|SearchCriteria|SearchResultsList|AttachmentList|RepositoryAssociateAttachment|SearchCriteriaReassociateAttachment)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="MigrationStatus_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Approve - Source to Target Migration Approved
+			Success - Source to Target migration Successful
+			Fail - Migration Failed
+			Cancel - Migration Cancelled
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Approve|Success|Fail|Cancel)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Mime_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				FIMS required type used to represent the MIME type being injected
+				Example, text/xml 
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(image/tiff|image/gif|image/bmp|image/jpeg|text/html|text/plain|text/xml|application/excel|application/msword|application/pdf|application/rtf|application/zip|audio/x-wav)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Name_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent any name attribute that is the  standard length of 30 characters
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="NoteName_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent any note name attribute that is the  standard length of 30 characters
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="0"/>
+			<xsd:maxLength value="30"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Name10_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent any name attribute that is the  standard length of 10 characters
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="10"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Name60_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent any name attribute that is up to 60 characters long
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="60"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Name100_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent any name attribute that is up to 100 characters long
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="100"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="NameFirst_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for a first name
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="NameLast_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for a last name
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="25"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="NameMiddle_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for a middle name
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="NamespacePrefix_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to specify a namespace prefix
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="15"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="NodeIncludeParameterValue_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type will be used for finding the
+				included nodes based on passed parameter
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(All|Node)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="NotAllowedReasonName_T">
+		<xsd:annotation>
+			<xsd:documentation>Type used to designate why a given suspend is not allowed.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(SuspendLimitExceeded|SuspendMinutesExceeded|SuspendRangeViolated|NoMatchingSuspendRule|SuspendDateViolated)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="NoteText_T">
+		<xsd:annotation>
+			<xsd:documentation>Note text : maximum size is 
+				7500 characters
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="7500"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="OperatorType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				 Type will be used for list references service for different operator types
+	        </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Individual|MultiUser|System)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="ParagraphTemplateName_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<!-- ATTENTION: If the restrictions in this Password_T type change, then the 
+       password validation in com.fmr.xtrac.business.impl.operator.XtOperator.changePassword
+       must also be changed -->
+	<xsd:simpleType name="Password_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="20"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Pattern_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent any pattern, format or regex string that is up to 60 characters long
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="60"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Phone_T">
+		<xsd:annotation>
+			<xsd:documentation>
+	 				Type used for any data field that contains an Phone text field
+	 			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="17"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="PrinterCommand_T">
+		<xsd:annotation>
+			<xsd:documentation>Type to represent the command associated with a printer definition.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="256"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="PriorityLimit_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent limit for priority points
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="999"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="QueueFilterType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+						Type used for filtering requests for lists of Queues types
+						</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Personal|Work|All)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="RecordTypeName_T">
+		<xsd:annotation>
+			<xsd:documentation>Record Type name
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="500"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="ReferenceId_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent any additional history information associated with a history action
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="200"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Repository_T">
+		<xsd:annotation>
+			<xsd:documentation>Repository Information
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="4000"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="ResumeQueueCategory_T">
+		<xsd:annotation>
+			<xsd:documentation>Type used to determine where the work item is transferred on resume. Options are 1- the suspending operator's personal queue or 2- the queue specified in the suspend rule or the current queue of the work item at the time it was suspended.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(SuspendingOperator|Queue)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="RuleComparator_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Type used for Fld_Eval_C data field containing Field Evaluation Operator.
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(greaterThan|greaterThanOrEqual|lessThan|lessThanOrEqual|equal|notEqual|notIn|in|changed|notChanged|doesNotContain|contains|matches|doesNotMatch)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="Sequence_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to constrain the sequence number attribute 
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(1)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="SmartStoreId_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for storing the identifier using which to search for 
+				a purged workitem in the smartstore
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="500"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="ArchiveState_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for containing current state of the workItem as it pertains 
+				to the archive repository
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(PermanentPurge|Archived|PurgedOnly)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="StatusTypeFilterValue_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Type used for filtering requests for lists of status values.
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(open|resolved|both)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<!-- ===== for future use when XWB converts to the thin client ====== -->
+	<xsd:simpleType name="StateAction_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Correspondence State Actions
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Approve|Reject|Cancel|Print|Resubmit|Reprint|Submit)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="ResolvedURLData_T">
+		<xsd:annotation>
+			<xsd:documentation>resolved hyperlink</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2048"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="RuleOwner_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(node|agent|paragraphType|none|entitlementSet)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="RuleListGroupValue_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent rule list group value
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="60"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="SampleSize_T">
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="99999"/>
+			<xsd:minInclusive value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="SampleSetSize_T">
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="99999"/>
+			<xsd:minInclusive value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="SecurityFunctionCode_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="SecurityGroupName_T">
+		<xsd:annotation>
+			<xsd:documentation> Type used for the security group component</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10"/>
+			<xsd:minLength value="1"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="XenAgentName_T">
+		<xsd:annotation>
+			<xsd:documentation> Type used for the Xen Agent component</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="12"/>
+			<xsd:minLength value="1"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="SourceQueName_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for a Source Queue name data field that contains a string up to 60 characters long
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="60"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ============================================= -->
+	<xsd:simpleType name="SplitStatusCode_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				AwakenedParent : Frozen parent (first generation) that has been 
+					awakened
+				Child : Child
+				Frozen : Frozen parent
+				NoSplit : Not involved in split
+				Parent : Parent
+				Resolved : Resolved
+				AwakenedChild : Child that was also a frozen parent but has been 
+					awakened
+				NeedsRendezvous : Child that will require rendezvous
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(AwakenedParent|Child|Frozen|NeedsRendezvous|NoSplit|Parent|Resolved|AwakenedChild)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="DuplicateSearchStatusTypeFilter_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for different status types
+				which can be associated with a duplicate 
+				search rule
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Open|Resolved|All)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="SuspendDays_T">
+		<xsd:annotation>
+			<xsd:documentation>Type used to represent the number of days for 
+			which work item is to be suspended. Zero value indicates that there 
+			is no time limit</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="999"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="SuspendStatusCode_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Active|Suspended|WakeState)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="SuspensionTimeLimit_T">
+		<xsd:annotation>
+			<xsd:documentation>
+						Type used to represent a total duration for suspend rules 	
+					</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="999"/>
+			<xsd:minInclusive value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="StatusType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Valid status types.
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(InProcess|Pending|Resolved)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="TemplateName_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="TemplateType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Template Type for Template Body. 
+					Paragraph --> For Paragraph 
+					Template Body,Letter --> For Letter Template 
+					Body and Internal --> Internal Message 
+					Template. 
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Paragraph|Letter|Internal)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="TicklerDay_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Type used to represent a days for Ticklers in 
+					Letter Template/ Internal Message Template
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="730"/>
+			<xsd:minInclusive value="0"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="TriggerRuleType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for trigger rule type
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Archive|CorrGeneration|DefinedSearch|NotificationFilter|Priority|Purge|RecordsManagement|Sampling|Split|Suspend|Transfer|WorkList|WorkSelection|WorkItemUpdate|ParagraphSelection)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="TemplateData_T">
+		<xsd:annotation>
+			<xsd:documentation>Template data - size is 10MB</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="10000000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="Timezone_T">
+		<xsd:annotation>
+			<xsd:documentation>Type to represent an Timezone.</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+			<xsd:pattern value="(\(GMT[+-][0-1]{1}[0-9]{1}:[0-4]{1}[0|5]{1}\){1}\s[a-zA-Z \s\:\'\,\.\&amp;\(\-)]+|\(GMT\){1}\s[a-zA-Z \s\:\'\,\.\&amp;\(\-)]+|\(UTC[+-][0-1]{1}[0-9]{1}:[0-4]{1}[0|5]{1}\){1}\s[a-zA-Z \s\:\'\,\.\&amp;\(\-)]+|\(UTC\){1}\s[a-zA-Z \s\:\'\,\.\&amp;\(\-)]+)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="CorrespondenceData_T">
+		<xsd:annotation>
+			<xsd:documentation>Correspondence template data - size is 12MB</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="12000000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="Time_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type for a time in "HH:MM:SS" format
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(0\d{1}|1\d{1}|2[0-3]):[0-5][0-9]:[0-5][0-9]"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="TimeHHMM_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type for a time in "HH:MM" format
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(0\d{1}|1\d{1}|2[0-3]):[0-5][0-9]"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="TimeFilter_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Minutes|Hours)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="Title_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for accepting title for print list
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="175"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="TypeCode1_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Used for any single character type code designation
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="TypeCode2_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Used for any two character type code designation
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="2"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="TypeCode3_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Used for any 100 character type code designation
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="URL_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for any data field that contains a URL such as B2B endpoint URL
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="256"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="URLData_T">
+		<xsd:annotation>
+			<xsd:documentation>URL Data</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="500"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Value_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for any data field that has a 20 character value
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Value30_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent any code attribute that is  the standard length of 30 characters. 
+				Example, item type code, status code, items sub type code, etc.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="30"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="Value100_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent valid value for a field. 
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="ValueSource_T">
+		<xsd:annotation>
+			<xsd:documentation>Type used to represent the Value Source of a Work Item Update Rule Action </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="15"/>
+			<xsd:pattern value="(Manual|AutoPopulate|Literal|Field)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="WorkItemNumber_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="W\d{1,6}-\d{2}(JAN|FEB|MAR|APR|MAY|JUN|JUL|AUG|SEP|OCT|NOV|DEC)\d{2}"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="WorkSelectionRuleComparator_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Type used for Fld_Eval_C data field containing Field Evaluation Operator.
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(greaterThan|greaterThanOrEqual|lessThan|lessThanOrEqual|equal|notEqual|notIn|in|between|doesNotContain|contains|matches|doesNotMatch)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ===================================================== -->
+	<xsd:simpleType name="UserSettings_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SystemSettings_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ========================================================= -->
+	<xsd:simpleType name="RuleDescription_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for rule description having 100 char length
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--================================================ -->
+	<xsd:simpleType name="RemoteHost_T">
+		<xsd:annotation>
+			<xsd:documentation>
+					Type used for remote host having 100 char length
+				</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="100"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!--================================================ -->
+	<xsd:simpleType name="IP_Address_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for IP Address
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="AdminHistoryEvent_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			This object will contain the event type that can occur on a 
+			component and will be stored in the history. 
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Create|Update|Delete)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="ChangeRequestId_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type for ChangeRequestId to be displayed on admin
+				standard history list.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="30"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="RuleExpressionEvaluator_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(AND|OR)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="SuspendTimeFilter_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Minutes|Hours|Days)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="SuspendUntilCriteria_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used for filtering requests for Suspend Option values.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(After|Before)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="TargetDateStartOption_T">
+		<xsd:annotation>
+			<xsd:documentation>
+		WorkItemCreateDate, CurrentSystemDate are used by Process completion, Milestone rules. QueueEntryDate 
+		is used by Queue completion rule. Server side validation will be done to make sure this.
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(WorkItemCreateDate|CurrentSystemDate|QueueEntryDate)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="ThresholdTimeFilter_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Percent)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="TargetDateFilter_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to represent time
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Minutes|Hours|Days)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="TimeLimit_T">
+		<xsd:annotation>
+			<xsd:documentation>
+						Type used to represent a total duration
+					</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:int">
+			<xsd:maxInclusive value="999"/>
+			<xsd:minInclusive value="1"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="JeopardyComponentFilter_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Family|Queue|CriticalPath)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="StateFilter_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Red|Amber|Green)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<!--======================XEN======================= -->
+	<xsd:simpleType name="PropertyValue_T">
+		<xsd:annotation>
+			<xsd:documentation>
+			Type used for any data field that has up to a 1000 character value
+		</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LogType_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(TRACE|ERROR|PERF|CONFIG|AUDIT)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<xsd:simpleType name="LogLevel_T">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(ALL|DEBUG|INFO|WARN|ERROR|FATAL|NONE)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- =============EMAIL INTERACTION================== -->
+	<xsd:simpleType name="Importance_T">
+		<xsd:annotation>
+			<xsd:documentation>
+ 	Type used to designate the importance of Email.
+  	  </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Low|Normal|High)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="Sensitivity_T">
+		<xsd:annotation>
+			<xsd:documentation>
+ 	Type used to designate the sensitivity of Email.
+  	 </xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(Normal|Personal|Private|Confidential)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="EmailFieldState_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Stores the different field states
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(ReadOnly|Editable)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="EmailFormXml_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				XML content which holds the Infopath xml file contents
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:maxLength value="1000000"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="ListType_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				List type for myStuff. The list contains the workitem created
+				by, updated by or viewed by the loggedIn operId.
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="(C|U|V)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+	<xsd:simpleType name="XPathExpression_T">
+		<xsd:annotation>
+			<xsd:documentation>
+				Type used to contain an XPath expression
+			</xsd:documentation>
+		</xsd:annotation>
+		<xsd:restriction base="xsd:string">
+			<xsd:minLength value="1"/>
+			<xsd:maxLength value="512"/>
+			<xsd:pattern value="(\S(?:.*\S)?)"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	<!-- ================================================ -->
+</xsd:schema>
