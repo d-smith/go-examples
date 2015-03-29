@@ -86,6 +86,8 @@ func TestSimpleAndComplexInXSDParse(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 1, len(s.SimpleTypes))
 	assert.Equal(t, "AccessGroupValue_T", s.SimpleTypes[0].Name)
+	assert.Equal(t, "xsd:string", s.SimpleTypes[0].Constraints.Base)
+
 	assert.Equal(t, 1, len(s.ComplexTypes))
 	assert.Equal(t, "MergeMapping_T", s.ComplexTypes[0].Name)
 }
