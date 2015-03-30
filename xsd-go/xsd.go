@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/xml"
 	"fmt"
+	"strings"
 )
 
 type Schema struct {
@@ -41,7 +42,6 @@ type ComplexType struct {
 	Name     string          `xml:"name,attr"`
 	Abstract bool            `xml:"abstract,attr"`
 	Sequence []Element       `xml:"sequence>element"`
-	Content  *ComplexContent `xml:"http://www.w3.org/2001/XMLSchema complexContent"`
 }
 
 type SimpleType struct {
@@ -55,19 +55,31 @@ type Restriction struct {
 	Base    string   `xml:"base,attr"`
 }
 
-type ComplexContent struct {
-	XMLName   xml.Name  `xml:"http://www.w3.org/2001/XMLSchema complexContent"`
-	Extension Extension `xml:"http://www.w3.org/2001/XMLSchema extension"`
+func IsQualifiedName(name string) bool {
+	return (strings.Count(name, ":") == 1)
 }
 
-type Extension struct {
-	XMLName  xml.Name  `xml:"http://www.w3.org/2001/XMLSchema extension"`
-	Base     string    `xml:"base,attr"`
-	Sequence []Element `xml:"sequence>element"`
+func UnqualifiedName(name string) string {
+	if !IsQualifiedName(name) {
+		return name
+	} else {
+		parts := strings.Split(name, ":")
+		return parts[1]
+	}
 }
 
-type Import struct {
-	XMLName        xml.Name `xml:"http://www.w3.org/2001/XMLSchema import"`
-	SchemaLocation string   `xml:"schemaLocation,attr"`
-	Namespace      string   `xml:"namespace,attr"`
+func HasXsdPrefix(name string) bool {
+	if !IsQualifiedName(name) {
+		return false
+	}
+	
+	parts := strings.Split(name, ":")
+	
+	return parts[0] == "xsd"
 }
+
+
+
+
+
+

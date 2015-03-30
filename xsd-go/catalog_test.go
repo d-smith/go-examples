@@ -32,9 +32,29 @@ func TestComplexTypeCatalog(t *testing.T) {
 	assert.Equal(t, 7, len(ct.Sequence))
 
 	for _, e := range ct.Sequence {
-		fmt.Printf("ref: %s\n", e.Ref)
+		fmt.Printf("ref: %s qualified: %v\n", e.Ref, IsQualifiedName(e.Ref))
 	}
 
 	assert.Equal(t, false, catalog.IsSimpleType("foobar"))
 	assert.Equal(t, true, catalog.IsSimpleType("AdminGroup_T"))
+	
+	for _, e := range ct.Sequence {
+		fmt.Printf("ref: %s\n", e.Ref)
+		uq := UnqualifiedName(e.Ref)
+		fmt.Printf("\tunqualfied name: %s", uq)
+		elementDef, _ := catalog.LookupElementDef(uq)
+		fmt.Printf("\ttype name: %s\n", elementDef.Type)
+		fmt.Printf("\ttype: %s\n", func(typeName string, c *Catalog) string {
+				if(HasXsdPrefix(typeName)) {
+					return "xsd"
+				} 
+				
+				uqTypeName := UnqualifiedName(typeName)
+				if(c.IsSimpleType(uqTypeName)) {
+					return "simple type"
+				} else {
+					return "complext type"
+				}
+			}(elementDef.Type, catalog))
+	}
 }

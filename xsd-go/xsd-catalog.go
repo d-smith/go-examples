@@ -8,12 +8,14 @@ import (
 type Catalog struct {
 	complexTypeMap map[string]ComplexType
 	simpleTypeMap  map[string]SimpleType
+	elementMap map[string]Element
 }
 
 func NewCatalog() *Catalog {
 	return &Catalog{
 		make(map[string]ComplexType),
 		make(map[string]SimpleType),
+		make(map[string]Element),
 	}
 }
 
@@ -21,10 +23,19 @@ func (c *Catalog) catalogComplexType(ct ComplexType) {
 	c.complexTypeMap[ct.Name] = ct
 }
 
+func (c *Catalog) catalogElement(e Element) {
+	c.elementMap[e.Name] = e	
+}
+
 func (c *Catalog) CatalogComplexTypes(s *Schema) {
 	for _, ct := range s.ComplexTypes {
 		fmt.Println("catalog ", ct.Name)
 		c.catalogComplexType(ct)
+	}
+	
+	for _, e := range s.Elements {
+		fmt.Println("catalog element ", e.Name)
+		c.catalogElement(e)
 	}
 }
 
@@ -59,5 +70,16 @@ func (c *Catalog) LookupSimpleType(name string) (SimpleType, error) {
 		return st, nil
 	} else {
 		return st, errors.New("Simple type not found")
+	}
+}
+
+
+
+func (c *Catalog) LookupElementDef(name string)(Element, error) {
+	e, ok := c.elementMap[name]
+	if ok {
+		return e, nil
+	} else {
+		return e, errors.New("Element def not found")
 	}
 }
