@@ -8,17 +8,23 @@ import (
 	"testing"
 )
 
-func TestComplexTypeCatalog(t *testing.T) {
-	bs, err := ioutil.ReadFile("XtracElements.xsd")
+func loadSchemaDefs(t *testing.T, xsdFileName string) *Schema {
+	bs, err := ioutil.ReadFile(xsdFileName)
 	assert.Nil(t, err)
 
 	s := new(Schema)
-
 	err = xml.Unmarshal(bs, &s)
 	assert.Nil(t, err)
+	return s
+}
+
+func TestComplexTypeCatalog(t *testing.T) {
+	elementsSchema := loadSchemaDefs(t, "XtracElements.xsd")
+	typesSchema := loadSchemaDefs(t, "XtracTypes.xsd")
 
 	catalog := NewCatalog()
-	catalog.CatalogComplexTypes(s)
+	catalog.CatalogComplexTypes(elementsSchema)
+	catalog.CatalogSimpleTypes(typesSchema)
 
 	ct, err := catalog.LookupComplexType("LoginInfo_T")
 	assert.Nil(t, err)
@@ -29,5 +35,6 @@ func TestComplexTypeCatalog(t *testing.T) {
 		fmt.Printf("ref: %s\n", e.Ref)
 	}
 
-	//Next - add a predicate to see if we are referencing a simple type or a complex type.
+	assert.Equal(t, false, catalog.IsSimpleType("foobar"))
+	assert.Equal(t, true, catalog.IsSimpleType("AdminGroup_T"))
 }

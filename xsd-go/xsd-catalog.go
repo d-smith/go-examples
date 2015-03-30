@@ -36,3 +36,28 @@ func (c *Catalog) LookupComplexType(name string) (ComplexType, error) {
 		return ct, errors.New("Complex type not found")
 	}
 }
+
+func (c *Catalog) catalogSimpleType(st SimpleType) {
+	c.simpleTypeMap[st.Name] = st
+}
+
+func (c *Catalog) CatalogSimpleTypes(s *Schema) {
+	for _, st := range s.SimpleTypes {
+		fmt.Println("catalog ", st.Name)
+		c.catalogSimpleType(st)
+	}
+}
+
+func (c *Catalog) IsSimpleType(name string) bool {
+	_, ok := c.simpleTypeMap[name]
+	return ok
+}
+
+func (c *Catalog) LookupSimpleType(name string) (SimpleType, error) {
+	st, ok := c.simpleTypeMap[name]
+	if ok {
+		return st, nil
+	} else {
+		return st, errors.New("Simple type not found")
+	}
+}
