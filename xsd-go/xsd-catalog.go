@@ -5,10 +5,30 @@ import (
 	"fmt"
 )
 
+type ElementType int
+
+const (
+	Xsd     ElementType = iota
+	Simple  ElementType = iota
+	Complex             = iota
+)
+
+func (et ElementType) String() string {
+	switch et {
+	case Xsd:
+		return "Xsd"
+	case Simple:
+		return "Simple"
+	case Complex:
+		return "Complex"
+	}
+	return fmt.Sprintf("%d", et)
+}
+
 type Catalog struct {
 	complexTypeMap map[string]ComplexType
 	simpleTypeMap  map[string]SimpleType
-	elementMap map[string]Element
+	elementMap     map[string]Element
 }
 
 func NewCatalog() *Catalog {
@@ -24,7 +44,7 @@ func (c *Catalog) catalogComplexType(ct ComplexType) {
 }
 
 func (c *Catalog) catalogElement(e Element) {
-	c.elementMap[e.Name] = e	
+	c.elementMap[e.Name] = e
 }
 
 func (c *Catalog) CatalogComplexTypes(s *Schema) {
@@ -32,7 +52,7 @@ func (c *Catalog) CatalogComplexTypes(s *Schema) {
 		fmt.Println("catalog ", ct.Name)
 		c.catalogComplexType(ct)
 	}
-	
+
 	for _, e := range s.Elements {
 		fmt.Println("catalog element ", e.Name)
 		c.catalogElement(e)
@@ -73,13 +93,24 @@ func (c *Catalog) LookupSimpleType(name string) (SimpleType, error) {
 	}
 }
 
-
-
-func (c *Catalog) LookupElementDef(name string)(Element, error) {
+func (c *Catalog) LookupElementDef(name string) (Element, error) {
 	e, ok := c.elementMap[name]
 	if ok {
 		return e, nil
 	} else {
 		return e, errors.New("Element def not found")
+	}
+}
+
+func (c *Catalog) ElementType(typeName string) ElementType {
+	if HasXsdPrefix(typeName) {
+		return Xsd
+	}
+
+	uqTypeName := UnqualifiedName(typeName)
+	if c.IsSimpleType(uqTypeName) {
+		return Simple
+	} else {
+		return Complex
 	}
 }

@@ -38,10 +38,10 @@ type Element struct {
 }
 
 type ComplexType struct {
-	XMLName  xml.Name        `xml:"http://www.w3.org/2001/XMLSchema complexType"`
-	Name     string          `xml:"name,attr"`
-	Abstract bool            `xml:"abstract,attr"`
-	Sequence []Element       `xml:"sequence>element"`
+	XMLName  xml.Name  `xml:"http://www.w3.org/2001/XMLSchema complexType"`
+	Name     string    `xml:"name,attr"`
+	Abstract bool      `xml:"abstract,attr"`
+	Sequence []Element `xml:"sequence>element"`
 }
 
 type SimpleType struct {
@@ -72,14 +72,8 @@ func HasXsdPrefix(name string) bool {
 	if !IsQualifiedName(name) {
 		return false
 	}
-	
+
 	parts := strings.Split(name, ":")
-	
+
 	return parts[0] == "xsd"
 }
-
-
-
-
-
-
