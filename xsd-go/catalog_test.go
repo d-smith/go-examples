@@ -24,19 +24,13 @@ func TestComplexTypeCatalog(t *testing.T) {
 
 	catalog := NewCatalog()
 	catalog.CatalogComplexTypes(elementsSchema)
+	catalog.CatalogSimpleTypes(elementsSchema)
 	catalog.CatalogSimpleTypes(typesSchema)
 
 	ct, err := catalog.LookupComplexType("LoginInfo_T")
 	assert.Nil(t, err)
 	assert.Equal(t, "LoginInfo_T", ct.Name)
 	assert.Equal(t, 7, len(ct.Sequence))
-
-	for _, e := range ct.Sequence {
-		fmt.Printf("ref: %s qualified: %v\n", e.Ref, IsQualifiedName(e.Ref))
-	}
-
-	assert.Equal(t, false, catalog.IsSimpleType("foobar"))
-	assert.Equal(t, true, catalog.IsSimpleType("AdminGroup_T"))
 
 	for _, e := range ct.Sequence {
 		fmt.Printf("ref: %s\n", e.Ref)
@@ -49,5 +43,25 @@ func TestComplexTypeCatalog(t *testing.T) {
 
 		et := catalog.ElementType(elementDef.Type)
 		fmt.Printf("\ttype: %s\n", et)
+
+		switch uq {
+		case "securityFunctionBitmasks":
+			assert.Equal(t, "Complex", catalog.ElementType(elementDef.Type).String())
+		case "operatorProfileInfo":
+			assert.Equal(t, "Complex", catalog.ElementType(elementDef.Type).String())
+		case "securityFunctions":
+			assert.Equal(t, "Complex", catalog.ElementType(elementDef.Type).String())
+		case "securityToken":
+			assert.Equal(t, "Simple", catalog.ElementType(elementDef.Type).String())
+		case "sourceSystems":
+			assert.Equal(t, "Complex", catalog.ElementType(elementDef.Type).String())
+		case "daysToExpiration":
+			assert.Equal(t, "Xsd", catalog.ElementType(elementDef.Type).String())
+		case "timeOutMinutes":
+			assert.Equal(t, "Simple", catalog.ElementType(elementDef.Type).String())
+		}
 	}
+
+	assert.Equal(t, false, catalog.IsSimpleType("foobar"))
+	assert.Equal(t, true, catalog.IsSimpleType("AdminGroup_T"))
 }
