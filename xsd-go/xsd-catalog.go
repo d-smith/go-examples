@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"strings"
 )
 
 type ElementType int
@@ -112,5 +113,25 @@ func (c *Catalog) ElementType(typeName string) ElementType {
 		return Simple
 	} else {
 		return Complex
+	}
+}
+
+func (c *Catalog) XsdBaseType(typeName string)(string, error) {
+	unprefixedTypeName := c.UnprefixedName(typeName)
+	st, err := c.LookupSimpleType(unprefixedTypeName)
+	if err != nil {
+		return "",err
+	}
+	
+	baseType := st.Constraints.Base
+	return c.UnprefixedName(baseType), nil
+}
+
+func (c *Catalog) UnprefixedName(name string) string {
+	parts := strings.Split(name, ":")
+	if len(parts) == 2 {
+		return parts[1]
+	} else {
+		return name
 	}
 }
