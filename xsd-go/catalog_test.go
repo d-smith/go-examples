@@ -53,13 +53,15 @@ func TestComplexTypeCatalog(t *testing.T) {
 			assert.Equal(t, "Complex", catalog.ElementType(elementDef.Type).String())
 		case "securityToken":
 			assert.Equal(t, "Simple", catalog.ElementType(elementDef.Type).String())
-			assertGivenType(t, catalog, elementDef.Type, "string")   
+			assertGivenBaseType(t, catalog, elementDef.Type, "string")   
 		case "sourceSystems":
 			assert.Equal(t, "Complex", catalog.ElementType(elementDef.Type).String())
 		case "daysToExpiration":
 			assert.Equal(t, "Xsd", catalog.ElementType(elementDef.Type).String())
+			assert.Equal(t, "int", catalog.XsdTypeToGolangType(elementDef.Type))
 		case "timeOutMinutes":
 			assert.Equal(t, "Simple", catalog.ElementType(elementDef.Type).String())
+			assertGivenBaseType(t, catalog, elementDef.Type, "int")   
 		}
 	}
 
@@ -67,7 +69,7 @@ func TestComplexTypeCatalog(t *testing.T) {
 	assert.Equal(t, true, catalog.IsSimpleType("AdminGroup_T"))
 }
 
-func assertGivenType(t *testing.T, c *Catalog, typeName string, assertedType string) {
+func assertGivenBaseType(t *testing.T, c *Catalog, typeName string, assertedType string) {
 	fmt.Println("checkin base type of ", typeName)
 	base, err := c.XsdBaseType(typeName)
 	assert.Nil(t,err)

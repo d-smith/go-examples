@@ -117,17 +117,21 @@ func (c *Catalog) ElementType(typeName string) ElementType {
 }
 
 func (c *Catalog) XsdBaseType(typeName string)(string, error) {
-	unprefixedTypeName := c.UnprefixedName(typeName)
+	unprefixedTypeName := c.unprefixedName(typeName)
 	st, err := c.LookupSimpleType(unprefixedTypeName)
 	if err != nil {
 		return "",err
 	}
 	
 	baseType := st.Constraints.Base
-	return c.UnprefixedName(baseType), nil
+	return c.unprefixedName(baseType), nil
 }
 
-func (c *Catalog) UnprefixedName(name string) string {
+func (c *Catalog) XsdTypeToGolangType(xsdType string) string {
+	return c.unprefixedName(xsdType)
+}
+
+func (c *Catalog) unprefixedName(name string) string {
 	parts := strings.Split(name, ":")
 	if len(parts) == 2 {
 		return parts[1]
