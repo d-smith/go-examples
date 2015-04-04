@@ -7,3 +7,5 @@ Setup
 * export PKG_CONFIG_PATH=$GOPATH/src/github.com/d-smith/go-examples/oracle/pkgconfig/
 * go get -v github.com/mattn/go-oci8
 * Note before go get that the install location and paths in oci8.pc must be aligned.
+
+To run on the mac set the DYLD_LIBRARY_PATH , e.g. `export DYLD_LIBRARY_PATH=/usr/local/instantclient_11_2`
