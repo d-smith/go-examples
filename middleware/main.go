@@ -2,6 +2,7 @@ package main
 
 import (
 	"net/http"
+	"net/http/httptest"
 )
 
 func handleCall(w http.ResponseWriter, r *http.Request) {
@@ -11,8 +12,10 @@ func handleCall(w http.ResponseWriter, r *http.Request) {
 
 func wrap(h http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		rec := httptest.NewRecorder()
 		println("wrap...")
-		h.ServeHTTP(w, r)
+		h.ServeHTTP(rec, r)
+		w.Write(rec.Body.Bytes())
 		w.Write([]byte("wrap wrote this\n"))	
  	})	
 }
