@@ -8,8 +8,10 @@ type Wrapper interface {
 	Wrap(http.Handler) http.Handler
 }
 
-type WrapperFactory interface {
-	NewWrapper() Wrapper
+type WrapperFactory func() Wrapper
+
+func NewAWrapper() Wrapper {
+	return new(AWrapper)
 }
 
 type AWrapper struct{}
@@ -20,6 +22,10 @@ func (aw AWrapper) Wrap(h http.Handler) http.Handler {
 		w.Write([]byte("A wrapper wrote this\n"))
 	})
 
+}
+
+func NewBWrapper() Wrapper {
+	return new(BWrapper)
 }
 
 type BWrapper struct{}
@@ -36,12 +42,13 @@ func handleCall(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("handleCall wrote this stuff\n"))
 }
 
-func chainWrappers(hf func(w http.ResponseWriter, r *http.Request), wrappers ...Wrapper) http.Handler {
+func chainWrappers(hf func(w http.ResponseWriter, r *http.Request), wrapperFactories []WrapperFactory) http.Handler {
 	handler := http.HandlerFunc(hf)
-	for _, wrapper := range wrappers {
-		if wrapper == nil {
+	for _, factory := range wrapperFactories {
+		if factory == nil {
 			continue
 		}
+		wrapper := factory()
 		handler = (wrapper.Wrap(handler)).(http.HandlerFunc)
 	}
 
@@ -49,6 +56,6 @@ func chainWrappers(hf func(w http.ResponseWriter, r *http.Request), wrappers ...
 }
 
 func main() {
-	//Todo - update sample to work with slice of factories
-	http.ListenAndServe(":8080", chainWrappers(handleCall, new(AWrapper), new(BWrapper)))
+	factories := []WrapperFactory{NewAWrapper,NewBWrapper}
+	http.ListenAndServe(":8080", chainWrappers(handleCall, factories))
 }
