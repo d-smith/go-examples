@@ -1,13 +1,7 @@
-package main 
-
-import (
-
-)
-
-
+package main
 
 func main() {
-	
+
 	xmlLiteral := `
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:schemas-xtrac-fmr-com:b2b">
    <soapenv:Header>
@@ -25,11 +19,11 @@ func main() {
    </soapenv:Body>
 </soapenv:Envelope>
 	`
-	
+
 	xml2Literal := `
 	<a><b><c><d><e></e></d></c></b></a>
 	`
-	
+
 	xmlLiteral3 := `
 	<docRoot>
 		<collection>
@@ -39,16 +33,15 @@ func main() {
 		</collection>
 	</docRoot>
 	`
-	
-	xml1()
+
+	xml1(true)
 	xml2()
 	streaming(xmlLiteral)
 	streaming(xml2Literal)
-	xpathSampleFindOne(xmlLiteral,"/Envelope/Body/AddNote/Memo")
-	xpathSampleFindOne(xmlLiteral3,"/docRoot/collection/thing[2]") 
-	xpathSampleFindMany(xmlLiteral3,"/docRoot/collection/thing")
-	
+	xpathSampleFindOne(xmlLiteral, "/Envelope/Body/AddNote/Memo")
+	xpathSampleFindOne(xmlLiteral3, "/docRoot/collection/thing[2]")
+	xpathSampleFindMany(xmlLiteral3, "/docRoot/collection/thing")
+
 	xpathSampleFindOne(workItemRuleResponse, "/Envelope/Body/retrieveRuntimeWorkItemRuleResponse/retrieveRuntimeWorkItemRuleReturn/node")
 	xpathSampleFindOne(workItemRuleResponse, "/Envelope/Body")
 }
-
