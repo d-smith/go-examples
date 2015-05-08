@@ -10,3 +10,9 @@ func BenchmarkXML1(b *testing.B) {
 		xml1(false)
 	}
 }
+
+func BenchmarkStreamXML1(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		streamParseXml1(false)
+	}
+}
