@@ -55,6 +55,77 @@ func xml1(verbose bool) {
 
 }
 
+func parseThing(decoder *xml.Decoder, result *Result, verbose bool) {
+	var typeData = false
+	var thingData = false
+
+	for {
+		t, _ := decoder.Token()
+		if t == nil {
+			break
+		}
+
+		switch t.(type) {
+		default:
+			fmt.Println("Not sure what we're dealing with here")
+		case xml.StartElement:
+
+			if verbose {
+				fmt.Println("StartElement")
+				fmt.Printf("\tElement: %s\n", t.(xml.StartElement).Name)
+			}
+			elementName := t.(xml.StartElement).Name.Local
+			switch elementName {
+			case "type":
+				typeData = true
+			case "thing":
+				thingData = true
+			}
+
+		case xml.EndElement:
+			if verbose {
+				fmt.Println("EndElement")
+			}
+
+			elementName := t.(xml.EndElement).Name.Local
+			switch elementName {
+			case "type":
+				typeData = false
+			case "thing":
+				thingData = false
+			}
+
+		case xml.CharData:
+			if verbose {
+				fmt.Println("CharData")
+				fmt.Println(string(t.(xml.CharData)))
+			}
+
+			if typeData {
+				result.Type = string(t.(xml.CharData))
+			} else if thingData {
+				result.Things = append(result.Things, string(t.(xml.CharData)))
+
+			}
+		}
+
+	}
+}
+
+func sonOfStreamParseXml1(verbose bool) *Result {
+	reader := strings.NewReader(xml1Doc)
+	decoder := xml.NewDecoder(reader)
+	result := new(Result)
+
+	parseThing(decoder, result, false)
+
+	if verbose {
+		fmt.Printf("%v\n", result)
+	}
+
+	return result
+}
+
 func streamParseXml1(verbose bool) {
 	reader := strings.NewReader(xml1Doc)
 	decoder := xml.NewDecoder(reader)

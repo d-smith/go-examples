@@ -16,3 +16,22 @@ func BenchmarkStreamXML1(b *testing.B) {
 		streamParseXml1(false)
 	}
 }
+
+func TestSonOfStreamParseXml1(t *testing.T) {
+	result := sonOfStreamParseXml1(false)
+	if result.Type != "Thing1" {
+		t.Error("type should be Thing1")
+	}
+
+	if len(result.Things) != 18 {
+		t.Error("expected 18 things")
+	}
+
+	if result.Things[0] != "xxx" {
+		t.Error("First thing should be xxx")
+	}
+
+	if result.Things[1] != "yyy" {
+		t.Error("Second thing should be yyy")
+	}
+}
