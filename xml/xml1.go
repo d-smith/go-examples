@@ -55,9 +55,9 @@ func xml1(verbose bool) {
 
 }
 
-func parseThing(decoder *xml.Decoder, result *Result, verbose bool) {
-	var typeData = false
-	var thingData = false
+func parseThings(decoder *xml.Decoder, result *Result, verbose bool) {
+
+	parsingThing := false
 
 	for {
 		t, _ := decoder.Token()
@@ -74,12 +74,10 @@ func parseThing(decoder *xml.Decoder, result *Result, verbose bool) {
 				fmt.Println("StartElement")
 				fmt.Printf("\tElement: %s\n", t.(xml.StartElement).Name)
 			}
+
 			elementName := t.(xml.StartElement).Name.Local
-			switch elementName {
-			case "type":
-				typeData = true
-			case "thing":
-				thingData = true
+			if elementName == "thing" {
+				parsingThing = true
 			}
 
 		case xml.EndElement:
@@ -87,12 +85,11 @@ func parseThing(decoder *xml.Decoder, result *Result, verbose bool) {
 				fmt.Println("EndElement")
 			}
 
+			parsingThing = false
+
 			elementName := t.(xml.EndElement).Name.Local
-			switch elementName {
-			case "type":
-				typeData = false
-			case "thing":
-				thingData = false
+			if elementName == "things" {
+				return
 			}
 
 		case xml.CharData:
@@ -100,12 +97,59 @@ func parseThing(decoder *xml.Decoder, result *Result, verbose bool) {
 				fmt.Println("CharData")
 				fmt.Println(string(t.(xml.CharData)))
 			}
-
-			if typeData {
-				result.Type = string(t.(xml.CharData))
-			} else if thingData {
+			if parsingThing {
 				result.Things = append(result.Things, string(t.(xml.CharData)))
+			}
 
+		}
+
+	}
+}
+
+func parseThing(decoder *xml.Decoder, result *Result, verbose bool) {
+
+	parsingType := false
+
+	for {
+		t, _ := decoder.Token()
+		if t == nil {
+			break
+		}
+
+		switch t.(type) {
+		default:
+			fmt.Println("Not sure what we're dealing with here")
+		case xml.StartElement:
+
+			if verbose {
+				fmt.Println("StartElement")
+				fmt.Printf("\tElement: %s\n", t.(xml.StartElement).Name)
+			}
+
+			elementName := t.(xml.StartElement).Name.Local
+			switch elementName {
+			case "type":
+				parsingType = true
+			case "things":
+				parsingType = false
+				parseThings(decoder, result, verbose)
+			}
+
+		case xml.EndElement:
+			if verbose {
+				fmt.Println("EndElement")
+			}
+
+			parsingType = false
+
+		case xml.CharData:
+			if verbose {
+				fmt.Println("CharData")
+				fmt.Println(string(t.(xml.CharData)))
+				fmt.Println("set result type")
+			}
+			if parsingType {
+				result.Type = string(t.(xml.CharData))
 			}
 		}
 
@@ -117,7 +161,7 @@ func sonOfStreamParseXml1(verbose bool) *Result {
 	decoder := xml.NewDecoder(reader)
 	result := new(Result)
 
-	parseThing(decoder, result, false)
+	parseThing(decoder, result, verbose)
 
 	if verbose {
 		fmt.Printf("%v\n", result)
