@@ -6,9 +6,9 @@ import (
 
 //FooCommand defines the foo command and related runtime documentation
 type FooCommand struct {
-	HelpText string
+	HelpText     string
 	SynopsisText string
-	RunArgs []string
+	RunArgs      []string
 }
 
 //Help returns a string describing the inputs associated with the command
@@ -19,15 +19,15 @@ func (c *FooCommand) Help() string {
 //Run executes the command logic
 func (c *FooCommand) Run(args []string) int {
 	c.RunArgs = args
-	
+
 	log.Println("Doing some foo...")
-	
+
 	for i := range args {
 		log.Printf("Arg: %s\n", args[i])
 	}
-	
+
 	log.Println("Ok, done with the foo")
-	
+
 	return 0
 }
 

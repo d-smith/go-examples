@@ -6,9 +6,9 @@ import (
 
 //BarCommand is an example command
 type BarCommand struct {
-	HelpText string
+	HelpText     string
 	SynopsisText string
-	RunArgs []string
+	RunArgs      []string
 }
 
 //Help returns the help text for the Bar command
@@ -19,15 +19,15 @@ func (c *BarCommand) Help() string {
 //Run executes the command logic
 func (c *BarCommand) Run(args []string) int {
 	c.RunArgs = args
-	
+
 	log.Println("Doing some bar...")
-	
+
 	for i := range args {
 		log.Printf("Arg: %s\n", args[i])
 	}
-	
+
 	log.Println("Ok, done with the bar")
-	
+
 	return 0
 }
 
