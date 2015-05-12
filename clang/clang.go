@@ -1,4 +1,4 @@
-package main 
+package main
 
 /*
 #include <stdlib.h>
@@ -10,6 +10,5 @@ import "time"
 func main() {
 	seedInput := time.Now().Nanosecond()
 	C.srandom(C.uint(seedInput))
-	fmt.Println(C.random())	
+	fmt.Println(C.random())
 }
-

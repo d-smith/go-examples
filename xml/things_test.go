@@ -17,6 +17,12 @@ func BenchmarkStreamXML1(b *testing.B) {
 	}
 }
 
+func BenchmarkSonOfStreamParseXml1(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		sonOfStreamParseXml1(false)
+	}
+}
+
 func TestSonOfStreamParseXml1(t *testing.T) {
 	result := sonOfStreamParseXml1(false)
 	if result.Type != "Thing1" {
