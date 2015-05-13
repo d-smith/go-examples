@@ -20,7 +20,7 @@ func countWordsInLine(line string) int {
 	for wordScanner.Scan() {
 		wordCount++
 	}
-	
+
 	return wordCount
 }
 
@@ -40,30 +40,30 @@ func (wc *WordCounter) Count(f *os.File, countWords bool) {
 
 func report(wc *WordCounter, lines bool, words bool) {
 	if words && !lines {
-			fmt.Printf("%d\n", wc.WordCount)
-		} else if !words && lines {
-			fmt.Printf("%d\n", wc.LineCount)
-		} else {
-			fmt.Printf("%d\t%d\n", wc.LineCount, wc.WordCount)
-		}
+		fmt.Printf("%d\n", wc.WordCount)
+	} else if !words && lines {
+		fmt.Printf("%d\n", wc.LineCount)
+	} else {
+		fmt.Printf("%d\t%d\n", wc.LineCount, wc.WordCount)
+	}
 }
 
 func main() {
 	linesPtr := flag.Bool("l", false, "count lines")
 	wordsPtr := flag.Bool("w", false, "count words")
 	flag.Parse()
-	
+
 	files := flag.Args()
-	for i:= range files {
+	for i := range files {
 		f, err := os.Open(files[i])
 		if err != nil {
 			panic(err)
 		}
-		
+
 		var wc WordCounter
 		wc.Count(f, *wordsPtr || (!*wordsPtr && !*linesPtr))
 		f.Close()
-		
+
 		report(&wc, *wordsPtr, *linesPtr)
 	}
 }
