@@ -2,17 +2,15 @@ package main
 
 import (
 	"encoding/base64"
-	"fmt"
+	"testing"
+
+	"github.com/stretchr/testify/assert"
 )
 
-func main() {
+func TestEncodeDecode(t *testing.T) {
 	s := "This is a test of base64 encoding, which is pretty easy"
 	encoded := base64.StdEncoding.EncodeToString([]byte(s))
-	fmt.Println("Encoded: ", encoded)
 	decoded, err := base64.StdEncoding.DecodeString(encoded)
-	if err != nil {
-		fmt.Println("Error: ", err.Error())
-	} else {
-		fmt.Print("Decoded: ", string(decoded))
-	}
+	assert.Nil(t, err)
+	assert.Equal(t, s, decoded)
 }
