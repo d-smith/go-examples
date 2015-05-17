@@ -33,9 +33,8 @@ func TestBazBar(t *testing.T) {
 		checkBar := func(s string, bar string) bool {
 			if bar == "" {
 				return strings.Index(s, bar) == 0
-			} else {
-				return strings.Index(s, bar) > 0
 			}
+			return strings.Index(s, bar) > 0
 		}
 
 		checkLen := func(s string, substr1 string, substr2 string) bool {
