@@ -11,11 +11,11 @@ const (
 	PUT = "PUT"
 )
 
-var items map[string]Item
+var items map[string]Item = make(map[string]Item)
 
-func init() {
-	items = make(map[string]Item)
-}
+//func init() {
+//	items = make(map[string]Item)
+//}
 
 type Item struct {
 	Id          string `json:"id"`

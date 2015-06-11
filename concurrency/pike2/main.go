@@ -12,7 +12,7 @@ var wg sync.WaitGroup
 func main() {
 	wg.Add(1)
 	go boring("boring!")
-	wg.Wait()
+	//	wg.Wait()
 }
 
 func boring(msg string) {
