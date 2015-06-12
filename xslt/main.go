@@ -1,5 +1,4 @@
-package main 
-
+package main
 
 /*
 #cgo CFLAGS: -I/usr/include/libxml2
@@ -35,7 +34,7 @@ import "C"
 import (
 	"fmt"
 	"unsafe"
-	)
+)
 
 func main() {
 	fmt.Println("grab xml bytes")
@@ -56,35 +55,32 @@ func main() {
    </soapenv:Body>
 </soapenv:Envelope>
 	`
-	
+
 	fmt.Println("initialize xml library")
-	
-	
-	
+
 	fmt.Println("read xml from memory")
 	docChars := C.CString(xmlDoc)
 	baseName := C.CString("noname.xml")
 	defer C.free(unsafe.Pointer(baseName))
 	defer C.free(unsafe.Pointer(docChars))
-	doc := C.xmlReadMemory(docChars, C.int(len(xmlDoc)), baseName, nil, 0);
-	
+	doc := C.xmlReadMemory(docChars, C.int(len(xmlDoc)), baseName, nil, 0)
+
 	fmt.Println("null doc?")
 	root := C.xmlDocGetRootElement(doc)
-	
+
 	C.print_element_names(root)
-	
+
 	//XSLT
 	fmt.Println("Read style sheet from file")
 	xsltFileName := C.CString("./xml2json.xslt")
 	defer C.free(unsafe.Pointer(xsltFileName))
-	styleSheet := C.xsltParseStylesheetFile( (*C.xmlChar) (unsafe.Pointer(xsltFileName)))
-	res := C.xsltApplyStylesheet(styleSheet, doc, nil);
-	C.print_stylesheet_result(res, styleSheet);
-	
+	styleSheet := C.xsltParseStylesheetFile((*C.xmlChar)(unsafe.Pointer(xsltFileName)))
+	res := C.xsltApplyStylesheet(styleSheet, doc, nil)
+	C.print_stylesheet_result(res, styleSheet)
+
 	fmt.Println("free C stuff")
 	C.xsltFreeStylesheet(styleSheet)
 	C.xmlFreeDoc(res)
 	C.xmlFreeDoc(doc)
 	fmt.Println("done")
 }
-
