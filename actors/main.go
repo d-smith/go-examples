@@ -15,12 +15,23 @@ func myReceiver(rc chan actor.Message) {
 	}
 }
 
+type MyActor struct {
+	*actor.Actor
+	receiveFn func(chan actor.Message)
+}
+
 func main() {
-	a := actor.NewActor(myReceiver)
-	go a.Run()
+	myActor := &MyActor{
+		Actor: &actor.Actor{
+			Mailbox:   make(chan actor.Message, 100),
+			ReceiveFn: myReceiver,
+		},
+	}
+
+	go myActor.Run()
 	var i int
 	for {
-		a.Send(i, nil)
+		myActor.Send(i, nil)
 		i++
 	}
 }

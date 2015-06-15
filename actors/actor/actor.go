@@ -2,9 +2,9 @@ package actor
 
 const mailboxSize = 100
 
-type actor struct {
-	mailbox   chan Message
-	receiveFn func(chan Message)
+type Actor struct {
+	Mailbox   chan Message
+	ReceiveFn func(chan Message)
 }
 
 type Message struct {
@@ -12,20 +12,16 @@ type Message struct {
 	Sender  chan interface{}
 }
 
-func NewActor(receiveFn func(chan Message)) *actor {
-	return &actor{
-		mailbox:   make(chan Message, mailboxSize),
-		receiveFn: receiveFn,
-	}
-}
-
-func (a *actor) Send(msgContent interface{}, replyMailbox chan interface{}) {
+func (a *Actor) Send(msgContent interface{}, replyMailbox chan interface{}) {
 	message := Message{msgContent, replyMailbox}
-	a.mailbox <- message
+	a.Mailbox <- message
 }
 
-func (a *actor) Run() {
+func (a *Actor) Run() {
+	if a.ReceiveFn == nil {
+		panic("No receive function defined for actor")
+	}
 	for {
-		a.receiveFn(a.mailbox)
+		a.ReceiveFn(a.Mailbox)
 	}
 }
