@@ -6,10 +6,7 @@ import (
 	"strings"
 )
 
-
 func streaming(xmlLiteral string) {
-
-	
 
 	reader := strings.NewReader(xmlLiteral)
 	decoder := xml.NewDecoder(reader)
@@ -19,8 +16,7 @@ func streaming(xmlLiteral string) {
 	endElement := false
 
 	for {
-		
-		
+
 		t, _ := decoder.Token()
 		if t == nil {
 			break
@@ -30,14 +26,13 @@ func streaming(xmlLiteral string) {
 		default:
 			fmt.Println("Not sure what we're dealing with here")
 		case xml.StartElement:
-			
-			
+
 			fmt.Println("StartElement")
 			fmt.Printf("\tElement: %s\n", t.(xml.StartElement).Name)
-			
+
 			endElement = false
 			if startElement == true {
-				
+
 				depth++
 				fmt.Println("start element true, depth now ", depth)
 				if depth > maxDepth {
@@ -46,9 +41,9 @@ func streaming(xmlLiteral string) {
 			} else {
 				startElement = true
 			}
-			
+
 			attrs := t.(xml.StartElement).Attr
-			for _,attr := range attrs {
+			for _, attr := range attrs {
 				fmt.Printf("\t attr: %s\n", attr)
 			}
 		case xml.EndElement:
@@ -69,7 +64,7 @@ func streaming(xmlLiteral string) {
 			fmt.Println("Directive")
 		}
 	}
-	
+
 	fmt.Println("max depth: ", maxDepth)
 
 }

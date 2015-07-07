@@ -24,7 +24,7 @@ func printInterfaceAddresses() {
 		return
 	}
 
-	fmt.Printf("Interface addresses:")
+	fmt.Printf("Interface addresses:\n")
 	for _, address := range addresses {
 		fmt.Printf("\tnetwork form: %s, string form: %s\n", address.Network(), address.String())
 	}
@@ -43,8 +43,29 @@ func printInterfaces() {
 	}
 }
 
+func printHostLookup() {
+	host, err := os.Hostname()
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	addrs, err := net.LookupHost(host)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	fmt.Printf("Addresses for host %s\n", host)
+	for _, addr := range addrs {
+		fmt.Printf("\t%s\n", addr)
+	}
+}
+
 func main() {
 	printHostName()
+	printHostLookup()
 	printInterfaceAddresses()
 	printInterfaces()
+
 }
