@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"strings"
+	"time"
 )
 
 var soapStart = `
@@ -50,8 +51,17 @@ func handleCall(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("handleCall wrote this stuff\n"))
 }
 
-func wrap(h http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+func timingWrapper(timingName string, fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		start := time.Now()
+		fn(w, r)
+		elapsed := time.Since(start)
+		fmt.Printf("time for %s: %d\n", timingName, elapsed.Nanoseconds())
+	}
+}
+
+func restToSoapWrapper(fn http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
 
 		resourceId, err := extractResource(r.RequestURI)
 		if err != nil {
@@ -71,16 +81,16 @@ func wrap(h http.Handler) http.Handler {
 		r.RequestURI = "/soap/foo/service"
 		r.Header.Add("SOAPAction", `"Some deal"`)
 
-		h.ServeHTTP(rec, r)
+		fn(rec, r)
+
 		w.Write(rec.Body.Bytes())
 		w.Write([]byte("wrap wrote this\n"))
-	})
+	}
 }
 
 func main() {
 	println("yeah")
-	handleCallHandler := http.HandlerFunc(handleCall)
-	wrapped := wrap(handleCallHandler)
+	wrapped := timingWrapper("soap wrapper", restToSoapWrapper(timingWrapper("handle call", handleCall)))
 	http.Handle("/foo/", wrapped)
 	http.ListenAndServe(":8080", nil)
 }
