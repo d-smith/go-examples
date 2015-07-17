@@ -1,0 +1,46 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "0.0.0",
+    "title": "Stock Quote"
+  },
+  "paths": {
+    "/quote/{symbol}": {
+      "get": {
+        "description": "Gets a stock quote.\nOptional query param of **size** determines\nsize of returned array\n",
+        "parameters": [
+          {
+            "name": "symbol",
+            "in": "path",
+            "description": "Stock symbol",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful response.",
+            "schema":{
+              "type":"object",
+              "properties": {
+                "name": {
+                  "type":"string"
+                },
+                "last": {
+                  "type": "number",
+                  "format":"double"
+                },
+                "time":{
+                  "type":"string"
+                },
+                "date": {
+                  "type":"string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
