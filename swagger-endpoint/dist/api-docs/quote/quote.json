@@ -7,7 +7,7 @@
   "paths": {
     "/quote/{symbol}": {
       "get": {
-        "description": "Gets a stock quote.\nOptional query param of **size** determines\nsize of returned array\n",
+        "description": "Gets a stock quote.\n",
         "parameters": [
           {
             "name": "symbol",
