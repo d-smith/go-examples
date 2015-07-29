@@ -32,7 +32,11 @@ func Sieve(in <- chan int, done <- chan struct{}, val int) <- chan int {
 			select {
 				case n := <- in:
 					if n % val != 0 {
-						out <- n
+						select {
+						case out <- n:
+						case <- done:
+							return
+						}
 					}
 				case <- done:
 					return
