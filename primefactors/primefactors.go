@@ -17,6 +17,7 @@ func GeneratePrimeCandidates2(done <- chan struct{}) <- chan int {
 			select {
 				case c <- next:
 				case <- done:
+					return
 			}
 		}
 	}()
@@ -33,7 +34,8 @@ func Sieve(in <- chan int, done <- chan struct{}, val int) <- chan int {
 					if n % val != 0 {
 						out <- n
 					}
-				case <- done: return
+				case <- done:
+					return
 
 			}
 		}
@@ -48,14 +50,11 @@ func PrimeFactors(n int) []int {
 	defer close(done)
 	c2 := GeneratePrimeCandidates2(done)
 	for ; n > 1; {
-		println("reducing ", n)
 		prime := <- c2
-		println("prime is ", prime)
 		c2 = Sieve(c2, done, prime)
 
 		for n % prime == 0 {
 			n = n / prime
-			println("reduced to ", n)
 			primeFactors = append(primeFactors, prime)
 		}
 	}

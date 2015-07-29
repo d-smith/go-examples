@@ -34,5 +34,5 @@ func TestGeneratePrimes(t *testing.T) {
 	assert.Equal(t, 5, pf[2])
 	assert.Equal(t, 7, pf[3])
 	fmt.Println(pf)
-	
+
 }
