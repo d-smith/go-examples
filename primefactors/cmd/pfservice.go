@@ -10,6 +10,7 @@ import (
 	"flag"
 	"log"
 	"runtime"
+	 _ "expvar"
 )
 
 func extractResource(uri string) (string, error) {
