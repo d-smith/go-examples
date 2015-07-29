@@ -9,6 +9,7 @@ import (
 	"encoding/json"
 	"flag"
 	"log"
+	"runtime"
 )
 
 func extractResource(uri string) (string, error) {
@@ -22,6 +23,9 @@ func extractResource(uri string) (string, error) {
 }
 
 func handleCall(w http.ResponseWriter, r *http.Request) {
+	log.Println("Go routines: ", runtime.NumGoroutine())
+	//pprof.Lookup("goroutine").WriteTo(os.Stdout, 1)
+
 	resourceId, err := extractResource(r.RequestURI)
 	if err != nil {
 		w.WriteHeader(http.StatusNotFound)
@@ -51,6 +55,8 @@ func main() {
 		fmt.Println("Must specify a -port argument")
 		return
 	}
+
+
 
 	http.Handle("/pf/", http.HandlerFunc(handleCall))
 	http.ListenAndServe(fmt.Sprintf(":%d",*port), nil)
