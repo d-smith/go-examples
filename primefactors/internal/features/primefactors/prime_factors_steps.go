@@ -79,6 +79,40 @@ type TestContext struct {
 	outputData []byte
 }
 
+func createAndStartContainer(docker *dockerclient.DockerClient) string {
+	labels := make(map[string]string)
+	labels["xt-container-type"] = "atest"
+	containerConfig := dockerclient.ContainerConfig{
+		Image:"pfservice",
+		Labels:labels,
+		ExposedPorts:map[string]struct{}{
+			"3000/tcp":{},
+		},
+	}
+
+	var err error
+	containerId, err := docker.CreateContainer(&containerConfig, "")
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	pb := dockerclient.PortBinding{HostPort:"8080"}
+	portBindings := []dockerclient.PortBinding{pb}
+	hostConfig := &dockerclient.HostConfig{
+		PortBindings:map[string][]dockerclient.PortBinding {
+			"3000/tcp":portBindings,
+		},
+	}
+	err = docker.StartContainer(containerId, hostConfig)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("...we just started a docker container...")
+
+	return containerId
+}
+
 func init() {
 
 	var containerId string
@@ -99,39 +133,7 @@ func init() {
 			return
 		}
 
-		//No running container found - start one. This assumes the image we want to run is available
-		//to the docker runtime.
-		labels := make(map[string]string)
-		labels["xt-container-type"] = "atest"
-		containerConfig := dockerclient.ContainerConfig{
-			Image:"pfservice",
-			Labels:labels,
-			ExposedPorts:map[string]struct{}{
-				"3000/tcp":{},
-			},
-		}
-
-		var err error
-		containerId, err = docker.CreateContainer(&containerConfig, "foobar")
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		pb := dockerclient.PortBinding{HostPort:"8080"}
-		portBindings := []dockerclient.PortBinding{pb}
-		hostConfig := &dockerclient.HostConfig{
-			PortBindings:map[string][]dockerclient.PortBinding {
-				"3000/tcp":portBindings,
-			},
-		}
-		err = docker.StartContainer(containerId, hostConfig)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		println("...we just started a docker container...")
-
-
+		containerId = createAndStartContainer(docker)
 
 	})
 
@@ -146,7 +148,6 @@ func init() {
 			T.Errorf("Call to endpoint has failed: ", err.Error())
 		}
 
-		println("resp is ", resp)
 		testContext.outputData,_ = ioutil.ReadAll(resp.Body)
 		resp.Body.Close()
 		testContext.outputStatus = resp.StatusCode
@@ -165,8 +166,10 @@ func init() {
 
 	After("@primefactors", func() {
 		if containerId != "" {
-			println("stop container")
+			log.Println("stop container")
 			docker.StopContainer(containerId, 5)
+			log.Println("remove container")
+			docker.RemoveContainer(containerId, false, false)
 		}
 	})
 
