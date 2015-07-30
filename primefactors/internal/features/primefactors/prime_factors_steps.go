@@ -9,6 +9,7 @@ import (
 	"crypto/x509"
 	"os"
 	"fmt"
+	"net/http"
 )
 
 func readEnv() (string,string) {
@@ -72,10 +73,17 @@ func getAcceptanceTestContainerInfo(docker *dockerclient.DockerClient, container
 	return nil
 }
 
+type TestContext struct {
+	input int
+	outputStatus int
+	outputData []byte
+}
+
 func init() {
 
 	var containerId string
 	var docker *dockerclient.DockerClient
+	var testContext *TestContext
 
 	Before("@primefactors", func() {
 		//Grab the environment
@@ -127,13 +135,32 @@ func init() {
 
 	})
 
-	Given(`^A prime factor resource value of (\d+)$`, func(i1 int) {
+	Given(`^A prime factor resource value of (\d+)$`, func(n int) {
+		testContext = new(TestContext)
+		testContext.input = n
 	})
 
 	When(`^I call the prime factors service$`, func() {
+		resp, err := http.Get(fmt.Sprintf("http://localhost:8080/pf/%d", testContext.input))
+		if err != nil {
+			T.Errorf("Call to endpoint has failed: ", err.Error())
+		}
+
+		println("resp is ", resp)
+		testContext.outputData,_ = ioutil.ReadAll(resp.Body)
+		resp.Body.Close()
+		testContext.outputStatus = resp.StatusCode
 	})
 
 	Then(`^The prime factors for the resouce value are returned$`, func() {
+		if testContext.outputStatus != http.StatusOK {
+			T.Errorf("Invalid status returned, expecting 200 OK: ", testContext.outputStatus)
+		}
+
+		outputString := string(testContext.outputData)
+		if string(testContext.outputData) != "[5,5,5,5,13]" {
+			T.Errorf("Unexpected output - expected [5,5,5,5,13], got ", outputString)
+		}
 	})
 
 	After("@primefactors", func() {
