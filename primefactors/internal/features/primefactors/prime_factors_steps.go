@@ -86,8 +86,7 @@ type ContainerContext struct {
 }
 
 func createAndStartContainer(docker *dockerclient.DockerClient, ctx *ContainerContext) string {
-	labels := make(map[string]string)
-	labels["xt-container-type"] = "atest"
+
 	containerConfig := dockerclient.ContainerConfig{
 		Image: ctx.ImageName,
 		Labels:ctx.Labels,
@@ -165,6 +164,9 @@ func init() {
 		containerCtx := ContainerContext{
 			ImageName:"pfservice",
 		}
+
+		containerCtx.Labels = make(map[string]string)
+		containerCtx.Labels["xt-container-type"] = "atest"
 
 		log.Println("Verify required image is present")
 		imagePresent, err := requiredImageAvailable(docker, containerCtx.ImageName)
