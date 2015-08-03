@@ -13,7 +13,7 @@ import (
 	"strings"
 )
 
-func readEnv() (string,string) {
+func readDockerEnv() (string,string) {
 
 	dockerHome := os.Getenv("DOCKER_HOST")
 	if dockerHome == "" {
@@ -28,7 +28,7 @@ func readEnv() (string,string) {
 	return dockerHome, dockerCertPath
 }
 
-func buildTLSConfig(dockerCertPath string) *tls.Config {
+func buildDockerTLSConfig(dockerCertPath string) *tls.Config {
 
 
 	caFile := fmt.Sprintf("%s/ca.pem", dockerCertPath)
@@ -80,12 +80,17 @@ type TestContext struct {
 	outputData []byte
 }
 
-func createAndStartContainer(docker *dockerclient.DockerClient, imageName string) string {
+type ContainerContext struct {
+	ImageName string
+	Labels map[string]string
+}
+
+func createAndStartContainer(docker *dockerclient.DockerClient, ctx *ContainerContext) string {
 	labels := make(map[string]string)
 	labels["xt-container-type"] = "atest"
 	containerConfig := dockerclient.ContainerConfig{
-		Image: imageName,
-		Labels:labels,
+		Image: ctx.ImageName,
+		Labels:ctx.Labels,
 		ExposedPorts:map[string]struct{}{
 			"3000/tcp":{},
 		},
@@ -139,12 +144,14 @@ func init() {
 
 	Before("@primefactors", func() {
 		//Grab the environment
-		dockerHost, dockerCertPath := readEnv()
+		dockerHost, dockerCertPath := readDockerEnv()
 
 		// Init the client
-		docker, _ = dockerclient.NewDockerClient(dockerHost, buildTLSConfig(dockerCertPath))
+		log.Println("Create docker client")
+		docker, _ = dockerclient.NewDockerClient(dockerHost, buildDockerTLSConfig(dockerCertPath))
 
 		// Is the container already running?
+		log.Println("Check to see if container is already started")
 		info := getAcceptanceTestContainerInfo(docker, "atest")
 		if info != nil {
 			log.Println("Container found - state is: ", info.State.StateString())
@@ -154,18 +161,24 @@ func init() {
 
 		// If the container is not running, is the image required for the test present such that we
 		// can create a container based on the required image?
-		imageName := "pfservice"
-		imagePresent, err := requiredImageAvailable(docker, imageName)
+		log.Println("Container not running - create container context")
+		containerCtx := ContainerContext{
+			ImageName:"pfservice",
+		}
+
+		log.Println("Verify required image is present")
+		imagePresent, err := requiredImageAvailable(docker, containerCtx.ImageName)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		if !imagePresent {
-			log.Fatal("Cannot run test as required image (", imageName, ") is not present.")
+			log.Fatal("Cannot run test as required image (", containerCtx.ImageName, ") is not present.")
 		}
 
 		//Create and start the container.
-		containerId = createAndStartContainer(docker, imageName)
+		log.Println("Create and start the container")
+		containerId = createAndStartContainer(docker, &containerCtx)
 
 	})
 
