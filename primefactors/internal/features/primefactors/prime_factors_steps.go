@@ -91,8 +91,7 @@ type ContainerContext struct {
 	PortContext map[string]string
 }
 
-func createAndStartContainer(docker *dockerclient.DockerClient, ctx *ContainerContext) string {
-
+func createContainer(docker *dockerclient.DockerClient, ctx *ContainerContext) (string, error) {
 	//Make a collection of exposed ports
 	var exposedPorts map[string]struct{}
 	exposedPorts = make(map[string]struct{})
@@ -108,12 +107,11 @@ func createAndStartContainer(docker *dockerclient.DockerClient, ctx *ContainerCo
 	}
 
 	//Create the container
-	var err error
-	containerId, err := docker.CreateContainer(&containerConfig, "")
-	if err != nil {
-		log.Fatal(err)
-	}
+	return docker.CreateContainer(&containerConfig, "")
 
+}
+
+func startContainer(docker *dockerclient.DockerClient, containerId string, ctx *ContainerContext) error {
 	//Build the port bindings needed when running the container
 	dockerHostConfig := new(dockerclient.HostConfig)
 	dockerHostConfig.PortBindings = make(map[string][]dockerclient.PortBinding)
@@ -124,12 +122,22 @@ func createAndStartContainer(docker *dockerclient.DockerClient, ctx *ContainerCo
 	}
 
 	//Start the container
-	err = docker.StartContainer(containerId, dockerHostConfig)
+	return docker.StartContainer(containerId, dockerHostConfig)
+}
+
+func createAndStartContainer(docker *dockerclient.DockerClient, ctx *ContainerContext) string {
+
+	containerId, err := createContainer(docker, ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	log.Println("...we just started a docker container...")
+	err = startContainer(docker, containerId, ctx)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	log.Println("...container started...")
 
 	return containerId
 }
@@ -149,6 +157,20 @@ func requiredImageAvailable(docker *dockerclient.DockerClient, name string) (boo
 	}
 
 	return false, nil
+}
+
+func createTestContainerContext() *ContainerContext {
+	containerCtx := ContainerContext{
+		ImageName:"pfservice",
+	}
+
+	containerCtx.Labels = make(map[string]string)
+	containerCtx.Labels["xt-container-type"] = "atest"
+
+	containerCtx.PortContext = make(map[string]string)
+	containerCtx.PortContext["3000/tcp"] = "8080"
+
+	return &containerCtx
 }
 
 func init() {
@@ -177,15 +199,8 @@ func init() {
 		// If the container is not running, is the image required for the test present such that we
 		// can create a container based on the required image?
 		log.Println("Container not running - create container context")
-		containerCtx := ContainerContext{
-			ImageName:"pfservice",
-		}
+		containerCtx := createTestContainerContext()
 
-		containerCtx.Labels = make(map[string]string)
-		containerCtx.Labels["xt-container-type"] = "atest"
-
-		containerCtx.PortContext = make(map[string]string)
-		containerCtx.PortContext["3000/tcp"] = "8080"
 
 		log.Println("Verify required image is present")
 		imagePresent, err := requiredImageAvailable(docker, containerCtx.ImageName)
@@ -199,7 +214,7 @@ func init() {
 
 		//Create and start the container.
 		log.Println("Create and start the container")
-		containerId = createAndStartContainer(docker, &containerCtx)
+		containerId = createAndStartContainer(docker, containerCtx)
 
 	})
 
