@@ -80,11 +80,11 @@ type TestContext struct {
 	outputData []byte
 }
 
-func createAndStartContainer(docker *dockerclient.DockerClient) string {
+func createAndStartContainer(docker *dockerclient.DockerClient, imageName string) string {
 	labels := make(map[string]string)
 	labels["xt-container-type"] = "atest"
 	containerConfig := dockerclient.ContainerConfig{
-		Image:"pfservice",
+		Image: imageName,
 		Labels:labels,
 		ExposedPorts:map[string]struct{}{
 			"3000/tcp":{},
@@ -154,17 +154,18 @@ func init() {
 
 		// If the container is not running, is the image required for the test present such that we
 		// can create a container based on the required image?
-		imagePresent, err := requiredImageAvailable(docker, "pfservice")
+		imageName := "pfservice"
+		imagePresent, err := requiredImageAvailable(docker, imageName)
 		if err != nil {
 			log.Fatal(err)
 		}
 
 		if !imagePresent {
-			log.Fatal("Cannot run test as required image (pfservice:latest) is not present.")
+			log.Fatal("Cannot run test as required image (", imageName, ") is not present.")
 		}
 
 		//Create and start the container.
-		containerId = createAndStartContainer(docker)
+		containerId = createAndStartContainer(docker, imageName)
 
 	})
 
