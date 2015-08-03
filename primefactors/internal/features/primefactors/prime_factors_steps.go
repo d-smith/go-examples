@@ -127,11 +127,19 @@ func startContainer(docker *dockerclient.DockerClient, containerId string, ctx *
 
 func createAndStartContainer(docker *dockerclient.DockerClient, ctx *ContainerContext) string {
 
+	//Make sure the required image is present
+	imagePresent := requiredImageAvailable(docker, ctx.ImageName)
+	if !imagePresent {
+		log.Fatal("Cannot run test as required image (", ctx.ImageName, ") is not present.")
+	}
+
+	//Create the container
 	containerId, err := createContainer(docker, ctx)
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	//Start the container
 	err = startContainer(docker, containerId, ctx)
 	if err != nil {
 		log.Fatal(err)
@@ -142,21 +150,21 @@ func createAndStartContainer(docker *dockerclient.DockerClient, ctx *ContainerCo
 	return containerId
 }
 
-func requiredImageAvailable(docker *dockerclient.DockerClient, name string) (bool,error) {
+func requiredImageAvailable(docker *dockerclient.DockerClient, name string) bool {
 	images, err := docker.ListImages(true)
 	if err != nil {
-		return false, err
+		log.Fatal(err)
 	}
 
 	for _, i := range images {
 		for _,t := range i.RepoTags {
 			if strings.Index(t, name) == 0 {
-				return true, nil
+				return true
 			}
 		}
 	}
 
-	return false, nil
+	return false
 }
 
 func createTestContainerContext() *ContainerContext {
@@ -200,17 +208,6 @@ func init() {
 		// can create a container based on the required image?
 		log.Println("Container not running - create container context")
 		containerCtx := createTestContainerContext()
-
-
-		log.Println("Verify required image is present")
-		imagePresent, err := requiredImageAvailable(docker, containerCtx.ImageName)
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		if !imagePresent {
-			log.Fatal("Cannot run test as required image (", containerCtx.ImageName, ") is not present.")
-		}
 
 		//Create and start the container.
 		log.Println("Create and start the container")
