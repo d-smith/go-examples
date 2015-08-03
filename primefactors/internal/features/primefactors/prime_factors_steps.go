@@ -10,6 +10,7 @@ import (
 	"os"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 func readEnv() (string,string) {
@@ -113,6 +114,23 @@ func createAndStartContainer(docker *dockerclient.DockerClient) string {
 	return containerId
 }
 
+func requiredImageAvailable(docker *dockerclient.DockerClient, name string) (bool,error) {
+	images, err := docker.ListImages(true)
+	if err != nil {
+		return false, err
+	}
+
+	for _, i := range images {
+		for _,t := range i.RepoTags {
+			if strings.Index(t, name) == 0 {
+				return true, nil
+			}
+		}
+	}
+
+	return false, nil
+}
+
 func init() {
 
 	var containerId string
@@ -126,6 +144,7 @@ func init() {
 		// Init the client
 		docker, _ = dockerclient.NewDockerClient(dockerHost, buildTLSConfig(dockerCertPath))
 
+		// Is the container already running?
 		info := getAcceptanceTestContainerInfo(docker, "atest")
 		if info != nil {
 			log.Println("Container found - state is: ", info.State.StateString())
@@ -133,6 +152,18 @@ func init() {
 			return
 		}
 
+		// If the container is not running, is the image required for the test present such that we
+		// can create a container based on the required image?
+		imagePresent, err := requiredImageAvailable(docker, "pfservice")
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		if !imagePresent {
+			log.Fatal("Cannot run test as required image (pfservice:latest) is not present.")
+		}
+
+		//Create and start the container.
 		containerId = createAndStartContainer(docker)
 
 	})
