@@ -83,32 +83,48 @@ type TestContext struct {
 type ContainerContext struct {
 	ImageName string
 	Labels map[string]string
+	//PortContext has a container port/proto key and a host port value,
+	//with a convention that the container port/proto is an exposed port
+	//from the container, and a host port it is mapped to is specified
+	//in the map. We further restrict things by assuming a single host
+	//mapping for an exposed port.
+	PortContext map[string]string
 }
 
 func createAndStartContainer(docker *dockerclient.DockerClient, ctx *ContainerContext) string {
 
+	//Make a collection of exposed ports
+	var exposedPorts map[string]struct{}
+	exposedPorts = make(map[string]struct{})
+	for k,_ := range ctx.PortContext {
+		exposedPorts[k] = struct{}{}
+	}
+
+	//Build the Docker container config from the configuration provided by the caller
 	containerConfig := dockerclient.ContainerConfig{
 		Image: ctx.ImageName,
 		Labels:ctx.Labels,
-		ExposedPorts:map[string]struct{}{
-			"3000/tcp":{},
-		},
+		ExposedPorts: exposedPorts,
 	}
 
+	//Create the container
 	var err error
 	containerId, err := docker.CreateContainer(&containerConfig, "")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	pb := dockerclient.PortBinding{HostPort:"8080"}
-	portBindings := []dockerclient.PortBinding{pb}
-	hostConfig := &dockerclient.HostConfig{
-		PortBindings:map[string][]dockerclient.PortBinding {
-			"3000/tcp":portBindings,
-		},
+	//Build the port bindings needed when running the container
+	dockerHostConfig := new(dockerclient.HostConfig)
+	dockerHostConfig.PortBindings = make(map[string][]dockerclient.PortBinding)
+	for k,v := range ctx.PortContext {
+		pb := dockerclient.PortBinding{HostPort: v }
+		portBindings := []dockerclient.PortBinding{pb}
+		dockerHostConfig.PortBindings[k] = portBindings
 	}
-	err = docker.StartContainer(containerId, hostConfig)
+
+	//Start the container
+	err = docker.StartContainer(containerId, dockerHostConfig)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -167,6 +183,9 @@ func init() {
 
 		containerCtx.Labels = make(map[string]string)
 		containerCtx.Labels["xt-container-type"] = "atest"
+
+		containerCtx.PortContext = make(map[string]string)
+		containerCtx.PortContext["3000/tcp"] = "8080"
 
 		log.Println("Verify required image is present")
 		imagePresent, err := requiredImageAvailable(docker, containerCtx.ImageName)
