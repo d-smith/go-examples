@@ -9,6 +9,7 @@ import (
 	jwt "github.com/dgrijalva/jwt-go"
 	"log"
 
+	"strings"
 )
 
 const (
@@ -69,8 +70,13 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	//Extract the token from the token string
 	token, err := extractTokenFromHeaderValue(apiKey)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(err.Error()))
+
+		if strings.Contains(err.Error(), "verification error") {
+			w.WriteHeader(http.StatusUnauthorized)
+		}  else {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(err.Error()))
+		}
 		return
 	}
 
