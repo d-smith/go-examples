@@ -12,9 +12,9 @@ import (
 )
 
 const (
-	privateKeyPath = "./app.rsa" 	//openssl genrsa -out app.rsa 1024
-	publicKeyPath = "./app.rsa.pub" //openssl rsa -in app.rsa -pubout > app.rsa.pub
-	otherKeyPath = "./otherkey.rsa.pub"
+	privateKeyPath = "../keys/app.rsa" 	//openssl genrsa -out app.rsa 1024
+	publicKeyPath = "../keys/app.rsa.pub" //openssl rsa -in app.rsa -pubout > app.rsa.pub
+	otherKeyPath = "../keys/otherkey.rsa.pub"
 )
 
 var (
@@ -80,7 +80,7 @@ func main() {
 		}
 
 		return otherKey,nil
-	})	
+	})
 
 	if err != nil {
 		log.Fatal("expected error when validating token with other key")
