@@ -14,13 +14,15 @@ import (
 const (
 	privateKeyPath = "../keys/app.rsa" 	//openssl genrsa -out app.rsa 1024
 	publicKeyPath = "../keys/app.rsa.pub" //openssl rsa -in app.rsa -pubout > app.rsa.pub
-	otherKeyPath = "../keys/otherkey.rsa.pub"
+	otherKeyPath = "../keys/otherkey.rsa.pub" //openssl genrsa -out otherkey.rsa 1024
+	otherPrivateKeyPath = "../keys/otherkey.rsa" //openssl rsa -in otherkey.rsa -pubout > otherkey.rsa.pub
 )
 
 var (
 	verifyKey *rsa.PublicKey
 	signKey   *rsa.PrivateKey
-	otherKey  *rsa.PublicKey
+	otherVerifyKey  *rsa.PublicKey
+	otherSignKey *rsa.PrivateKey
 )
 
 
@@ -41,7 +43,13 @@ func init() {
 	otherKeyBytes, err := ioutil.ReadFile(otherKeyPath)
 	fatal(err)
 
-	otherKey, err = jwt.ParseRSAPublicKeyFromPEM(otherKeyBytes)
+	otherVerifyKey, err = jwt.ParseRSAPublicKeyFromPEM(otherKeyBytes)
+	fatal(err)
+
+	otherSignBytes, err := ioutil.ReadFile(otherPrivateKeyPath)
+	fatal(err)
+
+	otherSignKey, err = jwt.ParseRSAPrivateKeyFromPEM(otherSignBytes)
 	fatal(err)
 }
 
@@ -52,6 +60,8 @@ func fatal(err error) {
 }
 
 func main() {
+
+
 	t := jwt.New(jwt.GetSigningMethod("RS256"))
 	t.Claims["AccessToken"] = "level1"
 	t.Claims["ApplicationName"] = "foo app"
@@ -60,7 +70,11 @@ func main() {
 	tokenString,err := t.SignedString(signKey)
 	fatal(err)
 
-	log.Println("token string: ", tokenString)
+	log.Println("token string - sign key: ", tokenString)
+
+	otherTokenString,err := t.SignedString(otherSignKey)
+	fatal(err)
+	log.Println("token string - other: ", otherTokenString)
 
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token)(interface{}, error){
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
@@ -79,7 +93,7 @@ func main() {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return otherKey,nil
+		return otherVerifyKey,nil
 	})
 
 	if err != nil {
