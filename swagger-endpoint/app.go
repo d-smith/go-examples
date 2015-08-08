@@ -13,14 +13,6 @@ import (
 	"strings"
 )
 
-var stubbedResponseJson string = `
-{
-  "name": "GOOGL",
-  "last": 1002.20,
-  "time": "12:34",
-  "date": "10/31/2014"
-}
-`
 
 type Response struct {
 	Name string  `json:name"Name"`
@@ -147,7 +139,7 @@ func formResponseJson(data string) ([]byte, error) {
 
 func handleQuoteCalls(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8000")
+	w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000")
 
 	quoteData, err := getQuote(r)
 	if err != nil {
@@ -188,5 +180,5 @@ func main() {
 	http.Handle("/apispec/", http.StripPrefix("/apispec/", corsWrapper(ss)))
 
 	log.Println("Listening...")
-	http.ListenAndServe(":3000", nil)
+	http.ListenAndServe(":9000", nil)
 }
