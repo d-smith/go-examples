@@ -1,0 +1,109 @@
+package main
+
+import (
+	"io/ioutil"
+	"crypto/rsa"
+	"log"
+	"encoding/pem"
+	"errors"
+	"crypto/x509"
+//	"crypto"
+)
+
+var (
+	signKey *rsa.PrivateKey
+	verifyKey *rsa.PublicKey
+)
+
+func fatal(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
+
+func extractPrivateKeyFromPEM(key []byte) (*rsa.PrivateKey, error) {
+	//For this sample we assume our key is PEM encoded
+	var block *pem.Block
+	block, _ = pem.Decode(key); if block == nil {
+		return nil, errors.New("Key must be PEM encoded for this sample")
+	}
+
+	//Extract the private key. Note there's a couple ways this migbt be embedded in the key
+	var parsedKey interface{}
+	var err error
+	if parsedKey, err = x509.ParsePKCS1PrivateKey(block.Bytes); err != nil {
+		if parsedKey, err = x509.ParsePKCS8PrivateKey(block.Bytes); err != nil {
+			return nil, err
+		}
+	}
+
+	var pkey *rsa.PrivateKey
+	var ok bool
+	if pkey, ok = parsedKey.(*rsa.PrivateKey); !ok {
+		return nil, errors.New("Unable to parse key from key bytes")
+	}
+
+	return pkey, nil
+
+}
+
+func extractPublicKeyFromPEM(key []byte)(*rsa.PublicKey,error) {
+	//For this sample we assume our key is PEM encoded
+	var block *pem.Block
+	block, _ = pem.Decode(key); if block == nil {
+		return nil, errors.New("Key must be PEM encoded for this sample")
+	}
+
+	//Extract the public key. Note there's a couple ways it might be embedded in the key
+	var parsedKey interface{}
+	var err error
+	if parsedKey, err = x509.ParsePKIXPublicKey(block.Bytes); err != nil {
+		if cert, err := x509.ParseCertificate(block.Bytes); err == nil {
+			parsedKey = cert.PublicKey
+		} else {
+			return nil, err
+		}
+	}
+
+	var pkey *rsa.PublicKey
+	var ok bool
+	if pkey, ok = parsedKey.(*rsa.PublicKey); !ok {
+		return nil, errors.New("Unable to parse key from key bytes")
+	}
+
+	return pkey, nil
+}
+
+func init() {
+	signKeyBytes, err := ioutil.ReadFile("./testkey.rsa")
+	fatal(err)
+
+	signKey, err = extractPrivateKeyFromPEM(signKeyBytes)
+	fatal(err)
+
+	verifyKeyBytes, err := ioutil.ReadFile("./testkey.pub")
+	fatal(err)
+
+	verifyKey, err = extractPublicKeyFromPEM(verifyKeyBytes)
+	fatal(err)
+}
+
+/* TODO - finish this
+func signString(s string, *rsa.PrivateKey) (string, error) {
+	if !crypto.Hash.Available() {
+		return nil, errors.New("Hash not available")
+	}
+
+	hasher := crypto.Hash.New()
+	hasher.Write([]byte(s))
+}
+*/
+
+func main() {
+	println("sign something")
+
+	println("verify something")
+}
+
+
