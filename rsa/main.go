@@ -1,23 +1,23 @@
 /*
 Note - this example borrows heavily from github.com/dgrijalva/jwt-go
- */
+*/
 package main
 
 import (
-	"io/ioutil"
-	"crypto/rsa"
-	"log"
-	"encoding/pem"
-	"errors"
-	"crypto/x509"
 	"crypto"
 	"crypto/rand"
-	"strings"
+	"crypto/rsa"
+	"crypto/x509"
 	"encoding/base64"
+	"encoding/pem"
+	"errors"
+	"io/ioutil"
+	"log"
+	"strings"
 )
 
 var (
-	signKey *rsa.PrivateKey
+	signKey   *rsa.PrivateKey
 	verifyKey *rsa.PublicKey
 )
 
@@ -27,11 +27,11 @@ func fatal(err error) {
 	}
 }
 
-
 func extractPrivateKeyFromPEM(key []byte) (*rsa.PrivateKey, error) {
 	//For this sample we assume our key is PEM encoded
 	var block *pem.Block
-	block, _ = pem.Decode(key); if block == nil {
+	block, _ = pem.Decode(key)
+	if block == nil {
 		return nil, errors.New("Key must be PEM encoded for this sample")
 	}
 
@@ -54,10 +54,11 @@ func extractPrivateKeyFromPEM(key []byte) (*rsa.PrivateKey, error) {
 
 }
 
-func extractPublicKeyFromPEM(key []byte)(*rsa.PublicKey,error) {
+func extractPublicKeyFromPEM(key []byte) (*rsa.PublicKey, error) {
 	//For this sample we assume our key is PEM encoded
 	var block *pem.Block
-	block, _ = pem.Decode(key); if block == nil {
+	block, _ = pem.Decode(key)
+	if block == nil {
 		return nil, errors.New("Key must be PEM encoded for this sample")
 	}
 
@@ -106,10 +107,10 @@ func signString(s string, key *rsa.PrivateKey) (string, error) {
 
 	signedBytes, err := rsa.SignPKCS1v15(rand.Reader, key, hash, hasher.Sum(nil))
 	if err != nil {
-		return "",err
+		return "", err
 	}
 
-	return encodeSegment(signedBytes),nil
+	return encodeSegment(signedBytes), nil
 
 }
 
@@ -130,13 +131,11 @@ func decodeSegment(seg string) ([]byte, error) {
 
 func main() {
 	println("sign something")
-	s:= "This is something to sign."
-	signed,err := signString(s, signKey)
+	s := "This is something to sign."
+	signed, err := signString(s, signKey)
 	fatal(err)
 	println(signed)
 
 	//TODO - next, implement verify
 	println("verify something")
 }
-
-
