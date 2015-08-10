@@ -1,3 +1,6 @@
+/*
+Note - this example borrows heavily from github.com/dgrijalva/jwt-go
+ */
 package main
 
 import (
@@ -7,7 +10,10 @@ import (
 	"encoding/pem"
 	"errors"
 	"crypto/x509"
-//	"crypto"
+	"crypto"
+	"crypto/rand"
+	"strings"
+	"encoding/base64"
 )
 
 var (
@@ -89,20 +95,47 @@ func init() {
 	fatal(err)
 }
 
-/* TODO - finish this
-func signString(s string, *rsa.PrivateKey) (string, error) {
-	if !crypto.Hash.Available() {
-		return nil, errors.New("Hash not available")
+func signString(s string, key *rsa.PrivateKey) (string, error) {
+	var hash crypto.Hash = crypto.SHA256
+	if !hash.Available() {
+		return "", errors.New("Hash not available")
 	}
 
-	hasher := crypto.Hash.New()
+	hasher := hash.New()
 	hasher.Write([]byte(s))
+
+	signedBytes, err := rsa.SignPKCS1v15(rand.Reader, key, hash, hasher.Sum(nil))
+	if err != nil {
+		return "",err
+	}
+
+	return encodeSegment(signedBytes),nil
+
 }
-*/
+
+//Taken directly from github.com/dgrijalva/jwt-go
+func encodeSegment(seg []byte) string {
+	return strings.TrimRight(base64.URLEncoding.EncodeToString(seg), "=")
+}
+
+//Taken directly from github.com/dgrijalva/jwt-go
+// Decode JWT specific base64url encoding with padding stripped
+func decodeSegment(seg string) ([]byte, error) {
+	if l := len(seg) % 4; l > 0 {
+		seg += strings.Repeat("=", 4-l)
+	}
+
+	return base64.URLEncoding.DecodeString(seg)
+}
 
 func main() {
 	println("sign something")
+	s:= "This is something to sign."
+	signed,err := signString(s, signKey)
+	fatal(err)
+	println(signed)
 
+	//TODO - next, implement verify
 	println("verify something")
 }
 
