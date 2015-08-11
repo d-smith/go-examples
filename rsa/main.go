@@ -114,6 +114,24 @@ func signString(s string, key *rsa.PrivateKey) (string, error) {
 
 }
 
+func verifyString(s, signature string, key *rsa.PublicKey) error {
+	sig, err := decodeSegment(signature)
+	if err != nil {
+		return nil
+	}
+
+	var hash crypto.Hash = crypto.SHA256
+	if !hash.Available() {
+		return errors.New("Hash not available")
+	}
+
+	hasher := hash.New()
+	hasher.Write([]byte(s))
+
+	return rsa.VerifyPKCS1v15(key, hash, hasher.Sum(nil), sig)
+
+}
+
 //Taken directly from github.com/dgrijalva/jwt-go
 func encodeSegment(seg []byte) string {
 	return strings.TrimRight(base64.URLEncoding.EncodeToString(seg), "=")
@@ -136,6 +154,17 @@ func main() {
 	fatal(err)
 	println(signed)
 
-	//TODO - next, implement verify
 	println("verify something")
+	err = verifyString(s, signed, verifyKey); if err != nil {
+		println(err.Error())
+	}
+
+	println("signature verified")
+
+	println("try to verify something that's been tampered with")
+	err = verifyString("what's all this then?", signed, verifyKey); if err == nil {
+		println("hmmmm... expected an error")
+	} else {
+		println(err.Error())
+	}
 }
