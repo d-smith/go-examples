@@ -148,23 +148,25 @@ func decodeSegment(seg string) ([]byte, error) {
 }
 
 func main() {
-	println("sign something")
+	log.Println("sign something")
 	s := "This is something to sign."
 	signed, err := signString(s, signKey)
 	fatal(err)
-	println(signed)
+	log.Println(signed)
 
-	println("verify something")
-	err = verifyString(s, signed, verifyKey); if err != nil {
-		println(err.Error())
+	log.Println("verify something")
+	err = verifyString(s, signed, verifyKey)
+	if err != nil {
+		log.Println(err.Error())
 	}
 
-	println("signature verified")
+	log.Println("signature verified")
 
-	println("try to verify something that's been tampered with")
-	err = verifyString("what's all this then?", signed, verifyKey); if err == nil {
-		println("hmmmm... expected an error")
+	log.Println("try to verify something that's been tampered with")
+	err = verifyString("what's all this then?", signed, verifyKey)
+	if err == nil {
+		log.Println("hmmmm... expected an error")
 	} else {
-		println(err.Error())
+		log.Println(err.Error())
 	}
 }
