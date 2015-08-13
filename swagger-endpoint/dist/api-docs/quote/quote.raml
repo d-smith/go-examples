@@ -4,7 +4,7 @@ baseUri: http://localhost:9000
 version: v1
 /quote/{symbol}:
   get:
-    description:
+    description: 
       Get a quote for the given symbol
     responses:
       200:
@@ -29,3 +29,43 @@ version: v1
                   }
                 }
               }
+    
+
+
+/quote-me:
+  post:
+    body:
+      application/json:
+        schema: |
+          {
+            "type":"object",
+            "properties": {
+              "Symbol": {
+                "type":"string"
+              }
+            }
+          }
+    responses:
+      200:
+        body:
+          application/json:
+            schema: |
+              {
+                "type":"object",
+                "properties": {
+                  "Name": {
+                    "type":"string"
+                  },
+                  "Last": {
+                    "type": "number",
+                    "format":"double"
+                  },
+                  "Time":{
+                    "type":"string"
+                  },
+                  "Date": {
+                    "type":"string"
+                  }
+                }
+              }  
+        

@@ -170,6 +170,7 @@ func formResponseJson(data string) ([]byte, error) {
 func handleQuoteCalls(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
+	w.Header().Set("Access-Control-Allow-Headers", "Content-Type")
 
 	var quoteData string
 	var err error
@@ -181,7 +182,13 @@ func handleQuoteCalls(w http.ResponseWriter, r *http.Request) {
 	case "POST":
 		log.Println("Handling POST request")
 		quoteData, err = quoteViaPost(r)
+	case "OPTIONS":
+		log.Println("Handling OPTIONS request")
+		w.Write([]byte("Allow: GET,POST,OPTIONS\n"))
+		w.Write([]byte("Content-Type:application/json\n"))
+		return
 	default:
+		log.Println("Someone tried ", r.Method)
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return
 	}
@@ -218,6 +225,7 @@ func main() {
 
 	//Add some dynamc content
 	http.HandleFunc("/quote/", handleQuoteCalls)
+	http.HandleFunc("/quote-me", handleQuoteCalls)
 
 	//Add the swagger spec
 	ss := http.FileServer(http.Dir("dist"))
