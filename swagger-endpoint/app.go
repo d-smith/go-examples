@@ -13,12 +13,15 @@ import (
 	"strings"
 )
 
-
 type Response struct {
 	Name string  `json:name"Name"`
 	Last float64 `json:name"Last"`
 	Time string  `json:name"Time"`
 	Date string  `json:name"Date"`
+}
+
+type QuoteRequest struct {
+	Symbol string
 }
 
 var soapStart string = `
@@ -27,12 +30,8 @@ var soapStart string = `
 
 var soapEnd string = `</web:symbol></web:GetQuote></soapenv:Body></soapenv:Envelope>`
 
-func getQuote(r *http.Request) (string, error) {
-
-	//Get the symbol as the last part of the request URI
-	parts := strings.Split(r.RequestURI, "/")
-	symbol := parts[len(parts)-1]
-	fmt.Printf("requesting quote for %s\n", symbol)
+func callQuoteService(symbol string) (string, error) {
+	log.Println("call quote service for ", symbol)
 
 	payload := fmt.Sprintf("%s%s%s", soapStart, symbol, soapEnd)
 
@@ -54,8 +53,39 @@ func getQuote(r *http.Request) (string, error) {
 		return "", nil
 	}
 	resp.Body.Close()
-	return string(respData), nil
 
+	log.Println("quote service returned ", string(respData))
+	return string(respData), nil
+}
+
+func quoteViaGet(r *http.Request) (string, error) {
+
+	//Get the symbol as the last part of the request URI
+	parts := strings.Split(r.RequestURI, "/")
+	symbol := parts[len(parts)-1]
+	fmt.Printf("requesting quote for %s\n", symbol)
+
+	return callQuoteService(symbol)
+}
+
+func quoteViaPost(r *http.Request) (string, error) {
+	//Parse the payload
+	quoteBody, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		log.Println("Unable to read post body")
+		return "", nil
+	}
+
+	r.Body.Close()
+
+	log.Println("Unmarshal quote body: ", string(quoteBody))
+	var quote QuoteRequest
+	err = json.Unmarshal(quoteBody, &quote)
+	if err != nil {
+		return "", err
+	}
+
+	return callQuoteService(quote.Symbol)
 }
 
 func getQuoteResponse(soapResponse string) (string, error) {
@@ -141,7 +171,21 @@ func handleQuoteCalls(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 
-	quoteData, err := getQuote(r)
+	var quoteData string
+	var err error
+
+	switch r.Method {
+	case "GET":
+		log.Println("Handling GET request")
+		quoteData, err = quoteViaGet(r)
+	case "POST":
+		log.Println("Handling POST request")
+		quoteData, err = quoteViaPost(r)
+	default:
+		w.WriteHeader(http.StatusMethodNotAllowed)
+		return
+	}
+
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte(err.Error()))
