@@ -12,7 +12,7 @@ type Developer struct {
 	LastName  string
 }
 
-func (d *Developer) Store(client *dynamodb.DynamoDB) error {
+func (d *Developer) Create(client *dynamodb.DynamoDB) error {
 	params := &dynamodb.PutItemInput{
 		TableName: aws.String("Developer"),
 		Item: map[string]*dynamodb.AttributeValue{
@@ -25,6 +25,33 @@ func (d *Developer) Store(client *dynamodb.DynamoDB) error {
 		},
 	}
 	_, err := client.PutItem(params)
+
+	return err
+}
+
+func (d *Developer) Update(first, last string, client *dynamodb.DynamoDB) error {
+	params := &dynamodb.UpdateItemInput{
+		TableName: aws.String("Developer"),
+		Key: map[string]*dynamodb.AttributeValue{
+			"EMail": {S: aws.String(d.EMail)},
+		},
+		AttributeUpdates: map[string]*dynamodb.AttributeValueUpdate{
+			"FirstName": {
+				Action: aws.String(dynamodb.AttributeActionPut),
+				Value: &dynamodb.AttributeValue{
+					S: aws.String(first),
+				},
+			},
+			"LastName": {
+				Action: aws.String(dynamodb.AttributeActionPut),
+				Value: &dynamodb.AttributeValue{
+					S: aws.String(last),
+				},
+			},
+		},
+	}
+
+	_, err := client.UpdateItem(params)
 
 	return err
 }
@@ -49,16 +76,29 @@ func Get(email string, client *dynamodb.DynamoDB) (*Developer, error) {
 	}, nil
 }
 
+func Delete(email string, client *dynamodb.DynamoDB) error {
+	params := &dynamodb.DeleteItemInput{
+		TableName: aws.String("Developer"),
+		Key: map[string]*dynamodb.AttributeValue{
+			"EMail": {S: aws.String(email)},
+		},
+	}
+
+	_, err := client.DeleteItem(params)
+	return err
+}
+
 func main() {
 	client := dynamodb.New(&aws.Config{Region: aws.String("us-east-1")})
+	devEmail := "dev@dev.com"
 
 	dev := Developer{
-		EMail:     "dev@dev.com",
+		EMail:     devEmail,
 		FirstName: "Joe",
 		LastName:  "Dev",
 	}
 
-	err := dev.Store(client)
+	err := dev.Create(client)
 	if err != nil {
 		fmt.Println("Dang it: ", err.Error())
 		return
@@ -66,11 +106,33 @@ func main() {
 
 	fmt.Println("dev stored")
 
-	retdev, err := Get("dev@dev.com", client)
+	retdev, err := Get(devEmail, client)
 	if err != nil {
 		fmt.Println("Dang it: ", err.Error())
 		return
 	}
 
 	fmt.Println(retdev)
+
+	err = dev.Update("updated first", "updated last", client)
+	if err != nil {
+		fmt.Println("Dang it: ", err.Error())
+		return
+	}
+
+	retdev, err = Get(devEmail, client)
+	if err != nil {
+		fmt.Println("Dang it: ", err.Error())
+		return
+	}
+
+	fmt.Println(retdev)
+
+	err = Delete(devEmail, client)
+	if err != nil {
+		fmt.Println("Dang it: ", err.Error())
+		return
+	}
+
+	fmt.Println("deleted")
 }
