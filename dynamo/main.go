@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
@@ -88,6 +89,32 @@ func Delete(email string, client *dynamodb.DynamoDB) error {
 	return err
 }
 
+func Find(email string, client *dynamodb.DynamoDB) (*Developer, error) {
+	params := &dynamodb.QueryInput{
+		TableName:              aws.String("Developer"),
+		KeyConditionExpression: aws.String("EMail=:email"),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":email": {S: aws.String(email)},
+		},
+	}
+
+	resp, err := client.Query(params)
+	if err != nil {
+		return nil, err
+	}
+
+	if *resp.Count != 1 {
+		return nil, errors.New("More than 1 record returned on primary key query")
+	}
+
+	return &Developer{
+		EMail:     *resp.Items[0]["EMail"].S,
+		FirstName: *resp.Items[0]["FirstName"].S,
+		LastName:  *resp.Items[0]["LastName"].S,
+	}, nil
+
+}
+
 func main() {
 	client := dynamodb.New(&aws.Config{Region: aws.String("us-east-1")})
 	devEmail := "dev@dev.com"
@@ -126,7 +153,15 @@ func main() {
 		return
 	}
 
-	fmt.Println(retdev)
+	fmt.Println("Get returns ", retdev)
+
+	retdev, err = Find(devEmail, client)
+	if err != nil {
+		fmt.Println("Dang it: ", err.Error())
+		return
+	}
+
+	fmt.Println("Find returns ", retdev)
 
 	err = Delete(devEmail, client)
 	if err != nil {
