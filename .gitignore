@@ -1,3 +1,5 @@
+./https/cert.pem
+./https/key.pem
 *.rsa
 *.rsa.pub
 *.o
