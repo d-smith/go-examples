@@ -62,7 +62,7 @@ func main() {
 	}
 
 	token := jwt.New(jwt.GetSigningMethod("RS256"))
-	token.Claims["aud"] = "111-222-3333"
+	token.Claims["iss"] = "111-222-3333"
 	token.Claims["sub"] = "drscan"
 
 	tokenString,err := token.SignedString(signKey)
