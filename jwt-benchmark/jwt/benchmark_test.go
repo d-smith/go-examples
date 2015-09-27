@@ -9,3 +9,10 @@ func BenchmarkCreateAndSignJWT(b *testing.B) {
 		CreateAndSignToken(key)
 	}
 }
+
+func BenchmarkExtractKeyAndCreateSignedToken(b *testing.B) {
+	for i:= 0; i < b.N; i++ {
+		key := PrivateKeyFromPEM()
+		CreateAndSignToken(key)
+	}
+}
