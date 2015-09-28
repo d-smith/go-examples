@@ -12,8 +12,6 @@ import (
 func makeCLI() *cli.CLI {
 	c := cli.NewCLI("commands", "1.0.0")
 
-	//c.Args = os.Args[1:]
-
 	fooCommand := &commands.FooCommand{
 		HelpText:     "foo blah blah blah flibby dibby do",
 		SynopsisText: "do some foo",
