@@ -7,5 +7,8 @@ Packages
 * bowling - the bowling kata
 * certs - example of decoding a PEM encoded cert, parsing the cert, and extracting the public key
 * cfun - simple example of how to use cgo to call a C function.
+* clang - Another C language sample
+* cli - Example use of the mitchelh cli library
+
 
 
