@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/dynamodb"
+	"os"
 )
 
 type Developer struct {
@@ -116,7 +117,14 @@ func Find(email string, client *dynamodb.DynamoDB) (*Developer, error) {
 }
 
 func main() {
-	client := dynamodb.New(&aws.Config{Region: aws.String("us-east-1")})
+	var client *dynamodb.DynamoDB
+	localAddr := os.Getenv("LOCAL_DYNAMO_ADDR")
+	if localAddr != "" {
+		client = dynamodb.New(&aws.Config{Endpoint:aws.String(localAddr), Region:aws.String("here")})
+	} else {
+		client = dynamodb.New(&aws.Config{Region: aws.String("us-east-1")})
+	}
+
 	devEmail := "dev@dev.com"
 
 	dev := Developer{
