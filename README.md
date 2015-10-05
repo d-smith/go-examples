@@ -9,6 +9,9 @@ Packages
 * cfun - simple example of how to use cgo to call a C function.
 * clang - Another C language sample
 * cli - Example use of the mitchelh cli library
+* client - Simple http client that can do a get on a URL. Can also use to show how the http_proxy is picked
+up automatically by go.
+
 
 
 
