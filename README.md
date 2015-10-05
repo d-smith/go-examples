@@ -11,7 +11,8 @@ Packages
 * cli - Example use of the mitchelh cli library
 * client - Simple http client that can do a get on a URL. Can also use to show how the http_proxy is picked
 up automatically by go.
-
+* concurrency - working example code from Rob Pike's [Go Concurrency Patterns](https://talks.golang.org/2012/concurrency.slide#1) talk
+* concurrent - Two concurrency examples, one using shared memory and synchronization, one using message passing.
 
 
 
