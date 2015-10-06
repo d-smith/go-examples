@@ -13,6 +13,11 @@ Packages
 up automatically by go.
 * concurrency - working example code from Rob Pike's [Go Concurrency Patterns](https://talks.golang.org/2012/concurrency.slide#1) talk
 * concurrent - Two concurrency examples, one using shared memory and synchronization, one using message passing.
+* consul-kv-read - Simple consul api sample for reading a value by key
+* cookies - simple http cookie jar sample
+* docker-list-containers - example use of the docker api to list docker containers
+* dynamo - AWS DynamodDB golang sample
+
 
 
 
