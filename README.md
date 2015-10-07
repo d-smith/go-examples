@@ -17,7 +17,8 @@ up automatically by go.
 * cookies - simple http cookie jar sample
 * docker-list-containers - example use of the docker api to list docker containers
 * dynamo - AWS DynamodDB golang sample
-
+* errors - customer error sample
+* flags - basic use of the flags package
 
 
 
