@@ -26,7 +26,7 @@ func main() {
 	flag.Var(&cmdServers, "servers", "comma-separated list of servers")
 
 	var checkInterval time.Duration
-	flag.DurationVar(&checkInterval, "check-interval", 10 * time.Second, "Interval between health checks")
+	flag.DurationVar(&checkInterval, "check-interval", 10*time.Second, "Interval between health checks")
 	flag.Parse()
 	fmt.Println(cmdServers)
 

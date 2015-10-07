@@ -1,6 +1,6 @@
 package stack
 
-//Stack represents a stack data structure. Elements can be pushed on to and 
+//Stack represents a stack data structure. Elements can be pushed on to and
 //popped off of the stack
 type Stack struct {
 	size int
@@ -30,7 +30,7 @@ func (s *Stack) Peek() interface{} {
 	if s.size > 0 {
 		return s.top.value
 	}
-	
+
 	return nil
 }
 

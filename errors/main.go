@@ -29,13 +29,12 @@ func broken() (int, error) {
 	me.addReason("secondly")
 	me.addReason("thirdly")
 	me.addReason("finally")
-	return -1, me	
+	return -1, me
 }
 
 func main() {
 	_, err := broken()
 	if err != nil {
 		panic(err)
-	}	
+	}
 }
-

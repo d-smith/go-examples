@@ -37,7 +37,6 @@ func testSelect(db *sql.DB) error {
 		rows.Scan(&foo, &three)
 		fmt.Println(foo, three)
 	}
-	
 
 	return nil
 }

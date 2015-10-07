@@ -3,18 +3,18 @@ package main
 import (
 	"encoding/json"
 	"expvar"
-	"fmt"
-	"io/ioutil"
-	log "github.com/Sirupsen/logrus"
-	"net/http"
 	"flag"
+	"fmt"
+	log "github.com/Sirupsen/logrus"
+	"io/ioutil"
+	"net/http"
 	"time"
 )
 
 const (
 	GET  = "GET"
 	POST = "POST"
-	PUT = "PUT"
+	PUT  = "PUT"
 )
 
 var (
@@ -54,7 +54,7 @@ func getHandlerForMethod(method string, resource interface{}) (handler HttpHandl
 	case PUT:
 		if resource, ok := resource.(PutSupported); ok {
 			handler = resource.Put
-		}	
+		}
 	}
 	return
 }
@@ -116,14 +116,14 @@ type HelloResource struct{}
 const (
 	helloGets  = "HelloGets"
 	helloPosts = "HelloPosts"
-	helloPuts = "HelloPuts"
+	helloPuts  = "HelloPuts"
 )
 
 func timeTrack(start time.Time, name string) {
 	elapsed := time.Since(start)
 	log.WithFields(log.Fields{
-			"calltime" : elapsed.Nanoseconds(),
-			"service" : name,}).Info()
+		"calltime": elapsed.Nanoseconds(),
+		"service":  name}).Info()
 }
 
 func (HelloResource) Get(rw http.ResponseWriter, req *http.Request) {
@@ -171,21 +171,21 @@ func (HelloResource) Put(rw http.ResponseWriter, request *http.Request) {
 	if err != nil {
 		rw.WriteHeader(http.StatusInternalServerError)
 	}
-	
+
 	log.Info("Post body: " + string(body))
-	
+
 	writeResponse(http.StatusOK, []byte("Yeah ok"), nil, rw)
 }
 
 func main() {
-	
+
 	var port = flag.Int("port", -1, "Port to listen on")
 	flag.Parse()
 	if *port == -1 {
 		fmt.Println("Must specify a -port argument")
 		return
 	}
-	
+
 	helloResource := new(HelloResource)
 
 	var api = new(API)

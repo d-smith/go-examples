@@ -1,14 +1,14 @@
 package main
+
 import (
-	"net/http"
-	"log"
 	"compress/gzip"
-	"io/ioutil"
-	"net"
 	"io"
+	"io/ioutil"
+	"log"
+	"net"
+	"net/http"
 	"strings"
 )
-
 
 func fatal(err error) {
 	if err != nil {
@@ -17,7 +17,7 @@ func fatal(err error) {
 }
 
 func handleGzipRequest() http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request){
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer r.Body.Close()
 		gr, err := gzip.NewReader(r.Body)
 		fatal(err)
@@ -51,8 +51,6 @@ func startServiceWithListener(ln net.Listener, handler http.Handler) {
 
 	go server.Serve(ln)
 }
-
-
 
 func main() {
 	log.Println("create listener")

@@ -60,7 +60,7 @@ func main() {
 
 	for _, c := range containers {
 		fmt.Printf("%v\n", c)
-		ci,_ := docker.InspectContainer(c.Id)
+		ci, _ := docker.InspectContainer(c.Id)
 		fmt.Printf("\t%v\n", ci)
 		links := ci.HostConfig.Links
 		fmt.Printf("\t--links: %v\n", links)

@@ -16,7 +16,7 @@ func xpathSampleFindOne(xmlDoc string, path string) {
 	}
 
 	if value, ok := compiledPath.String(root); ok {
-		fmt.Println("type: ", reflect.TypeOf(value)) 
+		fmt.Println("type: ", reflect.TypeOf(value))
 		fmt.Println("Found:", value)
 	}
 }

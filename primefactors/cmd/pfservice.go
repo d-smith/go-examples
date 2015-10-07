@@ -1,16 +1,16 @@
 package main
 
 import (
-	"fmt"
-	"strings"
-	"net/http"
-	"github.com/d-smith/go-examples/primefactors"
-	"strconv"
 	"encoding/json"
+	_ "expvar"
 	"flag"
+	"fmt"
+	"github.com/d-smith/go-examples/primefactors"
 	"log"
+	"net/http"
 	"runtime"
-	 _ "expvar"
+	"strconv"
+	"strings"
 )
 
 func extractResource(uri string) (string, error) {
@@ -57,8 +57,6 @@ func main() {
 		return
 	}
 
-
-
 	http.Handle("/pf/", http.HandlerFunc(handleCall))
-	http.ListenAndServe(fmt.Sprintf(":%d",*port), nil)
+	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 }

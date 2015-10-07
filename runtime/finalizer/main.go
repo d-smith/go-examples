@@ -1,4 +1,5 @@
 package main
+
 import (
 	"fmt"
 	"runtime"
@@ -19,7 +20,7 @@ func doSomeFooStuff(name string) {
 }
 
 func NewFoo(name string) *Foo {
-	foo:= &Foo{
+	foo := &Foo{
 		Name: name,
 	}
 	runtime.SetFinalizer(foo, finalizeFoo)
@@ -27,7 +28,7 @@ func NewFoo(name string) *Foo {
 }
 
 func main() {
-	for i:= 0; i < 10; i++ {
+	for i := 0; i < 10; i++ {
 		name := fmt.Sprintf("foo %d", i)
 		doSomeFooStuff(name)
 		time.Sleep(1 * time.Second)

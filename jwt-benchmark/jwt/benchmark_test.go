@@ -1,4 +1,5 @@
 package jwt
+
 import "testing"
 
 func BenchmarkCreateAndSignJWT(b *testing.B) {
@@ -11,7 +12,7 @@ func BenchmarkCreateAndSignJWT(b *testing.B) {
 }
 
 func BenchmarkExtractKeyAndCreateSignedToken(b *testing.B) {
-	for i:= 0; i < b.N; i++ {
+	for i := 0; i < b.N; i++ {
 		key := PrivateKeyFromPEM()
 		CreateAndSignToken(key)
 	}

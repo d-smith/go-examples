@@ -1,15 +1,15 @@
 package primefactors
 
 import (
-	"testing"
 	"fmt"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestGeneratePrimes(t *testing.T) {
 
 	pf := PrimeFactors(918125)
-	assert.Equal(t, 6,len(pf))
+	assert.Equal(t, 6, len(pf))
 	assert.Equal(t, 5, pf[0])
 	assert.Equal(t, 5, pf[1])
 	assert.Equal(t, 5, pf[2])
@@ -19,7 +19,7 @@ func TestGeneratePrimes(t *testing.T) {
 	fmt.Println(pf)
 
 	pf = PrimeFactors(8125)
-	assert.Equal(t, 5,len(pf))
+	assert.Equal(t, 5, len(pf))
 	assert.Equal(t, 5, pf[0])
 	assert.Equal(t, 5, pf[1])
 	assert.Equal(t, 5, pf[2])
@@ -28,7 +28,7 @@ func TestGeneratePrimes(t *testing.T) {
 	fmt.Println(pf)
 
 	pf = PrimeFactors(315)
-	assert.Equal(t, 4,len(pf))
+	assert.Equal(t, 4, len(pf))
 	assert.Equal(t, 3, pf[0])
 	assert.Equal(t, 3, pf[1])
 	assert.Equal(t, 5, pf[2])

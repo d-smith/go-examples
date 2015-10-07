@@ -1,4 +1,4 @@
-package main 
+package main
 
 var workItemRuleResponse = `
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
@@ -1473,4 +1473,3 @@ var workItemRuleResponse = `
    </soapenv:Body>
 </soapenv:Envelope>
 `
-

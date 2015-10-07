@@ -1,9 +1,9 @@
 package main
+
 import (
 	"encoding/pem"
 	"fmt"
 )
-
 
 const twoBlocks = `-----BEGIN Stuff1-----
 c3R1ZmYgIGZyb20gYmxvY2sgMQ==
@@ -46,7 +46,6 @@ func decodeMultiBlock() {
 	fmt.Printf("\tthe rest decoded bytes as string: %s\n", string(decoded.Bytes))
 	fmt.Println("\tmore bytes: ", len(theRest) > 0)
 }
-
 
 func main() {
 	encodeAndDecode()

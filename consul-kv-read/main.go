@@ -1,4 +1,4 @@
-package main 
+package main
 
 import (
 	"fmt"
@@ -10,17 +10,16 @@ import (
 func main() {
 	client, _ := api.NewClient(api.DefaultConfig())
 	kv := client.KV()
-	
-	pairs, _, err := kv.List("/listeners/",nil)
+
+	pairs, _, err := kv.List("/listeners/", nil)
 	if err != nil {
 		log.Panic(err)
 	}
-	
+
 	fmt.Printf("%v pairs returned\n", len(pairs))
-	
+
 	for i := range pairs {
 		pair := pairs[i]
-		fmt.Printf("key %s value %s\n", pair.Key, pair.Value)	
+		fmt.Printf("key %s value %s\n", pair.Key, pair.Value)
 	}
 }
-

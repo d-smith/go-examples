@@ -1,11 +1,10 @@
 package jwt
 
 import (
+	"crypto/rsa"
 	jwt "github.com/dgrijalva/jwt-go"
 	"log"
-	"crypto/rsa"
 )
-
 
 const certPEM = `
 -----BEGIN CERTIFICATE-----

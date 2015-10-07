@@ -1,4 +1,4 @@
-package main 
+package main
 
 import (
 	"net/http"
@@ -16,8 +16,8 @@ func wrap(h http.Handler) http.Handler {
 		println("wrap...")
 		h.ServeHTTP(rec, r)
 		w.Write(rec.Body.Bytes())
-		w.Write([]byte("wrap wrote this\n"))	
- 	})	
+		w.Write([]byte("wrap wrote this\n"))
+	})
 }
 
 func main() {
@@ -26,6 +26,3 @@ func main() {
 	wrapped := wrap(handleCallHandler)
 	http.ListenAndServe(":8080", wrapped)
 }
-
-
-

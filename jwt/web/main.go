@@ -1,27 +1,26 @@
 package main
 
 import (
-	"net/http"
+	"crypto/rsa"
 	"flag"
 	"fmt"
-	"crypto/rsa"
-	"io/ioutil"
 	jwt "github.com/dgrijalva/jwt-go"
+	"io/ioutil"
 	"log"
+	"net/http"
 
 	"strings"
 )
 
 const (
-	privateKeyPath = "../keys/app.rsa" 	//openssl genrsa -out app.rsa 1024
-	publicKeyPath = "../keys/app.rsa.pub" //openssl rsa -in app.rsa -pubout > app.rsa.pub
+	privateKeyPath = "../keys/app.rsa"     //openssl genrsa -out app.rsa 1024
+	publicKeyPath  = "../keys/app.rsa.pub" //openssl rsa -in app.rsa -pubout > app.rsa.pub
 )
 
 var (
 	verifyKey *rsa.PublicKey
 	signKey   *rsa.PrivateKey
 )
-
 
 func init() {
 	signBytes, err := ioutil.ReadFile(privateKeyPath)
@@ -36,7 +35,6 @@ func init() {
 	verifyKey, err = jwt.ParseRSAPublicKeyFromPEM(verifyBytes)
 	fatal(err)
 
-
 }
 
 func fatal(err error) {
@@ -45,16 +43,16 @@ func fatal(err error) {
 	}
 }
 
-func extractTokenFromHeaderValue(tokenString string)(*jwt.Token,error) {
-	token, err := jwt.Parse(tokenString, func(token *jwt.Token)(interface{}, error){
+func extractTokenFromHeaderValue(tokenString string) (*jwt.Token, error) {
+	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return verifyKey,nil
+		return verifyKey, nil
 	})
 
-	return token,err
+	return token, err
 }
 
 func handleRequest(w http.ResponseWriter, r *http.Request) {
@@ -73,7 +71,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 
 		if strings.Contains(err.Error(), "verification error") {
 			w.WriteHeader(http.StatusUnauthorized)
-		}  else {
+		} else {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte(err.Error()))
 		}
@@ -87,7 +85,7 @@ func handleRequest(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//Look at some token info
-	for k,v := range token.Claims {
+	for k, v := range token.Claims {
 		log.Println("Claim ", k, " is ", v)
 	}
 
@@ -103,6 +101,6 @@ func main() {
 	}
 
 	http.Handle("/goods", http.HandlerFunc(handleRequest))
-	http.ListenAndServe(fmt.Sprintf(":%d",*port), nil)
+	http.ListenAndServe(fmt.Sprintf(":%d", *port), nil)
 
 }

@@ -11,7 +11,7 @@ var finishedChannel = make(chan bool)
 var stopped = false
 
 func doStuff() {
-	for ; stopped == false; {
+	for stopped == false {
 		fmt.Println("Doing some stuff...")
 		time.Sleep(2 * time.Second)
 	}
@@ -21,9 +21,9 @@ func doStuff() {
 
 func main() {
 	go doStuff()
-	
+
 	signalChannel := make(chan os.Signal, 1)
-	
+
 	signal.Notify(signalChannel, os.Interrupt)
 	go func() {
 		for _ = range signalChannel {
@@ -31,7 +31,6 @@ func main() {
 			stopped = true
 		}
 	}()
-	<- finishedChannel
-	
-}
+	<-finishedChannel
 
+}

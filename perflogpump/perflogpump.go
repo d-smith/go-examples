@@ -1,17 +1,17 @@
 package main
 
 import (
-	"net"
-	"log"
 	"fmt"
+	"log"
+	"math/rand"
+	"net"
 	"sync"
 	"time"
-	"math/rand"
 )
 
 var wg sync.WaitGroup
 
-var services = []string {
+var services = []string{
 	"createWorkItem",
 	"updateWorkItem",
 	"retieveWorkItemRule",
@@ -22,8 +22,8 @@ var services = []string {
 	"splitItem",
 }
 
-var apps = []string {
-"app01", "app02","app03","app04","app05", "app06",
+var apps = []string{
+	"app01", "app02", "app03", "app04", "app05", "app06",
 }
 
 func fatal(err error) {
@@ -33,7 +33,7 @@ func fatal(err error) {
 }
 
 func handleConnection(conn net.Conn) {
-	for  {
+	for {
 		println("write to connection")
 		logLine := fmt.Sprintf("%s %s", apps[rand.Intn(len(apps))], services[rand.Intn(len(services))])
 		fmt.Fprintln(conn, logLine)

@@ -1,10 +1,10 @@
 package main
+
 import (
+	"crypto/x509"
 	"encoding/pem"
 	"log"
-	"crypto/x509"
 )
-
 
 const certPEM = `
 -----BEGIN CERTIFICATE-----
@@ -45,7 +45,6 @@ func main() {
 	if err != nil {
 		log.Fatal("unable to marshal public key")
 	}
-
 
 	pemdata := pem.EncodeToMemory(
 		&pem.Block{

@@ -1,13 +1,13 @@
 package main
+
 import (
-	"os"
+	"bytes"
+	"encoding/hex"
+	"fmt"
 	"io"
 	"log"
-	"bytes"
-	"fmt"
-	"encoding/hex"
+	"os"
 )
-
 
 func main() {
 	var b bytes.Buffer
@@ -16,7 +16,6 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-
 
 	fmt.Println(b.String())
 	fmt.Println("copied", n, "bytes")

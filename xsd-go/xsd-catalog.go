@@ -116,13 +116,13 @@ func (c *Catalog) ElementType(typeName string) ElementType {
 	}
 }
 
-func (c *Catalog) XsdBaseType(typeName string)(string, error) {
+func (c *Catalog) XsdBaseType(typeName string) (string, error) {
 	unprefixedTypeName := c.unprefixedName(typeName)
 	st, err := c.LookupSimpleType(unprefixedTypeName)
 	if err != nil {
-		return "",err
+		return "", err
 	}
-	
+
 	baseType := st.Constraints.Base
 	return c.unprefixedName(baseType), nil
 }

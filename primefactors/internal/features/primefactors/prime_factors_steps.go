@@ -1,19 +1,19 @@
 package primefactors
 
 import (
-	"log"
+	"crypto/tls"
+	"crypto/x509"
+	"fmt"
 	. "github.com/lsegal/gucumber"
 	"github.com/samalba/dockerclient"
 	"io/ioutil"
-	"crypto/tls"
-	"crypto/x509"
-	"os"
-	"fmt"
+	"log"
 	"net/http"
+	"os"
 	"strings"
 )
 
-func readDockerEnv() (string,string) {
+func readDockerEnv() (string, string) {
 
 	dockerHome := os.Getenv("DOCKER_HOST")
 	if dockerHome == "" {
@@ -30,7 +30,6 @@ func readDockerEnv() (string,string) {
 
 func buildDockerTLSConfig(dockerCertPath string) *tls.Config {
 
-
 	caFile := fmt.Sprintf("%s/ca.pem", dockerCertPath)
 	certFile := fmt.Sprintf("%s/cert.pem", dockerCertPath)
 	keyFile := fmt.Sprintf("%s/key.pem", dockerCertPath)
@@ -40,9 +39,9 @@ func buildDockerTLSConfig(dockerCertPath string) *tls.Config {
 	cert, _ := tls.LoadX509KeyPair(certFile, keyFile)
 	pemCerts, _ := ioutil.ReadFile(caFile)
 
-	tlsConfig.RootCAs       = x509.NewCertPool()
-	tlsConfig.ClientAuth    = tls.RequireAndVerifyClientCert
-	tlsConfig.Certificates  = []tls.Certificate{cert}
+	tlsConfig.RootCAs = x509.NewCertPool()
+	tlsConfig.ClientAuth = tls.RequireAndVerifyClientCert
+	tlsConfig.Certificates = []tls.Certificate{cert}
 
 	tlsConfig.RootCAs.AppendCertsFromPEM(pemCerts)
 
@@ -75,14 +74,14 @@ func getAcceptanceTestContainerInfo(docker *dockerclient.DockerClient, container
 }
 
 type TestContext struct {
-	input int
+	input        int
 	outputStatus int
-	outputData []byte
+	outputData   []byte
 }
 
 type ContainerContext struct {
 	ImageName string
-	Labels map[string]string
+	Labels    map[string]string
 	//PortContext has a container port/proto key and a host port value,
 	//with a convention that the container port/proto is an exposed port
 	//from the container, and a host port it is mapped to is specified
@@ -95,14 +94,14 @@ func createContainer(docker *dockerclient.DockerClient, ctx *ContainerContext) (
 	//Make a collection of exposed ports
 	var exposedPorts map[string]struct{}
 	exposedPorts = make(map[string]struct{})
-	for k,_ := range ctx.PortContext {
+	for k, _ := range ctx.PortContext {
 		exposedPorts[k] = struct{}{}
 	}
 
 	//Build the Docker container config from the configuration provided by the caller
 	containerConfig := dockerclient.ContainerConfig{
-		Image: ctx.ImageName,
-		Labels:ctx.Labels,
+		Image:        ctx.ImageName,
+		Labels:       ctx.Labels,
 		ExposedPorts: exposedPorts,
 	}
 
@@ -115,8 +114,8 @@ func startContainer(docker *dockerclient.DockerClient, containerId string, ctx *
 	//Build the port bindings needed when running the container
 	dockerHostConfig := new(dockerclient.HostConfig)
 	dockerHostConfig.PortBindings = make(map[string][]dockerclient.PortBinding)
-	for k,v := range ctx.PortContext {
-		pb := dockerclient.PortBinding{HostPort: v }
+	for k, v := range ctx.PortContext {
+		pb := dockerclient.PortBinding{HostPort: v}
 		portBindings := []dockerclient.PortBinding{pb}
 		dockerHostConfig.PortBindings[k] = portBindings
 	}
@@ -157,7 +156,7 @@ func requiredImageAvailable(docker *dockerclient.DockerClient, name string) bool
 	}
 
 	for _, i := range images {
-		for _,t := range i.RepoTags {
+		for _, t := range i.RepoTags {
 			if strings.Index(t, name) == 0 {
 				return true
 			}
@@ -169,7 +168,7 @@ func requiredImageAvailable(docker *dockerclient.DockerClient, name string) bool
 
 func createTestContainerContext() *ContainerContext {
 	containerCtx := ContainerContext{
-		ImageName:"pfservice",
+		ImageName: "pfservice",
 	}
 
 	containerCtx.Labels = make(map[string]string)
@@ -226,7 +225,7 @@ func init() {
 			T.Errorf("Call to endpoint has failed: ", err.Error())
 		}
 
-		testContext.outputData,_ = ioutil.ReadAll(resp.Body)
+		testContext.outputData, _ = ioutil.ReadAll(resp.Body)
 		resp.Body.Close()
 		testContext.outputStatus = resp.StatusCode
 	})

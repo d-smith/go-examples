@@ -120,7 +120,7 @@ func main() {
 	var client *dynamodb.DynamoDB
 	localAddr := os.Getenv("LOCAL_DYNAMO_ADDR")
 	if localAddr != "" {
-		client = dynamodb.New(&aws.Config{Endpoint:aws.String(localAddr), Region:aws.String("here")})
+		client = dynamodb.New(&aws.Config{Endpoint: aws.String(localAddr), Region: aws.String("here")})
 	} else {
 		client = dynamodb.New(&aws.Config{Region: aws.String("us-east-1")})
 	}

@@ -1,12 +1,12 @@
 package main
 
 import (
+	"crypto/rand"
+	"crypto/rsa"
+	"crypto/x509"
+	"encoding/pem"
 	"fmt"
 	"log"
-	"crypto/rsa"
-	"crypto/rand"
-	"encoding/pem"
-	"crypto/x509"
 )
 
 func fatal(err error) {
@@ -18,12 +18,12 @@ func fatal(err error) {
 func main() {
 	fmt.Println("gen us some keys")
 
-	privateKey ,err  := rsa.GenerateKey(rand.Reader, 1024)
+	privateKey, err := rsa.GenerateKey(rand.Reader, 1024)
 	fatal(err)
 
 	pemdata := pem.EncodeToMemory(
 		&pem.Block{
-			Type: "RSA PRIVATE KEY",
+			Type:  "RSA PRIVATE KEY",
 			Bytes: x509.MarshalPKCS1PrivateKey(privateKey),
 		},
 	)

@@ -1,13 +1,12 @@
 package main
 
 import (
-	"regexp"
 	"fmt"
+	"regexp"
 )
 
 var firstName = regexp.MustCompile(`^[a-zA-Z]+$`)
 var lastName = regexp.MustCompile(`^([a-zA-Z'-]\s*)+$`)
-
 
 func main() {
 	fmt.Println(firstName.MatchString("name"))
