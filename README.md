@@ -16,6 +16,7 @@ up automatically by go.
 * consul-kv-read - Simple consul api sample for reading a value by key
 * cookies - simple http cookie jar sample
 * docker-list-containers - example use of the docker api to list docker containers
+* decorate-http-hf - add a decorator method to functions with the http handler signature
 * dynamo - AWS DynamodDB golang sample
 * errors - customer error sample
 * flags - basic use of the flags package
