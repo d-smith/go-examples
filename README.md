@@ -19,6 +19,7 @@ up automatically by go.
 * dynamo - AWS DynamodDB golang sample
 * errors - customer error sample
 * flags - basic use of the flags package
+* fn-method-rev - example showing how to use a function type as a method signature.
 
 
 
