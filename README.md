@@ -21,6 +21,7 @@ up automatically by go.
 * errors - customer error sample
 * flags - basic use of the flags package
 * fn-method-rev - example showing how to use a function type as a method signature.
-
+* genkeys - generate a private/public key pair
+* hello - hello world, plus an example of an interface and implementation too.
 
 
