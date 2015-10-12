@@ -18,7 +18,7 @@ func TestEcho(t *testing.T) {
 		defer ts.Close()
 
 		t.Log("Test server URL: ", ts.URL)
-		t.Log("When going a get on /echo.test")
+		t.Log("When going a get on /echo/test")
 		{
 			echoTestEndpoint := ts.URL + "/echo/test"
 			res, err := http.Get(echoTestEndpoint)
@@ -49,7 +49,7 @@ func TestEchoUsingAsserts(t *testing.T) {
 		defer ts.Close()
 
 		t.Log("Test server URL: ", ts.URL)
-		t.Log("When going a get on /echo.test")
+		t.Log("When going a get on /echo/test")
 		{
 			echoTestEndpoint := ts.URL + "/echo/test"
 			res, err := http.Get(echoTestEndpoint)

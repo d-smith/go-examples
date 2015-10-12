@@ -23,5 +23,8 @@ up automatically by go.
 * fn-method-rev - example showing how to use a function type as a method signature.
 * genkeys - generate a private/public key pair
 * hello - hello world, plus an example of an interface and implementation too.
+* hexdump - read from the command line and run it through the encoding/hex Dumper.
+* http - Very basic http server that echos back the last uri component beyond /echo. Includes two unit test
+samples using the built in testing package and using the testify assert package.
 
 
