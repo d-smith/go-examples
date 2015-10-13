@@ -1,0 +1,33 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+# Note - if behind a proxy you need to set http_proxy and https_proxy
+# for the pull of the base image to work. Also, this assumes the
+# proxy plugin has been installed via
+# vagrant plugin install vagrant-proxyconf
+
+VAGRANTFILE_API_VERSION = "2"
+
+$script = <<SCRIPT
+wget -qO- https://get.docker.com/ | sh
+sudo usermod -aG docker vagrant
+sudo apt-get install -y nodejs
+sudo apt-get install -y npm
+sudo ln -s /usr/bin/nodejs /usr/bin/node
+sudo npm install -g mountebank --production
+SCRIPT
+
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+  config.vm.provider "virtualbox" do |v|
+    v.memory = 1024
+  end
+
+#  config.proxy.http     = "http://proxy-host:proxy-port"
+#  config.proxy.https    = "http://proxy-host:proxy-port"
+  config.proxy.no_proxy = "localhost,172.20.20.70,/var/run/docker.sock"
+  config.vm.network "private_network", ip: "172.20.20.70"
+  config.vm.box = "ubuntu/trusty64"
+  config.vm.box_check_update=false
+  config.vm.provision "shell", inline: $script
+end
