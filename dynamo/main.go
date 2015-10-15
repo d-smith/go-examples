@@ -78,6 +78,33 @@ func Get(email string, client *dynamodb.DynamoDB) (*Developer, error) {
 	}, nil
 }
 
+func GetByQuery(email, first string, client *dynamodb.DynamoDB) (*Developer, error) {
+	params := &dynamodb.QueryInput{
+		TableName:              aws.String("Developer"),
+		FilterExpression:       aws.String("FirstName=:first"),
+		KeyConditionExpression: aws.String("EMail=:email"),
+		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
+			":email": {S: aws.String(email)},
+			":first": {S: aws.String(first)},
+		},
+	}
+
+	resp, err := client.Query(params)
+	if err != nil {
+		return nil, err
+	}
+
+	if *resp.Count != 1 {
+		return nil, fmt.Errorf("Expected 1 result got %d instead", *resp.Count)
+	}
+
+	return &Developer{
+		EMail:     *resp.Items[0]["EMail"].S,
+		FirstName: *resp.Items[0]["FirstName"].S,
+		LastName:  *resp.Items[0]["LastName"].S,
+	}, nil
+}
+
 func Delete(email string, client *dynamodb.DynamoDB) error {
 	params := &dynamodb.DeleteItemInput{
 		TableName: aws.String("Developer"),
@@ -105,7 +132,7 @@ func Find(email string, client *dynamodb.DynamoDB) (*Developer, error) {
 	}
 
 	if *resp.Count != 1 {
-		return nil, errors.New("More than 1 record returned on primary key query")
+		return nil, errors.New("expected 1 record returned on primary key query")
 	}
 
 	return &Developer{
@@ -170,6 +197,14 @@ func main() {
 	}
 
 	fmt.Println("Find returns ", retdev)
+
+	retdev, err = GetByQuery(devEmail, "updated first", client)
+	if err != nil {
+		fmt.Println("Dang it: ", err.Error())
+		//return
+	} else {
+		fmt.Println("Get by query ", retdev)
+	}
 
 	err = Delete(devEmail, client)
 	if err != nil {
