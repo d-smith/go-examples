@@ -78,14 +78,15 @@ func Get(email string, client *dynamodb.DynamoDB) (*Developer, error) {
 	}, nil
 }
 
-func GetByQuery(email, first string, client *dynamodb.DynamoDB) (*Developer, error) {
+func GetByQuery(email, first, last string, client *dynamodb.DynamoDB) (*Developer, error) {
 	params := &dynamodb.QueryInput{
 		TableName:              aws.String("Developer"),
-		FilterExpression:       aws.String("FirstName=:first"),
+		FilterExpression:       aws.String("FirstName=:first and LastName=:last"),
 		KeyConditionExpression: aws.String("EMail=:email"),
 		ExpressionAttributeValues: map[string]*dynamodb.AttributeValue{
 			":email": {S: aws.String(email)},
 			":first": {S: aws.String(first)},
+			":last":  {S: aws.String(last)},
 		},
 	}
 
@@ -198,7 +199,7 @@ func main() {
 
 	fmt.Println("Find returns ", retdev)
 
-	retdev, err = GetByQuery(devEmail, "updated first", client)
+	retdev, err = GetByQuery(devEmail, "updated first", "updated last", client)
 	if err != nil {
 		fmt.Println("Dang it: ", err.Error())
 		//return
