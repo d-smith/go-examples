@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/d-smith/go-metrics"
-	"github.com/d-smith/go-metrics/datadog"
+	"github.com/armon/go-metrics"
+//	"github.com/armon/go-metrics/datadog"
 	"log"
 	"net/http"
 	"time"
@@ -12,7 +12,7 @@ type apiHandler struct{}
 
 func main() {
 	http.HandleFunc("/foo", func(w http.ResponseWriter, r *http.Request) {
-		defer metrics.MeasureSince([]string{"Foo handler"}, time.Now())
+		defer metrics.MeasureSince([]string{"FooService"}, time.Now())
 		log.Println("request to foo")
 		w.Write([]byte("uh-huh\n"))
 	})
@@ -22,11 +22,14 @@ func main() {
 		metrics.DefaultInmemSignal(inm)
 		metrics.NewGlobal(metrics.DefaultConfig("service-name"), inm)
 	*/
+	/*
 	sink, err := datadog.NewDogStatsdSink("localhost:8125", "devmac.xtrac")
+	*/
+	sink, err := metrics.NewStatsdSink("localhost:8125")
 	if err != nil {
 		log.Fatal(err)
 	}
-	metrics.NewGlobal(metrics.DefaultConfig("service-name"), sink)
+	metrics.NewGlobal(metrics.DefaultConfig("xavi"), sink)
 
 	http.ListenAndServe(":8080", nil)
 }
