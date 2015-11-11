@@ -1,8 +1,9 @@
 package main
 
 import (
-	jwt "github.com/dgrijalva/jwt-go"
 	"log"
+
+	jwt "github.com/dgrijalva/jwt-go"
 )
 
 const certPEM = `
@@ -63,7 +64,8 @@ func main() {
 
 	token := jwt.New(jwt.GetSigningMethod("RS256"))
 	token.Claims["iss"] = "1111-2222-3333333-4444444"
-	token.Claims["sub"] = "drscan"
+	token.Claims["sub"] = "foo"
+	token.Claims["scope"] = "a b c admin"
 
 	tokenString, err := token.SignedString(signKey)
 	if err != nil {
