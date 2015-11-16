@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/armon/go-metrics"
-//	"github.com/armon/go-metrics/datadog"
+	"github.com/armon/go-metrics/datadog"
 	"log"
 	"net/http"
 	"time"
@@ -22,10 +22,10 @@ func main() {
 		metrics.DefaultInmemSignal(inm)
 		metrics.NewGlobal(metrics.DefaultConfig("service-name"), inm)
 	*/
-	/*
+
 	sink, err := datadog.NewDogStatsdSink("localhost:8125", "devmac.xtrac")
-	*/
-	sink, err := metrics.NewStatsdSink("localhost:8125")
+
+	//	sink, err := metrics.NewStatsdSink("localhost:8125")
 	if err != nil {
 		log.Fatal(err)
 	}
