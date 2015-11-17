@@ -1,28 +1,27 @@
 package main
 
-
 import (
-	"testing"
-	"net/http/httptest"
-	"github.com/d-smith/go-examples/custom-handler/rc"
+	"github.com/d-smith/go-examples/custom-handler/customctx"
+	"github.com/d-smith/go-examples/custom-handler/customctx/reqid"
 	"golang.org/x/net/context"
-	"net/http"
-	"log"
 	"io/ioutil"
+	"log"
+	"net/http"
+	"net/http/httptest"
 	"strings"
+	"testing"
 )
 
 func TestWithXRequestID(t *testing.T) {
-	h := &rc.ContextAdapter{
-		Ctx: context.Background(),
-		Handler: rc.Middleware(rc.ContextHandlerFunc(handler)),
+	h := &customctx.ContextAdapter{
+		Ctx:     context.Background(),
+		Handler: reqid.Middleware(customctx.ContextHandlerFunc(handler)),
 	}
-
 
 	ts := httptest.NewServer(h)
 	defer ts.Close()
 
-	req, err := http.NewRequest("GET", ts.URL,nil)
+	req, err := http.NewRequest("GET", ts.URL, nil)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

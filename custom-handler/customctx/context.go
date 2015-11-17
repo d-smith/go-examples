@@ -1,11 +1,9 @@
-package rc
+package customctx
+
 import (
 	"golang.org/x/net/context"
 	"net/http"
 )
-
-type key int
-
 
 type ContextHandler interface {
 	ServeHTTPContext(context.Context, http.ResponseWriter, *http.Request)
@@ -17,7 +15,7 @@ func (h ContextHandlerFunc) ServeHTTPContext(ctx context.Context, rw http.Respon
 	h(ctx, rw, req)
 }
 
-type ContextAdapter struct{
+type ContextAdapter struct {
 	Ctx     context.Context
 	Handler ContextHandler
 }
