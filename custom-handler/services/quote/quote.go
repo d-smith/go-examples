@@ -1,17 +1,17 @@
 package quote
+
 import (
-"fmt"
-"strings"
-"encoding/xml"
-	cc "github.com/d-smith/go-examples/custom-handler/customctx"
-	"golang.org/x/net/context"
-	"net/http"
-	"io/ioutil"
 	"bytes"
-	"net/http/httptest"
-	"io"
+	"encoding/xml"
+	"fmt"
+	cc "github.com/d-smith/go-examples/custom-handler/customctx"
 	"github.com/d-smith/go-examples/custom-handler/customctx/timing"
-	"time"
+	"golang.org/x/net/context"
+	"io"
+	"io/ioutil"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 )
 
 func extractResource(uri string) (string, error) {
@@ -64,44 +64,29 @@ var transport = &http.Transport{DisableKeepAlives: false, DisableCompression: fa
 func QuoteHandler(ctx context.Context, rw http.ResponseWriter, req *http.Request) {
 
 	const timerName = "backend service call"
-	timer := timing.Timer{
-		Name: timerName,
-		StartTime: time.Now(),
-	}
+	timing.StartTimer(ctx, timerName)
 
 	req.URL.Scheme = "http"
 	req.URL.Host = "localhost:4545"
 	req.Host = "localhost:4545"
-	resp,err := transport.RoundTrip(req)
+	resp, err := transport.RoundTrip(req)
 	if err != nil {
 		println(err.Error())
 		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		timer.EndTime = time.Now()
-		timer.Error = err.Error()
-		timers := timing.TimingsFromContext(ctx)
-		timers.Timers[timerName] = timer
+		timing.EndTimer(ctx, timerName, err)
 		return
 	}
 	io.Copy(rw, resp.Body)
 	resp.Body.Close()
 
-	timer.EndTime = time.Now()
-	timers := timing.TimingsFromContext(ctx)
-	timers.Timers[timerName] = timer
+	timing.EndTimer(ctx, timerName, nil)
 }
-
-
 
 func QuoteMiddleware(ctxHandler cc.ContextHandler) cc.ContextHandler {
 	return cc.ContextHandlerFunc(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
-
-
 		const timerName = "message and protocol transformation"
-		timer := timing.Timer{
-			Name: timerName,
-			StartTime: time.Now(),
-		}
+		timing.StartTimer(ctx, timerName)
 
 		//Grab the symbol to quote from the uri
 		resourceId, err := extractResource(r.RequestURI)
@@ -130,28 +115,20 @@ func QuoteMiddleware(ctxHandler cc.ContextHandler) cc.ContextHandler {
 		r.Body = ioutil.NopCloser(bytes.NewReader(payloadBytes))
 		rec := httptest.NewRecorder()
 
-		ctxHandler.ServeHTTPContext(ctx,rec, r)
+		ctxHandler.ServeHTTPContext(ctx, rec, r)
 
 		//Parse the recorded response to allow the quote price to be extracted
 		var response ResponseEnvelope
 		err = xml.Unmarshal(rec.Body.Bytes(), &response)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
-			timer.EndTime = time.Now()
-			timer.Error = err.Error()
-			timers := timing.TimingsFromContext(ctx)
-			timers.Timers[timerName] = timer
+			timing.EndTimer(ctx, timerName, err)
 			return
 		}
 
 		//Return just the price to the caller
 		w.Write([]byte(response.Body.GetLastTradePriceResponse.Price + "\n"))
-
-		timer.EndTime = time.Now()
-		timers := timing.TimingsFromContext(ctx)
-		timers.Timers[timerName] = timer
+		timing.EndTimer(ctx, timerName, nil)
 
 	})
 }
-
-

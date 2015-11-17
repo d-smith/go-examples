@@ -8,8 +8,8 @@ import (
 	"fmt"
 	"github.com/d-smith/go-examples/custom-handler/customctx"
 	"github.com/d-smith/go-examples/custom-handler/customctx/reqid"
-	"github.com/d-smith/go-examples/custom-handler/services/quote"
 	"github.com/d-smith/go-examples/custom-handler/customctx/timing"
+	"github.com/d-smith/go-examples/custom-handler/services/quote"
 	"golang.org/x/net/context"
 	"net/http"
 )
