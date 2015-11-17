@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"github.com/d-smith/go-examples/custom-handler/customctx"
 	"github.com/d-smith/go-examples/custom-handler/customctx/reqid"
+	"github.com/d-smith/go-examples/custom-handler/services/quote"
 	"github.com/d-smith/go-examples/custom-handler/customctx/timing"
 	"golang.org/x/net/context"
 	"net/http"
@@ -19,7 +20,7 @@ func handler(ctx context.Context, rw http.ResponseWriter, req *http.Request) {
 }
 
 func main() {
-	wrapped := reqid.RequestIdMiddleware(customctx.ContextHandlerFunc(handler))
+	wrapped := quote.QuoteMiddleware(customctx.ContextHandlerFunc(quote.QuoteHandler))
 	wrapped = timing.TimerMiddleware(wrapped)
 
 	h := &customctx.ContextAdapter{
