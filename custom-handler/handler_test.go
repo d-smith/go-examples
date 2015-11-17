@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/d-smith/go-examples/custom-handler/customctx"
 	"github.com/d-smith/go-examples/custom-handler/customctx/reqid"
+	"github.com/d-smith/go-examples/custom-handler/customctx/timing"
 	"golang.org/x/net/context"
 	"io/ioutil"
 	"log"
@@ -15,7 +16,7 @@ import (
 func TestWithXRequestID(t *testing.T) {
 	h := &customctx.ContextAdapter{
 		Ctx:     context.Background(),
-		Handler: reqid.Middleware(customctx.ContextHandlerFunc(handler)),
+		Handler: timing.TimerMiddleware(reqid.RequestIdMiddleware(customctx.ContextHandlerFunc(handler))),
 	}
 
 	ts := httptest.NewServer(h)
@@ -29,9 +30,13 @@ func TestWithXRequestID(t *testing.T) {
 	req.Header.Set("X-Request-ID", "request-id")
 
 	client := http.Client{}
-	resp, err := client.Do(req)
-	if err != nil {
-		log.Fatal(err.Error())
+	var resp *http.Response
+
+	for i := 0; i < 1; i++ {
+		resp, err = client.Do(req)
+		if err != nil {
+			log.Fatal(err.Error())
+		}
 	}
 
 	body, err := ioutil.ReadAll(resp.Body)
