@@ -61,25 +61,27 @@ func getQuoteRequestForSymbol(symbol string) QuoteEnvelope {
 
 var transport = &http.Transport{DisableKeepAlives: false, DisableCompression: false}
 
-func QuoteHandler(ctx context.Context, rw http.ResponseWriter, req *http.Request) {
+func NewQuoteHandler(hostAndPort string) func(ctx context.Context, rw http.ResponseWriter, req *http.Request) {
+	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) {
 
-	const timerName = "backend service call"
-	timing.StartTimer(ctx, timerName)
+		const timerName = "backend service call"
+		timing.StartTimer(ctx, timerName)
 
-	req.URL.Scheme = "http"
-	req.URL.Host = "localhost:4545"
-	req.Host = "localhost:4545"
-	resp, err := transport.RoundTrip(req)
-	if err != nil {
-		println(err.Error())
-		http.Error(rw, err.Error(), http.StatusInternalServerError)
-		timing.EndTimer(ctx, timerName, err)
-		return
+		req.URL.Scheme = "http"
+		req.URL.Host = hostAndPort
+		req.Host = hostAndPort
+		resp, err := transport.RoundTrip(req)
+		if err != nil {
+			println(err.Error())
+			http.Error(rw, err.Error(), http.StatusInternalServerError)
+			timing.EndTimer(ctx, timerName, err)
+			return
+		}
+		io.Copy(rw, resp.Body)
+		resp.Body.Close()
+
+		timing.EndTimer(ctx, timerName, nil)
 	}
-	io.Copy(rw, resp.Body)
-	resp.Body.Close()
-
-	timing.EndTimer(ctx, timerName, nil)
 }
 
 func QuoteMiddleware(ctxHandler cc.ContextHandler) cc.ContextHandler {

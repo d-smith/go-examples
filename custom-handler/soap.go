@@ -4,7 +4,7 @@ import (
 	"encoding/xml"
 )
 
-type QuoteEnvelope struct {
+type quoteEnvelope struct {
 	XMLName xml.Name `xml:"Envelope"`
 	Body    Body
 }
@@ -31,8 +31,8 @@ type LastTradePriceResponse struct {
 	Price string
 }
 
-func getQuoteRequestForSymbol(symbol string) QuoteEnvelope {
-	return QuoteEnvelope{
+func getQuoteRequestForSymbol(symbol string) quoteEnvelope {
+	return quoteEnvelope{
 		Body: Body{
 			GetLastTradePrice: LastTradePrice{Symbol: symbol},
 		},

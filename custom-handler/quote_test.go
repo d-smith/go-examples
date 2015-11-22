@@ -12,15 +12,16 @@ import (
 	"net/http/httptest"
 	"strings"
 	"testing"
+	"net/url"
 )
 
-func TestQuote(t *testing.T) {
+	func TestQuote(t *testing.T) {
 	soapServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, `<SOAP-ENV:Envelope
-  xmlns:SOAP-ENV=\"http://schemas.xmlsoap.org/soap/envelope/\"
-  SOAP-ENV:encodingStyle=\"http://schemas.xmlsoap.org/soap/encoding/\">
+  xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
+  SOAP-ENV:encodingStyle="http://schemas.xmlsoap.org/soap/encoding/">
    <SOAP-ENV:Body>
-       <m:GetLastTradePriceResponse xmlns:m=\"Some-URI\">
+       <m:GetLastTradePriceResponse xmlns:m="Some-URI">
            <Price>34.5</Price>
        </m:GetLastTradePriceResponse>
    </SOAP-ENV:Body>
@@ -29,7 +30,9 @@ func TestQuote(t *testing.T) {
 
 	defer soapServer.Close()
 
-	wrapped := quote.QuoteMiddleware(customctx.ContextHandlerFunc(quote.QuoteHandler))
+		soapURL,_ := url.Parse(soapServer.URL)
+
+	wrapped := quote.QuoteMiddleware(customctx.ContextHandlerFunc(quote.NewQuoteHandler(soapURL.Host)))
 	wrapped = timing.TimerMiddleware(wrapped)
 
 	h := &customctx.ContextAdapter{
@@ -39,6 +42,8 @@ func TestQuote(t *testing.T) {
 
 	ts := httptest.NewServer(h)
 	defer ts.Close()
+
+
 
 	req, err := http.NewRequest("GET", ts.URL+"/quote/MSFT", nil)
 	if err != nil {
