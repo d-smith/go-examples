@@ -6,35 +6,35 @@ import (
 
 type quoteEnvelope struct {
 	XMLName xml.Name `xml:"Envelope"`
-	Body    Body
+	Body    body
 }
 
-type Body struct {
-	GetLastTradePrice LastTradePrice
+type body struct {
+	GetLastTradePrice lastTradePrice
 }
 
-type LastTradePrice struct {
+type lastTradePrice struct {
 	Symbol string
 }
 
-type ResponseEnvelope struct {
+type responseEnvelope struct {
 	XMLName xml.Name `xml:"Envelope"`
-	Body    ResponseBody
+	Body    responseBody
 }
 
-type ResponseBody struct {
+type responseBody struct {
 	XMLName                   xml.Name `xml:"Body"`
-	GetLastTradePriceResponse LastTradePriceResponse
+	GetLastTradePriceResponse lastTradePriceResponse
 }
 
-type LastTradePriceResponse struct {
+type lastTradePriceResponse struct {
 	Price string
 }
 
 func getQuoteRequestForSymbol(symbol string) quoteEnvelope {
 	return quoteEnvelope{
-		Body: Body{
-			GetLastTradePrice: LastTradePrice{Symbol: symbol},
+		Body: body{
+			GetLastTradePrice: lastTradePrice{Symbol: symbol},
 		},
 	}
 }

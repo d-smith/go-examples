@@ -24,43 +24,44 @@ func extractResource(uri string) (string, error) {
 
 }
 
-type QuoteEnvelope struct {
+type quoteEnvelope struct {
 	XMLName xml.Name `xml:"Envelope"`
-	Body    Body
+	Body    body
 }
 
-type Body struct {
-	GetLastTradePrice LastTradePrice
+type body struct {
+	GetLastTradePrice lastTradePrice
 }
 
-type LastTradePrice struct {
+type lastTradePrice struct {
 	Symbol string
 }
 
-type ResponseEnvelope struct {
+type responseEnvelope struct {
 	XMLName xml.Name `xml:"Envelope"`
-	Body    ResponseBody
+	Body    responseBody
 }
 
-type ResponseBody struct {
+type responseBody struct {
 	XMLName                   xml.Name `xml:"Body"`
-	GetLastTradePriceResponse LastTradePriceResponse
+	GetLastTradePriceResponse lastTradePriceResponse
 }
 
-type LastTradePriceResponse struct {
+type lastTradePriceResponse struct {
 	Price string
 }
 
-func getQuoteRequestForSymbol(symbol string) QuoteEnvelope {
-	return QuoteEnvelope{
-		Body: Body{
-			GetLastTradePrice: LastTradePrice{Symbol: symbol},
+func getQuoteRequestForSymbol(symbol string) quoteEnvelope {
+	return quoteEnvelope{
+		Body: body{
+			GetLastTradePrice: lastTradePrice{Symbol: symbol},
 		},
 	}
 }
 
 var transport = &http.Transport{DisableKeepAlives: false, DisableCompression: false}
 
+//NewQuoteHandler creates a quote handler with the given SOAP service endpoint
 func NewQuoteHandler(hostAndPort string) func(ctx context.Context, rw http.ResponseWriter, req *http.Request) {
 	return func(ctx context.Context, rw http.ResponseWriter, req *http.Request) {
 
@@ -84,21 +85,23 @@ func NewQuoteHandler(hostAndPort string) func(ctx context.Context, rw http.Respo
 	}
 }
 
-func QuoteMiddleware(ctxHandler cc.ContextHandler) cc.ContextHandler {
+//Middleware returns a context aware wrapper that converts a GET on a stock symbol
+//to a SOAP request to the quote service
+func Middleware(ctxHandler cc.ContextHandler) cc.ContextHandler {
 	return cc.ContextHandlerFunc(func(ctx context.Context, w http.ResponseWriter, r *http.Request) {
 
 		const timerName = "message and protocol transformation"
 		timing.StartTimer(ctx, timerName)
 
 		//Grab the symbol to quote from the uri
-		resourceId, err := extractResource(r.RequestURI)
+		resourceID, err := extractResource(r.RequestURI)
 		if err != nil {
 			w.WriteHeader(http.StatusNotFound)
 			w.Write([]byte(err.Error()))
 			return
 		}
 
-		println("quote for", resourceId)
+		println("quote for", resourceID)
 
 		//Convert the method to POST for SOAP, and set the soap service
 		//endpoint for the destination server
@@ -106,7 +109,7 @@ func QuoteMiddleware(ctxHandler cc.ContextHandler) cc.ContextHandler {
 		r.URL.Path = "/services/quote/getquote"
 
 		//Form the SOAP payload
-		payload := getQuoteRequestForSymbol(resourceId)
+		payload := getQuoteRequestForSymbol(resourceID)
 		payloadBytes, err := xml.Marshal(&payload)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)
@@ -120,7 +123,7 @@ func QuoteMiddleware(ctxHandler cc.ContextHandler) cc.ContextHandler {
 		ctxHandler.ServeHTTPContext(ctx, rec, r)
 
 		//Parse the recorded response to allow the quote price to be extracted
-		var response ResponseEnvelope
+		var response responseEnvelope
 		err = xml.Unmarshal(rec.Body.Bytes(), &response)
 		if err != nil {
 			http.Error(w, err.Error(), http.StatusInternalServerError)

@@ -32,7 +32,7 @@ import (
 
 		soapURL,_ := url.Parse(soapServer.URL)
 
-	wrapped := quote.QuoteMiddleware(customctx.ContextHandlerFunc(quote.NewQuoteHandler(soapURL.Host)))
+	wrapped := quote.Middleware(customctx.ContextHandlerFunc(quote.NewQuoteHandler(soapURL.Host)))
 	wrapped = timing.TimerMiddleware(wrapped)
 
 	h := &customctx.ContextAdapter{
