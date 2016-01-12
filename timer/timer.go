@@ -3,23 +3,26 @@ package timer
 import (
 	"encoding/json"
 	"time"
+	"sync"
 )
 
-type BackendCall struct {
+type ServiceCall struct {
 	Name  string
 	Time  time.Duration
 	start time.Time
 }
 
 type Contributor struct {
+	sync.Mutex
 	Name         string
 	Time         time.Duration
 	Error        error
 	start        time.Time
-	BackendCalls []*BackendCall
+	ServiceCalls []*ServiceCall
 }
 
 type APITime struct {
+	sync.Mutex
 	Name         string
 	Time         time.Duration
 	Contributors []*Contributor
@@ -47,7 +50,9 @@ func (t *APITime) StartContributor(name string) *Contributor {
 		start: time.Now(),
 	}
 
+	t.Lock()
 	t.Contributors = append(t.Contributors, contributor)
+	t.Unlock()
 
 	return contributor
 }
@@ -75,17 +80,19 @@ func (c *Contributor) End(err error) {
 	c.Error = err
 }
 
-func (c *Contributor) StartBackendCall(name string) *BackendCall {
-	bec := &BackendCall{
+func (c *Contributor) StartServiceCall(name string) *ServiceCall {
+	svcCall := &ServiceCall{
 		start: time.Now(),
 		Name:  name,
 	}
 
-	c.BackendCalls = append(c.BackendCalls, bec)
+	c.Lock()
+	c.ServiceCalls = append(c.ServiceCalls, svcCall)
+	c.Unlock()
 
-	return bec
+	return svcCall
 }
 
-func (b *BackendCall) End() {
-	b.Time = time.Now().Sub(b.start)
+func (sc *ServiceCall) End() {
+	sc.Time = time.Now().Sub(sc.start)
 }

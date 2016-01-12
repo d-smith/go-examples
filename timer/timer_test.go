@@ -3,6 +3,7 @@ package timer
 import (
 	"errors"
 	"testing"
+	"sync"
 )
 
 func TestPostitiveDuration(t *testing.T) {
@@ -62,10 +63,25 @@ func TestMultiBackendRecordings(t *testing.T) {
 	c1 := at.StartContributor("c1")
 	c2 := at.StartContributor("c2")
 	c3 := at.StartContributor("c3")
-	be1 := c3.StartBackendCall("workflo")
-	be2 := c3.StartBackendCall("doc munger")
-	be1.End()
-	be2.End()
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		be1 := c3.StartServiceCall("workflo")
+		be1.End()
+	}()
+
+	go func() {
+		defer wg.Done()
+		be2 := c3.StartServiceCall("doc munger")
+		be2.End()
+	}()
+
+	wg.Wait()
+
+
 	c3.End(nil)
 
 	c2.End(nil)
@@ -84,7 +100,7 @@ func TestMultiBackendRecordings(t *testing.T) {
 		t.Fail()
 	}
 
-	if len(c3.BackendCalls) != 22 {
+	if len(c3.ServiceCalls) != 2 {
 		t.Fail()
 	}
 
