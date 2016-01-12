@@ -1,10 +1,14 @@
 package timer
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type BackendCall struct {
-	Name string
-	Time time.Duration
+	Name  string
+	Time  time.Duration
+	start time.Time
 }
 
 type Contributor struct {
@@ -12,7 +16,7 @@ type Contributor struct {
 	Time         time.Duration
 	Error        error
 	start        time.Time
-	BackendCalls []BackendCall
+	BackendCalls []*BackendCall
 }
 
 type APITime struct {
@@ -58,7 +62,30 @@ func (t *APITime) ContributorErrors() []error {
 	return errs
 }
 
+func (t *APITime) ToJSONString() string {
+	s, err := json.Marshal(t)
+	if err != nil {
+		s = []byte("{}")
+	}
+	return string(s)
+}
+
 func (c *Contributor) End(err error) {
 	c.Time = time.Now().Sub(c.start)
 	c.Error = err
+}
+
+func (c *Contributor) StartBackendCall(name string) *BackendCall {
+	bec := &BackendCall{
+		start: time.Now(),
+		Name:  name,
+	}
+
+	c.BackendCalls = append(c.BackendCalls, bec)
+
+	return bec
+}
+
+func (b *BackendCall) End() {
+	b.Time = time.Now().Sub(b.start)
 }
