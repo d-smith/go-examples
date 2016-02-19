@@ -63,9 +63,10 @@ func main() {
 	}
 
 	token := jwt.New(jwt.GetSigningMethod("RS256"))
+	token.Claims["aud"] = "captive"
 	token.Claims["iss"] = "1111-2222-3333333-4444444"
 	token.Claims["sub"] = "foo"
-	token.Claims["scope"] = "a b c admin"
+	token.Claims["scope"] = "a b c notadmin"
 
 	tokenString, err := token.SignedString(signKey)
 	if err != nil {
