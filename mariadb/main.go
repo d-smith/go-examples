@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	_ "github.com/go-sql-driver/mysql"
 	"log"
+	"github.com/go-sql-driver/mysql"
 )
 
 func deleteData(db *sql.DB) {
@@ -25,6 +26,20 @@ func insertData(db *sql.DB) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func duplicateInsert(db *sql.DB) {
+	stmt, err := db.Prepare("insert into sample(name,value) values(?,?)")
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer stmt.Close()
+
+	_, err = stmt.Exec("Thing1","Thing2")
+
+	log.Println("Error:", err)
+	sqlErr := err.(*mysql.MySQLError)
+	log.Println("Error code:", sqlErr.Number)
 }
 
 func selectData(db *sql.DB) {
@@ -73,7 +88,7 @@ func updateData(db *sql.DB) {
 func main() {
 	//Create database object
 	db, err := sql.Open("mysql",
-		"rolluser:rollpw@tcp(127.0.0.1:3306)/roll")
+		"sampleusr:samplepw@tcp(127.0.0.1:3306)/sample")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -88,6 +103,7 @@ func main() {
 	deleteData(db)
 
 	insertData(db)
+	duplicateInsert(db)
 
 	selectData(db)
 

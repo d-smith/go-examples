@@ -5,16 +5,16 @@ This code assumes the following setup.
 <pre>
 show databases;
 
-create database roll;
+create database sample;
 
-create user rolluser identified by 'rollpw';
+create user sampleusr identified by 'samplepw';
 
-create table if not exists roll.sample (
+create table if not exists sample.sample (
 	name varchar(128) primary key,
     value varchar(256)
 );
 
 grant select, update, insert, delete
-on roll.sample
-to rolluser;
+on sample.sample
+to sampleusr;
 </pre>
