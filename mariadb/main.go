@@ -2,9 +2,10 @@ package main
 
 import (
 	"database/sql"
-	_ "github.com/go-sql-driver/mysql"
 	"log"
+
 	"github.com/go-sql-driver/mysql"
+	_ "github.com/go-sql-driver/mysql"
 )
 
 func deleteData(db *sql.DB) {
@@ -22,7 +23,7 @@ func insertData(db *sql.DB) {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec("Thing1","Thing2")
+	_, err = stmt.Exec("Thing1", "Thing2")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -35,7 +36,7 @@ func duplicateInsert(db *sql.DB) {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec("Thing1","Thing2")
+	_, err = stmt.Exec("Thing1", "Thing2")
 
 	log.Println("Error:", err)
 	sqlErr := err.(*mysql.MySQLError)
@@ -63,8 +64,21 @@ func selectData(db *sql.DB) {
 	}
 }
 
+func selectNonexistentData(db *sql.DB) {
+	var value string
+	err := db.QueryRow("select value from sample where name = ?", "pointy birds").Scan(&value)
+
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	log.Println("Value is", value)
+
+}
+
 func updateData(db *sql.DB) {
-	tx,err := db.Begin()
+	tx, err := db.Begin()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -76,7 +90,7 @@ func updateData(db *sql.DB) {
 	}
 	defer stmt.Close()
 
-	_, err = stmt.Exec("A new value, certainly not Thing2","Thing1")
+	_, err = stmt.Exec("A new value, certainly not Thing2", "Thing1")
 	if err != nil {
 		tx.Rollback()
 		log.Fatal(err)
@@ -104,6 +118,7 @@ func main() {
 
 	insertData(db)
 	duplicateInsert(db)
+	selectNonexistentData(db)
 
 	selectData(db)
 
