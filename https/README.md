@@ -9,14 +9,14 @@ go build generate_cert.go
 To run from your working directory:
 
 <pre>
-$GOROOT/src/crypto/tls/generate_cert --host `hostname`
+$GOROOT/src/crypto/tls/generate_cert -ca -host `hostname`
 </pre>
 
 
 Once the cert and key are in place, you can hit it via curl
 
 <pre>
-curl -k https://localhost:10443
+curl -k https://`hostname`:10443
 </pre>
 
 

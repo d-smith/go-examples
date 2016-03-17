@@ -6,6 +6,7 @@ import (
 )
 
 func handler(w http.ResponseWriter, req *http.Request) {
+	log.Println("Handler invoked")
 	w.Header().Set("Content-Type", "text/plain")
 	w.Write([]byte("Hello world\n"))
 }
