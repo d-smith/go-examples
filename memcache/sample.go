@@ -39,9 +39,14 @@ func makeAndCacheStuff(mc *memcache.Client, stuffId string) {
 }
 
 func main() {
+	//Grab address from the command line
+	if len(os.Args) != 2 {
+		log.Fatal("Usage: ", os.Args[0], " <memcached address>")
+		os.Exit(1)
+	}
 
 	//Create a client.
-	mc := memcache.New("localhost:12000")
+	mc := memcache.New(os.Args[1])
 
 	it, err := mc.Get("stuff1")
 	if err != nil {
