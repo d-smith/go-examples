@@ -33,7 +33,8 @@ function checkArgs(options,usage) {
 
 function makeTokenWithClaims(options) {
     claimsObj = getClaimsFromArgs(options.claims)
-    var token = jwt.sign(claimsObj, options.secret);
+    var decodedSecret = new Buffer(options.secret, 'base64')
+    var token = jwt.sign(claimsObj, decodedSecret);
     return token;
 }
 
