@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd">
+    <bean id="ignite.cfg" class="org.apache.ignite.configuration.IgniteConfiguration">
+        <property name="cacheConfiguration">
+            <list>
+                <!-- Partitioned cache example configuration (Atomic mode). -->
+                <bean class="org.apache.ignite.configuration.CacheConfiguration">
+                    <property name="name" value="xtSessionCache"/>
+                    <property name="cacheMode" value="PARTITIONED"/>
+                    <property name="backups" value="1"/>
+                    <property name="writeSynchronizationMode" value="FULL_SYNC"/>
+
+                    <property name="evictionPolicy">
+                      <!-- LRU eviction policy. -->
+                      <bean class="org.apache.ignite.cache.eviction.lru.LruEvictionPolicy">
+                        <property name="maxSize" value="15000"/>
+                      </bean>
+                    </property>
+                </bean>
+            </list>
+        </property>
+
+        <!-- Explicitly configure TCP discovery SPI to provide list of initial nodes. -->
+        <property name="discoverySpi">
+            <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
+                <property name="ipFinder">
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.s3.TcpDiscoveryS3IpFinder">
+                        <property name="awsCredentials" ref="aws.creds"/>
+                        <property name="bucketName" value="YOUR_BUCKET_NAME"/>
+                    </bean>
+                </property>
+            </bean>
+        </property>
+
+        <bean id="aws.creds" class="com.amazonaws.auth.BasicAWSCredentials">
+            <constructor-arg value="YOUR_ACCESS_KEY_ID" />
+            <constructor-arg value="YOUR_SECRET_ACCESS_KEY" />
+        </bean>
+    </bean>
+</beans>
