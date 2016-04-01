@@ -16,6 +16,7 @@ import (
 	"strconv"
 	"time"
 	"errors"
+	"sync"
 )
 
 var (
@@ -45,12 +46,26 @@ func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 	fmt.Println(*servers)
 
-	writeAndRead(1,500,*verbose,*servers)
+	var wg sync.WaitGroup
+
+	for i := 0; i < *concurrent; i++ {
+		wg.Add(1)
+		go func() {
+			for j := 0; j < *writes; j++ {
+				writeAndRead(*reads, *waitTimeMillis, *verbose, *servers)
+			}
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
 
 }
 
 func pickRandomServer(servers []string) string {
-	return servers[rand.Intn(len(servers))]
+	rn := rand.Intn(math.MaxInt64)
+	idx := rn % len(servers)
+	return servers[idx]
 }
 
 func generateID() (string, error) {
