@@ -35,10 +35,9 @@
                 </property>
             </bean>
         </property>
-
-        <bean id="aws.creds" class="com.amazonaws.auth.BasicAWSCredentials">
-            <constructor-arg value="YOUR_ACCESS_KEY_ID" />
-            <constructor-arg value="YOUR_SECRET_ACCESS_KEY" />
-        </bean>
+    </bean>
+    <bean id="aws.creds" class="com.amazonaws.auth.BasicAWSCredentials">
+        <constructor-arg value="YOUR_ACCESS_KEY_ID" />
+        <constructor-arg value="YOUR_SECRET_ACCESS_KEY" />
     </bean>
 </beans>
