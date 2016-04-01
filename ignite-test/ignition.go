@@ -8,7 +8,6 @@ import (
 	"math/rand"
 	"github.com/nu7hatch/gouuid"
 	"log"
-	"math"
 	"net/url"
 	"net/http"
 	"io/ioutil"
@@ -17,8 +16,13 @@ import (
 	"time"
 	"errors"
 	"sync"
+	"sync/atomic"
 )
 
+const MaxUint = ^uint(0)
+const MaxInt = int(MaxUint >> 1)
+
+//command line options
 var (
 	app = kingpin.New("ignition", "Test program for an ignite cluster")
 	verbose = app.Flag("verbose", "Enable verbose output").Bool()
@@ -30,6 +34,13 @@ var (
 
 )
 
+//counters
+var (
+	writeCount uint64 = 0
+	readCount uint64 = 0
+	errorCount uint64 = 0
+)
+
 type IgniteResponse struct {
 	AffinityNodeId string `json:"affinityNodeId"`
 	Error string `json:"error"`
@@ -39,6 +50,7 @@ type IgniteResponse struct {
 }
 
 func handleErr(err error) {
+	atomic.AddUint64(&errorCount, 1)
 	log.Println(err.Error())
 }
 
@@ -47,6 +59,8 @@ func main() {
 	fmt.Println(*servers)
 
 	var wg sync.WaitGroup
+
+	start := time.Now()
 
 	for i := 0; i < *concurrent; i++ {
 		wg.Add(1)
@@ -60,10 +74,15 @@ func main() {
 
 	wg.Wait()
 
+	duration := time.Now().Sub(start)
+
+	log.Printf("%d writes, %d reads, %d errors in %v",
+		writeCount, readCount, errorCount, duration)
+
 }
 
 func pickRandomServer(servers []string) string {
-	rn := rand.Intn(math.MaxInt64)
+	rn := rand.Intn(MaxInt)
 	idx := rn % len(servers)
 	return servers[idx]
 }
@@ -84,7 +103,7 @@ func writeAndRead(numReads, waitTimeMillis int, verbose bool, servers []string) 
 		log.Fatal(err)
 	}
 
-	val := rand.Intn(math.MaxInt64)
+	val := rand.Intn(MaxInt)
 	endpoint := pickRandomServer(servers)
 	if verbose {
 		log.Printf("write %s->%d to %s\n",key,val,endpoint)
@@ -122,7 +141,7 @@ func writeAndRead(numReads, waitTimeMillis int, verbose bool, servers []string) 
 }
 
 func putItem(endpoint, key string, val int) error {
-	queryString :=fmt.Sprintf("http://%s/ignite?cmd=put&key=%s&val=%d", endpoint, url.QueryEscape(key), val)
+	queryString :=fmt.Sprintf("http://%s/ignite?cmd=put&key=%s&val=%d&cacheName=xtSessionCache", endpoint, url.QueryEscape(key), val)
 	resp, err := http.Get(queryString)
 	if err != nil {
 		return err
@@ -134,11 +153,12 @@ func putItem(endpoint, key string, val int) error {
 		return err
 	}
 
+	atomic.AddUint64(&writeCount, 1)
 	return nil
 }
 
 func getItem(endpoint,key string)(int,error) {
-	queryString :=fmt.Sprintf("http://%s/ignite?cmd=get&key=%s", endpoint, url.QueryEscape(key))
+	queryString :=fmt.Sprintf("http://%s/ignite?cmd=get&key=%s&cacheName=xtSessionCache", endpoint, url.QueryEscape(key))
 	resp, err := http.Get(queryString)
 	if err != nil {
 		return -1,err
@@ -166,5 +186,6 @@ func getItem(endpoint,key string)(int,error) {
 		return -1,err
 	}
 
+	atomic.AddUint64(&readCount, 1)
 	return intVal,nil
 }
