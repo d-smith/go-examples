@@ -28,16 +28,16 @@
         <property name="discoverySpi">
             <bean class="org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi">
                 <property name="ipFinder">
-                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.s3.TcpDiscoveryS3IpFinder">
-                        <property name="awsCredentials" ref="aws.creds"/>
-                        <property name="bucketName" value="YOUR_BUCKET_NAME"/>
+                    <bean class="org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder">
+                        <property name="addresses">
+                            <list>
+                                <value>1.2.3.4</value>
+                            </list>
+                        </property>
                     </bean>
                 </property>
             </bean>
         </property>
     </bean>
-    <bean id="aws.creds" class="com.amazonaws.auth.BasicAWSCredentials">
-        <constructor-arg value="YOUR_ACCESS_KEY_ID" />
-        <constructor-arg value="YOUR_SECRET_ACCESS_KEY" />
-    </bean>
+
 </beans>

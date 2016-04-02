@@ -18,8 +18,11 @@ Next pull in the config and edit the particulars.
 wget https://raw.githubusercontent.com/d-smith/go-examples/master/ignite-test/aws-cache-config.xml
 </pre>
 
+Note in the above, the security groups need to permit traffic on ports 47100 and 47500 amongst the
+cluster members.
+
 To run the cache:
 
 <pre>
-docker run -it --net=host -v /home/ubuntu:/ignite -e "CONFIG_URI=file:///ignite/aws-cache-config.xml" -e "OPTION_LIBS=ignite-rest-http,ignite-aws"  -p 8080:8080 -e "IGNITE_QUIET=false" gridgain/gridgain-com
+docker run -it --net=host -v /home/ubuntu:/ignite -e "CONFIG_URI=file:///ignite/aws-cache-config.xml" -e "OPTION_LIBS=ignite-rest-http"  -p 8080:8080 -e "IGNITE_QUIET=false" gridgain/gridgain-com
 </pre>
