@@ -41,6 +41,8 @@ var (
 	errorCount uint64 = 0
 )
 
+var start time.Time
+
 type IgniteResponse struct {
 	AffinityNodeId string `json:"affinityNodeId"`
 	Error string `json:"error"`
@@ -54,13 +56,32 @@ func handleErr(err error) {
 	log.Println(err.Error())
 }
 
+func printStats(final bool) {
+	var fmtString string
+	if final {
+		fmtString = "Final summary: %d writes, %d reads, %d errors in %v"
+	} else {
+		fmtString = "%d writes, %d reads, %d errors in %v"
+	}
+	duration := time.Now().Sub(start)
+	log.Printf(fmtString,
+		writeCount, readCount, errorCount, duration)
+}
+
 func main() {
 	kingpin.MustParse(app.Parse(os.Args[1:]))
 	fmt.Println(*servers)
 
 	var wg sync.WaitGroup
 
-	start := time.Now()
+	ticker := time.NewTicker(time.Minute)
+	go func() {
+		for range ticker.C {
+			printStats(false)
+		}
+	}()
+
+	start = time.Now()
 
 	for i := 0; i < *concurrent; i++ {
 		wg.Add(1)
@@ -74,10 +95,7 @@ func main() {
 
 	wg.Wait()
 
-	duration := time.Now().Sub(start)
-
-	log.Printf("%d writes, %d reads, %d errors in %v",
-		writeCount, readCount, errorCount, duration)
+	printStats(true)
 
 }
 
@@ -127,8 +145,10 @@ func writeAndRead(numReads, waitTimeMillis int, verbose bool, servers []string) 
 			return
 		}
 
-		log.Printf("read %d from %s for %s, wanted %d\n",
-			readValue, endpoint,key,val)
+		if verbose {
+			log.Printf("read %d from %s for %s, wanted %d\n",
+				readValue, endpoint, key, val)
+		}
 
 		if readValue != val {
 			handleErr(err)
