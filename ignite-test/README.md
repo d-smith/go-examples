@@ -47,6 +47,7 @@ wget https://raw.githubusercontent.com/d-smith/go-examples/master/ignite-test/ig
 docker run --rm -it -v "$PWD":/usr/src/myapp -w /usr/src/myapp golang:1.6 bash
  go get github.com/alecthomas/kingpin
  go get github.com/nu7hatch/gouuid
+ go build -v -o ignitor
  exit
 </pre>
 
