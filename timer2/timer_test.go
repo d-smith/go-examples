@@ -13,9 +13,8 @@ func TestPostitiveDuration(t *testing.T) {
 	at := NewEndToEndTimer("foo")
 	time.Sleep(50 * time.Millisecond)
 	at.Stop(nil)
-	if at.Duration() < 50*time.Millisecond {
-		t.Fail()
-	}
+	assert.True(t, at.Duration() > 50*time.Millisecond)
+	assert.NotEqual(t, "", at.txnId, "Expected non-empty txn id")
 
 	at.Kill()
 }
@@ -47,9 +46,5 @@ func TestContributors(t *testing.T) {
 }
 
 func TestIfContributorErrorsThenTimerErrors(t *testing.T) {
-
-}
-
-func TestMultiBackendRecordings(t *testing.T) {
 
 }

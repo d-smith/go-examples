@@ -1,6 +1,7 @@
 package timer2
 
 import (
+	"crypto/rand"
 	"fmt"
 	"log"
 	"time"
@@ -29,6 +30,7 @@ const (
 //spawned to manage the timer state.
 type EndToEndTimer struct {
 	name         string
+	txnId        string
 	start        time.Time
 	c            chan command
 	r            chan interface{}
@@ -96,6 +98,7 @@ func NewEndToEndTimer(name string) *EndToEndTimer {
 	e2e := &EndToEndTimer{
 		name:  name,
 		start: time.Now(),
+		txnId: makeTxnId(),
 		c:     make(chan command),
 		r:     make(chan interface{}),
 	}
@@ -266,4 +269,10 @@ func (ct *Contributor) Time() time.Duration {
 	} else {
 		return 0 * time.Millisecond
 	}
+}
+
+func makeTxnId() string {
+	b := make([]byte, 16)
+	rand.Read(b)
+	return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
 }
