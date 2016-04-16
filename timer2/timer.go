@@ -23,6 +23,7 @@ const (
 	errorFreeOpCode    = "error-free"
 	getErrorOpCode     = "get-error"
 	contribTimeOp      = "contrib-time"
+	contribErrOp       = "contrib-err-op"
 )
 
 //EndToEnd timer is an opaque data type handed out to timer consumers. It exposes
@@ -66,12 +67,23 @@ func (t *EndToEndTimer) handleDuration() {
 	t.r <- t.duration
 }
 
+func (t *EndToEndTimer) handleContribError(cmd command) {
+	contributor := cmd.args[0].(*Contributor)
+	if contributor.err != nil {
+		t.r <- contributor.err.Error()
+	} else {
+		t.r <- ""
+	}
+}
+
 //handleTimerOps is the internal go routine responsible for accessing the timer internals
 func (t *EndToEndTimer) handleTimerOps() {
 	for {
 		cmd := <-t.c
 		log.Println("handle command", cmd.opcode)
 		switch cmd.opcode {
+		case contribErrOp:
+			t.handleContribError(cmd)
 		case startContributorOp:
 			t.handleStartContributor(cmd)
 		case endContributorOp:
@@ -268,6 +280,21 @@ func (ct *Contributor) Time() time.Duration {
 		return contributor
 	} else {
 		return 0 * time.Millisecond
+	}
+}
+
+func (ct *Contributor) Error() string {
+	ct.timer.c <- command{
+		opcode: contribErrOp,
+		args:   []interface{}{ct},
+	}
+
+	r := <-ct.timer.r
+	errmsg, ok := r.(string)
+	if ok {
+		return errmsg
+	} else {
+		return ""
 	}
 }
 

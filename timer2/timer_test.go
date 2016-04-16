@@ -23,6 +23,7 @@ func TestStopError(t *testing.T) {
 	at := NewEndToEndTimer("foo")
 	at.Stop(errors.New("problem"))
 	assert.Equal(t, "problem", at.Error())
+	assert.False(t, at.ErrorFree(), "Timer should indicate an error was set")
 }
 
 func TestContributors(t *testing.T) {
@@ -35,16 +36,22 @@ func TestContributors(t *testing.T) {
 
 	assert.Equal(t, "", at.Error())
 
-	if c1.Time() <= zeroDuration || c2.Time() <= zeroDuration {
-		t.Fail()
-	}
+	assert.False(t, c1.Time() <= zeroDuration || c2.Time() <= zeroDuration)
+	assert.True(t, at.ErrorFree(), "Timer should be error free")
 
-	if at.ErrorFree() == false {
-		t.Fail()
-	}
+	at.Kill()
 
 }
 
 func TestIfContributorErrorsThenTimerErrors(t *testing.T) {
+	at := NewEndToEndTimer("foo")
+	c1 := at.StartContributor("c1")
+	c1.End(errors.New("kaboom"))
+	at.Stop(nil)
 
+	assert.False(t, at.ErrorFree(), "Expected contributor error to make timer non-error free")
+	assert.Equal(t, "", at.Error(), "No error message on top level timer expected")
+	assert.Equal(t, "kaboom", c1.Error(), "Expected kaboom as contributor error message")
 }
+
+//Next - service start and stop, toJSON
