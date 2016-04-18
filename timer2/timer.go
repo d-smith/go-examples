@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"time"
+	"encoding/json"
 )
 
 //Functions of the timer are accessed using commands
@@ -26,42 +27,43 @@ const (
 	contribErrOp       = "contrib-err-op"
 	startServiceCallOp = "start-svc-call"
 	endServiceCallOp   = "end-svc-call"
+	toJsonOp = "to-json"
 )
 
 //EndToEnd timer is an opaque data type handed out to timer consumers. It exposes
 //several methods, but allows direct access to the data members only from a goroutine
 //spawned to manage the timer state.
 type EndToEndTimer struct {
-	name         string
-	txnId        string
+	Name         string
+	TxnId        string
 	start        time.Time
 	c            chan command
 	r            chan interface{}
-	duration     time.Duration
+	Duration     time.Duration
 	err          error
-	contributors []*Contributor
+	Contributors []*Contributor
 }
 
 type Contributor struct {
 	timer        *EndToEndTimer
-	name         string
+	Name         string
 	start        time.Time
-	duration     time.Duration
+	Duration     time.Duration
 	err          error
-	serviceCalls []*ServiceCall
+	ServiceCalls []*ServiceCall
 }
 
 type ServiceCall struct {
-	name        string
+	Name        string
 	endpoint    string
-	duration    time.Duration
+	Duration    time.Duration
 	err         error
 	start       time.Time
 	contributor *Contributor
 }
 
 func (t *EndToEndTimer) handleStop(cmd command) {
-	t.duration = time.Now().Sub(t.start)
+	t.Duration = time.Now().Sub(t.start)
 	log.Println("args 0", cmd.args[0])
 	if len(cmd.args) > 0 {
 		theErr, ok := cmd.args[0].(error)
@@ -76,7 +78,7 @@ func (t *EndToEndTimer) handleStop(cmd command) {
 }
 
 func (t *EndToEndTimer) handleDuration() {
-	t.r <- t.duration
+	t.r <- t.Duration
 }
 
 func (t *EndToEndTimer) handleContribError(cmd command) {
@@ -95,13 +97,13 @@ func (t *EndToEndTimer) handleStartServiceCall(cmd command) {
 	start := cmd.args[3].(time.Time)
 
 	svcCall := &ServiceCall{
-		name:        name,
+		Name:        name,
 		endpoint:    endpoint,
 		start:       start,
 		contributor: contributor,
 	}
 
-	contributor.serviceCalls = append(contributor.serviceCalls, svcCall)
+	contributor.ServiceCalls = append(contributor.ServiceCalls, svcCall)
 
 	t.r <- svcCall
 }
@@ -112,8 +114,17 @@ func (t *EndToEndTimer) handleEndServiceCall(cmd command) {
 	end := cmd.args[2].(time.Time)
 
 	sc.err = err
-	sc.duration = end.Sub(sc.start)
+	sc.Duration = end.Sub(sc.start)
 
+}
+
+func (t *EndToEndTimer) handleToJson() {
+	log.Println("handleToJson")
+	s, err := json.Marshal(t)
+	if err != nil {
+		s = []byte("{}")
+	}
+	t.r <-  string(s)
 }
 
 //handleTimerOps is the internal go routine responsible for accessing the timer internals
@@ -144,6 +155,8 @@ func (t *EndToEndTimer) handleTimerOps() {
 			t.handleStartServiceCall(cmd)
 		case endServiceCallOp:
 			t.handleEndServiceCall(cmd)
+		case toJsonOp:
+			t.handleToJson()
 		default:
 			fmt.Println("command", cmd.opcode)
 		}
@@ -152,9 +165,9 @@ func (t *EndToEndTimer) handleTimerOps() {
 
 func NewEndToEndTimer(name string) *EndToEndTimer {
 	e2e := &EndToEndTimer{
-		name:  name,
+		Name:  name,
 		start: time.Now(),
-		txnId: makeTxnId(),
+		TxnId: makeTxnId(),
 		c:     make(chan command),
 		r:     make(chan interface{}),
 	}
@@ -170,7 +183,7 @@ func contribsErrorFree(cts []*Contributor) bool {
 			return false
 		}
 
-		if hasServiceCallErrors(ct.serviceCalls) {
+		if hasServiceCallErrors(ct.ServiceCalls) {
 			return false
 		}
 	}
@@ -193,7 +206,7 @@ func (t *EndToEndTimer) handleErrorFree(cmd command) {
 	if t.err != nil {
 		errorFree = false
 	} else {
-		errorFree = contribsErrorFree(t.contributors)
+		errorFree = contribsErrorFree(t.Contributors)
 	}
 
 	t.r <- errorFree
@@ -201,7 +214,7 @@ func (t *EndToEndTimer) handleErrorFree(cmd command) {
 
 func (t *EndToEndTimer) handleContribTime(cmd command) {
 	contributor := cmd.args[0].(*Contributor)
-	t.r <- contributor.duration
+	t.r <- contributor.Duration
 }
 
 func (t *EndToEndTimer) handleGetError(cmd command) {
@@ -216,18 +229,18 @@ func (t *EndToEndTimer) handleStartContributor(cmd command) {
 	name, start := getContributorArgs(cmd.args)
 	contributor := &Contributor{
 		timer: t,
-		name:  name,
+		Name:  name,
 		start: start,
 	}
 
-	t.contributors = append(t.contributors, contributor)
+	t.Contributors = append(t.Contributors, contributor)
 
 	t.r <- contributor
 }
 
 func (t *EndToEndTimer) handleStopContributor(cmd command) {
 	ct, err, stopTime := extractEndContributorArgs(cmd.args)
-	ct.duration = stopTime.Sub(ct.start)
+	ct.Duration = stopTime.Sub(ct.start)
 	ct.err = err
 }
 
@@ -239,7 +252,7 @@ func (t *EndToEndTimer) Stop(err error) {
 	}
 }
 
-func (t *EndToEndTimer) Duration() time.Duration {
+func (t *EndToEndTimer) EndToEndDuration() time.Duration {
 	t.c <- command{opcode: durationOp}
 	r := <-t.r
 	d, ok := r.(time.Duration)
@@ -247,7 +260,7 @@ func (t *EndToEndTimer) Duration() time.Duration {
 	if ok {
 		return d
 	} else {
-		fmt.Println("Was not ablt to coerce restult to a Duration")
+		fmt.Println("Was not able to coerce restult to a Duration")
 		return 0 * time.Millisecond
 	}
 }
@@ -378,3 +391,13 @@ func (sc *ServiceCall) End(err error) {
 		args:   []interface{}{sc, err, time.Now()},
 	}
 }
+
+func (t *EndToEndTimer) ToJSONString() string {
+	t.c <- command{
+		opcode: toJsonOp,
+	}
+
+	json := <- t.r
+	return json.(string)
+}
+
