@@ -24,6 +24,8 @@ const (
 	getErrorOpCode     = "get-error"
 	contribTimeOp      = "contrib-time"
 	contribErrOp       = "contrib-err-op"
+	startServiceCallOp = "start-svc-call"
+	endServiceCallOp   = "end-svc-call"
 )
 
 //EndToEnd timer is an opaque data type handed out to timer consumers. It exposes
@@ -41,11 +43,21 @@ type EndToEndTimer struct {
 }
 
 type Contributor struct {
-	timer    *EndToEndTimer
-	name     string
-	start    time.Time
-	duration time.Duration
-	err      error
+	timer        *EndToEndTimer
+	name         string
+	start        time.Time
+	duration     time.Duration
+	err          error
+	serviceCalls []*ServiceCall
+}
+
+type ServiceCall struct {
+	name        string
+	endpoint    string
+	duration    time.Duration
+	err         error
+	start       time.Time
+	contributor *Contributor
 }
 
 func (t *EndToEndTimer) handleStop(cmd command) {
@@ -76,6 +88,34 @@ func (t *EndToEndTimer) handleContribError(cmd command) {
 	}
 }
 
+func (t *EndToEndTimer) handleStartServiceCall(cmd command) {
+	contributor := cmd.args[0].(*Contributor)
+	name := cmd.args[1].(string)
+	endpoint := cmd.args[2].(string)
+	start := cmd.args[3].(time.Time)
+
+	svcCall := &ServiceCall{
+		name:        name,
+		endpoint:    endpoint,
+		start:       start,
+		contributor: contributor,
+	}
+
+	contributor.serviceCalls = append(contributor.serviceCalls, svcCall)
+
+	t.r <- svcCall
+}
+
+func (t *EndToEndTimer) handleEndServiceCall(cmd command) {
+	sc := cmd.args[0].(*ServiceCall)
+	err := cmd.args[1].(error)
+	end := cmd.args[2].(time.Time)
+
+	sc.err = err
+	sc.duration = end.Sub(sc.start)
+
+}
+
 //handleTimerOps is the internal go routine responsible for accessing the timer internals
 func (t *EndToEndTimer) handleTimerOps() {
 	for {
@@ -100,6 +140,10 @@ func (t *EndToEndTimer) handleTimerOps() {
 			t.handleContribTime(cmd)
 		case errorFreeOpCode:
 			t.handleErrorFree(cmd)
+		case startServiceCallOp:
+			t.handleStartServiceCall(cmd)
+		case endServiceCallOp:
+			t.handleEndServiceCall(cmd)
 		default:
 			fmt.Println("command", cmd.opcode)
 		}
@@ -125,9 +169,23 @@ func contribsErrorFree(cts []*Contributor) bool {
 		if ct.err != nil {
 			return false
 		}
+
+		if hasServiceCallErrors(ct.serviceCalls) {
+			return false
+		}
 	}
 
 	return true
+}
+
+func hasServiceCallErrors(svcCalls []*ServiceCall) bool {
+	for _, sc := range svcCalls {
+		if sc.err != nil {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (t *EndToEndTimer) handleErrorFree(cmd command) {
@@ -302,4 +360,21 @@ func makeTxnId() string {
 	b := make([]byte, 16)
 	rand.Read(b)
 	return fmt.Sprintf("%x-%x-%x-%x-%x", b[0:4], b[4:6], b[6:8], b[8:10], b[10:])
+}
+
+func (ct *Contributor) StartServiceCall(name string, endpoint string) *ServiceCall {
+	ct.timer.c <- command{
+		opcode: startServiceCallOp,
+		args:   []interface{}{ct, name, endpoint, time.Now()},
+	}
+
+	svcCall := <-ct.timer.r
+	return svcCall.(*ServiceCall)
+}
+
+func (sc *ServiceCall) End(err error) {
+	sc.contributor.timer.c <- command{
+		opcode: endServiceCallOp,
+		args:   []interface{}{sc, err, time.Now()},
+	}
 }

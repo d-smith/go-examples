@@ -54,4 +54,15 @@ func TestIfContributorErrorsThenTimerErrors(t *testing.T) {
 	assert.Equal(t, "kaboom", c1.Error(), "Expected kaboom as contributor error message")
 }
 
-//Next - service start and stop, toJSON
+func TestServiceCallErrorDetection(t *testing.T) {
+	at := NewEndToEndTimer("foo")
+	c1 := at.StartContributor("c1")
+	sc := c1.StartServiceCall("larry", "/dev/null")
+	sc.End(errors.New("blammo"))
+	c1.End(nil)
+	at.Stop(nil)
+
+	assert.False(t, at.ErrorFree(), "Expected contributor error to make timer non-error free")
+}
+
+//Next - toJSON
