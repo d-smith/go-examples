@@ -4,6 +4,8 @@ import (
 	"errors"
 	"testing"
 	"sync"
+	"time"
+	"fmt"
 )
 
 func TestPostitiveDuration(t *testing.T) {
@@ -105,4 +107,45 @@ func TestMultiBackendRecordings(t *testing.T) {
 	}
 
 	println(at.ToJSONString())
+}
+
+func MultiGoRoutines(t *testing.T) {
+	for i := 1; i < 1000; i++ {
+		at := NewAPITimer("foo")
+		c1 := at.StartContributor("c1")
+
+		var wg sync.WaitGroup
+		wg.Add(2)
+
+		go func () {
+		defer wg.Done()
+		c1 := at.StartContributor("c1")
+
+		go func () {
+		defer wg.Done()
+		c2 := at.StartContributor("c2")
+		time.Sleep(50 * time.Millisecond)
+		c2.End(nil)
+		}()
+
+		time.Sleep(15 * time.Millisecond)
+		c1.End(nil)
+
+		}()
+
+		wg.Wait()
+
+		c1.End(nil)
+
+		at.Stop(nil)
+
+		wg.Add(1)
+
+		go func () {
+		fmt.Println(at.ToJSONString())
+		wg.Done()
+		}()
+
+		wg.Wait()
+	}
 }
