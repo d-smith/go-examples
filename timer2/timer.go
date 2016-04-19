@@ -40,7 +40,7 @@ type EndToEndTimer struct {
 	c            chan command
 	r            chan interface{}
 	Duration     time.Duration
-	err          error
+	Error        string
 	Contributors []*Contributor
 }
 
@@ -49,7 +49,7 @@ type Contributor struct {
 	Name         string
 	start        time.Time
 	Duration     time.Duration
-	err          error
+	Error          string
 	ServiceCalls []*ServiceCall
 }
 
@@ -57,7 +57,7 @@ type ServiceCall struct {
 	Name        string
 	endpoint    string
 	Duration    time.Duration
-	err         error
+	Error         string
 	start       time.Time
 	contributor *Contributor
 }
@@ -69,10 +69,10 @@ func (t *EndToEndTimer) handleStop(cmd command) {
 		theErr, ok := cmd.args[0].(error)
 		if ok {
 			log.Println("set error to", theErr.Error())
-			t.err = theErr
+			t.Error = theErr.Error()
 		} else {
 			log.Print("set error to nil")
-			t.err = nil
+			t.Error = ""
 		}
 	}
 }
@@ -83,11 +83,7 @@ func (t *EndToEndTimer) handleDuration() {
 
 func (t *EndToEndTimer) handleContribError(cmd command) {
 	contributor := cmd.args[0].(*Contributor)
-	if contributor.err != nil {
-		t.r <- contributor.err.Error()
-	} else {
-		t.r <- ""
-	}
+	t.r <- contributor.Error
 }
 
 func (t *EndToEndTimer) handleStartServiceCall(cmd command) {
@@ -113,7 +109,9 @@ func (t *EndToEndTimer) handleEndServiceCall(cmd command) {
 	err := cmd.args[1].(error)
 	end := cmd.args[2].(time.Time)
 
-	sc.err = err
+	if err != nil {
+		sc.Error = err.Error()
+	}
 	sc.Duration = end.Sub(sc.start)
 
 }
@@ -179,7 +177,7 @@ func NewEndToEndTimer(name string) *EndToEndTimer {
 
 func contribsErrorFree(cts []*Contributor) bool {
 	for _, ct := range cts {
-		if ct.err != nil {
+		if ct.Error != "" {
 			return false
 		}
 
@@ -193,7 +191,7 @@ func contribsErrorFree(cts []*Contributor) bool {
 
 func hasServiceCallErrors(svcCalls []*ServiceCall) bool {
 	for _, sc := range svcCalls {
-		if sc.err != nil {
+		if sc.Error != "" {
 			return true
 		}
 	}
@@ -203,7 +201,7 @@ func hasServiceCallErrors(svcCalls []*ServiceCall) bool {
 
 func (t *EndToEndTimer) handleErrorFree(cmd command) {
 	var errorFree = true
-	if t.err != nil {
+	if t.Error != "" {
 		errorFree = false
 	} else {
 		errorFree = contribsErrorFree(t.Contributors)
@@ -218,11 +216,7 @@ func (t *EndToEndTimer) handleContribTime(cmd command) {
 }
 
 func (t *EndToEndTimer) handleGetError(cmd command) {
-	if t.err == nil {
-		t.r <- ""
-	} else {
-		t.r <- t.err.Error()
-	}
+	t.r <- t.Error
 }
 
 func (t *EndToEndTimer) handleStartContributor(cmd command) {
@@ -241,7 +235,9 @@ func (t *EndToEndTimer) handleStartContributor(cmd command) {
 func (t *EndToEndTimer) handleStopContributor(cmd command) {
 	ct, err, stopTime := extractEndContributorArgs(cmd.args)
 	ct.Duration = stopTime.Sub(ct.start)
-	ct.err = err
+	if err != nil {
+		ct.Error = err.Error()
+	}
 }
 
 func (t *EndToEndTimer) Stop(err error) {
@@ -305,7 +301,7 @@ func (t *EndToEndTimer) ErrorFree() bool {
 	return errorFree
 }
 
-func (t *EndToEndTimer) Error() string {
+func (t *EndToEndTimer) GetError() string {
 	t.c <- command{
 		opcode: getErrorOpCode,
 	}
@@ -354,7 +350,7 @@ func (ct *Contributor) Time() time.Duration {
 	}
 }
 
-func (ct *Contributor) Error() string {
+func (ct *Contributor) GetError() string {
 	ct.timer.c <- command{
 		opcode: contribErrOp,
 		args:   []interface{}{ct},

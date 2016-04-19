@@ -24,7 +24,7 @@ func TestStopError(t *testing.T) {
 	at := NewEndToEndTimer("foo")
 	defer at.Kill()
 	at.Stop(errors.New("problem"))
-	assert.Equal(t, "problem", at.Error())
+	assert.Equal(t, "problem", at.GetError())
 	assert.False(t, at.ErrorFree(), "Timer should indicate an error was set")
 
 }
@@ -38,7 +38,7 @@ func TestContributors(t *testing.T) {
 	c1.End(nil)
 	at.Stop(nil)
 
-	assert.Equal(t, "", at.Error())
+	assert.Equal(t, "", at.GetError())
 
 	assert.False(t, c1.Time() <= zeroDuration || c2.Time() <= zeroDuration)
 	assert.True(t, at.ErrorFree(), "Timer should be error free")
@@ -55,8 +55,8 @@ func TestIfContributorErrorsThenTimerErrors(t *testing.T) {
 	at.Stop(nil)
 
 	assert.False(t, at.ErrorFree(), "Expected contributor error to make timer non-error free")
-	assert.Equal(t, "", at.Error(), "No error message on top level timer expected")
-	assert.Equal(t, "kaboom", c1.Error(), "Expected kaboom as contributor error message")
+	assert.Equal(t, "", at.GetError(), "No error message on top level timer expected")
+	assert.Equal(t, "kaboom", c1.GetError(), "Expected kaboom as contributor error message")
 }
 
 func TestServiceCallErrorDetection(t *testing.T) {
@@ -69,6 +69,8 @@ func TestServiceCallErrorDetection(t *testing.T) {
 	at.Stop(nil)
 
 	assert.False(t, at.ErrorFree(), "Expected contributor error to make timer non-error free")
+
+	fmt.Println(at.ToJSONString())
 }
 
 //TODO - refactor error to string
