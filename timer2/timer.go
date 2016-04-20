@@ -1,5 +1,10 @@
 package timer2
 
+//Note: currently if the kill method is invoked then calls to the public
+//methods will block indefinitely. Some work arounds are needed, for example
+//waiting for outstanding ends to be called before ending the go routine,
+//or buffering up
+
 import (
 	"crypto/rand"
 	"encoding/json"
@@ -108,12 +113,17 @@ func (t *EndToEndTimer) handleStartServiceCall(cmd command) {
 
 func (t *EndToEndTimer) handleEndServiceCall(cmd command) {
 	sc := cmd.args[0].(*ServiceCall)
-	err := cmd.args[1].(error)
+
+	var err error
+	theErr, ok := cmd.args[1].(error)
+	if ok {
+		err = theErr
+	}
+
 	end := cmd.args[2].(time.Time)
 
 	if err != nil {
 		sc.Error = err.Error()
-		t.ErrorFree = false
 	}
 	sc.Duration = end.Sub(sc.start)
 
