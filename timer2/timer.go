@@ -2,10 +2,10 @@ package timer2
 
 import (
 	"crypto/rand"
+	"encoding/json"
 	"fmt"
 	"log"
 	"time"
-	"encoding/json"
 )
 
 //Functions of the timer are accessed using commands
@@ -27,7 +27,7 @@ const (
 	contribErrOp       = "contrib-err-op"
 	startServiceCallOp = "start-svc-call"
 	endServiceCallOp   = "end-svc-call"
-	toJsonOp = "to-json"
+	toJsonOp           = "to-json"
 )
 
 //EndToEnd timer is an opaque data type handed out to timer consumers. It exposes
@@ -41,6 +41,7 @@ type EndToEndTimer struct {
 	r            chan interface{}
 	Duration     time.Duration
 	Error        string
+	ErrorFree    bool
 	Contributors []*Contributor
 }
 
@@ -49,7 +50,7 @@ type Contributor struct {
 	Name         string
 	start        time.Time
 	Duration     time.Duration
-	Error          string
+	Error        string
 	ServiceCalls []*ServiceCall
 }
 
@@ -57,7 +58,7 @@ type ServiceCall struct {
 	Name        string
 	endpoint    string
 	Duration    time.Duration
-	Error         string
+	Error       string
 	start       time.Time
 	contributor *Contributor
 }
@@ -70,6 +71,7 @@ func (t *EndToEndTimer) handleStop(cmd command) {
 		if ok {
 			log.Println("set error to", theErr.Error())
 			t.Error = theErr.Error()
+			t.ErrorFree = false
 		} else {
 			log.Print("set error to nil")
 			t.Error = ""
@@ -111,6 +113,7 @@ func (t *EndToEndTimer) handleEndServiceCall(cmd command) {
 
 	if err != nil {
 		sc.Error = err.Error()
+		t.ErrorFree = false
 	}
 	sc.Duration = end.Sub(sc.start)
 
@@ -122,7 +125,7 @@ func (t *EndToEndTimer) handleToJson() {
 	if err != nil {
 		s = []byte("{}")
 	}
-	t.r <-  string(s)
+	t.r <- string(s)
 }
 
 //handleTimerOps is the internal go routine responsible for accessing the timer internals
@@ -163,11 +166,12 @@ func (t *EndToEndTimer) handleTimerOps() {
 
 func NewEndToEndTimer(name string) *EndToEndTimer {
 	e2e := &EndToEndTimer{
-		Name:  name,
-		start: time.Now(),
-		TxnId: makeTxnId(),
-		c:     make(chan command),
-		r:     make(chan interface{}),
+		Name:      name,
+		start:     time.Now(),
+		TxnId:     makeTxnId(),
+		c:         make(chan command),
+		r:         make(chan interface{}),
+		ErrorFree: true,
 	}
 
 	go e2e.handleTimerOps()
@@ -175,39 +179,8 @@ func NewEndToEndTimer(name string) *EndToEndTimer {
 	return e2e
 }
 
-func contribsErrorFree(cts []*Contributor) bool {
-	for _, ct := range cts {
-		if ct.Error != "" {
-			return false
-		}
-
-		if hasServiceCallErrors(ct.ServiceCalls) {
-			return false
-		}
-	}
-
-	return true
-}
-
-func hasServiceCallErrors(svcCalls []*ServiceCall) bool {
-	for _, sc := range svcCalls {
-		if sc.Error != "" {
-			return true
-		}
-	}
-
-	return false
-}
-
 func (t *EndToEndTimer) handleErrorFree(cmd command) {
-	var errorFree = true
-	if t.Error != "" {
-		errorFree = false
-	} else {
-		errorFree = contribsErrorFree(t.Contributors)
-	}
-
-	t.r <- errorFree
+	t.r <- t.ErrorFree
 }
 
 func (t *EndToEndTimer) handleContribTime(cmd command) {
@@ -237,6 +210,7 @@ func (t *EndToEndTimer) handleStopContributor(cmd command) {
 	ct.Duration = stopTime.Sub(ct.start)
 	if err != nil {
 		ct.Error = err.Error()
+		t.ErrorFree = false
 	}
 }
 
@@ -288,7 +262,7 @@ func (t *EndToEndTimer) StartContributor(name string) *Contributor {
 	}
 }
 
-func (t *EndToEndTimer) ErrorFree() bool {
+func (t *EndToEndTimer) IsErrorFree() bool {
 	t.c <- command{
 		opcode: errorFreeOpCode,
 	}
@@ -393,7 +367,6 @@ func (t *EndToEndTimer) ToJSONString() string {
 		opcode: toJsonOp,
 	}
 
-	json := <- t.r
+	json := <-t.r
 	return json.(string)
 }
-

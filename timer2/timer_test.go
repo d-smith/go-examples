@@ -2,10 +2,10 @@ package timer2
 
 import (
 	"errors"
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"testing"
 	"time"
-	"fmt"
 )
 
 const zeroDuration = 0 * time.Millisecond
@@ -25,7 +25,7 @@ func TestStopError(t *testing.T) {
 	defer at.Kill()
 	at.Stop(errors.New("problem"))
 	assert.Equal(t, "problem", at.GetError())
-	assert.False(t, at.ErrorFree(), "Timer should indicate an error was set")
+	assert.False(t, at.IsErrorFree(), "Timer should indicate an error was set")
 
 }
 
@@ -41,7 +41,7 @@ func TestContributors(t *testing.T) {
 	assert.Equal(t, "", at.GetError())
 
 	assert.False(t, c1.Time() <= zeroDuration || c2.Time() <= zeroDuration)
-	assert.True(t, at.ErrorFree(), "Timer should be error free")
+	assert.True(t, at.IsErrorFree(), "Timer should be error free")
 
 	fmt.Println(at.ToJSONString())
 
@@ -54,7 +54,7 @@ func TestIfContributorErrorsThenTimerErrors(t *testing.T) {
 	c1.End(errors.New("kaboom"))
 	at.Stop(nil)
 
-	assert.False(t, at.ErrorFree(), "Expected contributor error to make timer non-error free")
+	assert.False(t, at.IsErrorFree(), "Expected contributor error to make timer non-error free")
 	assert.Equal(t, "", at.GetError(), "No error message on top level timer expected")
 	assert.Equal(t, "kaboom", c1.GetError(), "Expected kaboom as contributor error message")
 }
@@ -68,11 +68,9 @@ func TestServiceCallErrorDetection(t *testing.T) {
 	c1.End(nil)
 	at.Stop(nil)
 
-	assert.False(t, at.ErrorFree(), "Expected contributor error to make timer non-error free")
+	assert.False(t, at.IsErrorFree(), "Expected contributor error to make timer non-error free")
 
 	fmt.Println(at.ToJSONString())
 }
 
 //TODO - refactor error to string
-
-
