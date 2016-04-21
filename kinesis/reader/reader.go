@@ -50,25 +50,33 @@ func getShardItor(svc *kinesis.Kinesis, sid string) (*string, error) {
 
 func readRecordsFromStream(svc *kinesis.Kinesis, shardItor *string) (*string, error) {
 
-	params := &kinesis.GetRecordsInput{
-		ShardIterator: shardItor, // Required
-		Limit:         aws.Int64(1),
-	}
-	resp, err := svc.GetRecords(params)
+	for {
+		params := &kinesis.GetRecordsInput{
+			ShardIterator: shardItor, // Required
+			Limit:         aws.Int64(1),
+		}
+		resp, err := svc.GetRecords(params)
 
-	if err != nil {
-		// Print the error, cast err to awserr.Error to get the Code and
-		// Message from an error.
-		log.Println(err.Error())
-		return nil, err
+		if err != nil {
+			// Print the error, cast err to awserr.Error to get the Code and
+			// Message from an error.
+			log.Println(err.Error())
+			return nil, err
+		}
+
+		if len(resp.Records) == 0 {
+			return resp.NextShardIterator, nil
+		} else {
+			shardItor = resp.NextShardIterator
+		}
+
+		records := resp.Records
+		for _, r := range records {
+			log.Printf(">>>> %s\n", string(r.Data))
+		}
 	}
 
-	records := resp.Records
-	for _, r := range records {
-		log.Printf(">>>> %s\n", string(r.Data))
-	}
 
-	return resp.NextShardIterator, nil
 }
 
 func main() {
