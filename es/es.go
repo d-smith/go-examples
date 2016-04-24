@@ -1,6 +1,8 @@
 package main
 
-import "errors"
+import (
+	"errors"
+)
 
 /*
 Implementation map
@@ -41,7 +43,12 @@ func (u *User) UpdateFirstName(first string) error {
 }
 
 func (u *User) Apply(event interface{}) error {
-	return u.Route(event)
+	err :=  u.Route(event)
+	if err == nil {
+		eventStore.Record(event)
+	}
+
+	return err
 }
 
 func (u *User) UpdateLastName(last string) {
@@ -101,11 +108,40 @@ func (u *User) Route(event interface{}) error {
 func NewUser(first, last, email string) (*User, error) {
 	//Do validation... then
 	user := new(User)
-	err := user.Route(UserCreated{
+	err := user.Apply(
+		UserCreated{
 		FirstName: first,
 		LastName:  last,
 		Email:     email,
 	})
 
+
 	return user, err
+}
+
+//Constructor - from events
+func NewUserFromHistory(events []interface{}) (*User,error) {
+	user := new(User)
+	for _,e := range events {
+		err := user.Route(e)
+		if err != nil {
+			return nil,err
+		}
+	}
+
+	return user, nil
+}
+
+type EventRecorder struct {
+	events []interface{}
+}
+
+var eventStore = new(EventRecorder)
+
+func (er *EventRecorder) Record(event interface{}) {
+	er.events = append(er.events, event)
+}
+
+func (er *EventRecorder) GetEvents() []interface{} {
+	return er.events
 }
