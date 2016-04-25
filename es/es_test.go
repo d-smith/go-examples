@@ -48,6 +48,10 @@ func TestUpdateFirstName(t *testing.T) {
 		events, err := myEventStore.GetEvents(user.AggregateId)
 		if assert.Nil(t, err) {
 			assert.Equal(t, 2, len(events))
+
+			userCopy, err := NewUserFromHistory(events)
+			assert.Nil(t, err)
+			assert.Equal(t, user, userCopy)
 		}
 	}
 }

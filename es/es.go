@@ -95,9 +95,10 @@ func (u *User) UpdateLastName(last string) {
 //Events
 
 type UserCreated struct {
-	FirstName string
-	LastName  string
-	Email     string
+	AggregateId string
+	FirstName   string
+	LastName    string
+	Email       string
 }
 
 type UserFirstNameUpdated struct {
@@ -117,7 +118,7 @@ func (u *User) handleUserCreated(event UserCreated) error {
 	u.FirstName = event.FirstName
 	u.LastName = event.LastName
 	u.Email = event.Email
-	u.AggregateId, err = GenerateID()
+	u.AggregateId = event.AggregateId
 	return err
 }
 
@@ -147,11 +148,17 @@ func (u *User) Route(event interface{}) error {
 func NewUser(first, last, email string) (*User, error) {
 	//Do validation... then
 	user := new(User)
-	err := user.Apply(
+	aggId, err := GenerateID()
+	if err != nil {
+		return nil, err
+	}
+
+	err = user.Apply(
 		UserCreated{
-			FirstName: first,
-			LastName:  last,
-			Email:     email,
+			AggregateId: aggId,
+			FirstName:   first,
+			LastName:    last,
+			Email:       email,
 		})
 
 	return user, err
