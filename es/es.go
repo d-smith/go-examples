@@ -2,6 +2,7 @@ package main
 
 import (
 	"errors"
+	"github.com/nu7hatch/gouuid"
 )
 
 /*
@@ -21,9 +22,15 @@ Define:
 	an aggregate id, and an event store.
 */
 
+type EventSourced struct {
+	AggregateId string
+	Events      []interface{}
+}
+
 //Domain object
 
 type User struct {
+	EventSourced
 	FirstName string
 	LastName  string
 	Email     string
@@ -43,7 +50,7 @@ func (u *User) UpdateFirstName(first string) error {
 }
 
 func (u *User) Apply(event interface{}) error {
-	err :=  u.Route(event)
+	err := u.Route(event)
 	if err == nil {
 		eventStore.Record(event)
 	}
@@ -76,10 +83,12 @@ type UserLastNameUpdated struct {
 // Handlers
 
 func (u *User) handleUserCreated(event UserCreated) error {
+	var err error
 	u.FirstName = event.FirstName
 	u.LastName = event.LastName
 	u.Email = event.Email
-	return nil
+	u.AggregateId, err = GenerateID()
+	return err
 }
 
 func (u *User) handleUserFirstNameUpdated(event UserFirstNameUpdated) error {
@@ -110,22 +119,21 @@ func NewUser(first, last, email string) (*User, error) {
 	user := new(User)
 	err := user.Apply(
 		UserCreated{
-		FirstName: first,
-		LastName:  last,
-		Email:     email,
-	})
-
+			FirstName: first,
+			LastName:  last,
+			Email:     email,
+		})
 
 	return user, err
 }
 
 //Constructor - from events
-func NewUserFromHistory(events []interface{}) (*User,error) {
+func NewUserFromHistory(events []interface{}) (*User, error) {
 	user := new(User)
-	for _,e := range events {
+	for _, e := range events {
 		err := user.Route(e)
 		if err != nil {
-			return nil,err
+			return nil, err
 		}
 	}
 
@@ -144,4 +152,13 @@ func (er *EventRecorder) Record(event interface{}) {
 
 func (er *EventRecorder) GetEvents() []interface{} {
 	return er.events
+}
+
+func GenerateID() (string, error) {
+	u, err := uuid.NewV4()
+	if err != nil {
+		return "", err
+	}
+
+	return u.String(), nil
 }

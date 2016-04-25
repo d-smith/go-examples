@@ -18,17 +18,19 @@ func TestCreateNew(t *testing.T) {
 
 		events := eventStore.GetEvents()
 		assert.Equal(t, 1, len(events))
+
+		assert.NotEqual(t, "", user.AggregateId)
 	}
 }
 
 func TestNewFromEvents(t *testing.T) {
 	createEvent := UserCreated{
-		FirstName:"first",
-		LastName:"last",
-		Email:"user@crazy.net",
+		FirstName: "first",
+		LastName:  "last",
+		Email:     "user@crazy.net",
 	}
 
-	user,err := NewUserFromHistory([]interface{}{createEvent})
+	user, err := NewUserFromHistory([]interface{}{createEvent})
 	if assert.Nil(t, err) {
 		validateNewUser(t, user)
 	}
