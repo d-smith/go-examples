@@ -3,24 +3,54 @@ package main
 import (
 	"errors"
 	"github.com/nu7hatch/gouuid"
+	"sync"
 )
 
-/*
-Implementation map
+type EventStore interface {
+	GetEvents(aggregateId string) ([]interface{}, error)
+	StoreEvents(aggregateId string, events []interface{}) error
+}
 
-Define:
-	user (domain obj)
-	commands
-	events
-	handlers - route and record
-	routing (event to handler)
-	recording (of events)
-	constructor - new domain object
-	constructor - event history
+type InMemEventStore struct {
+	sync.RWMutex
+	AllEvents map[string][]interface{}
+}
 
-	Next - need a way to record history, and a way to load history which means we'll need
-	an aggregate id, and an event store.
-*/
+func NewInMemEventStore() *InMemEventStore {
+	es := new(InMemEventStore)
+	es.AllEvents = make(map[string][]interface{})
+	return es
+}
+
+func (es *InMemEventStore) GetEvents(aggregateId string) ([]interface{}, error) {
+	es.RLock()
+	defer es.RUnlock()
+	events, ok := es.AllEvents[aggregateId]
+	if !ok {
+		return nil, errors.New("No events for aggregateId " + aggregateId)
+	}
+
+	return events, nil
+}
+
+var myEventStore = NewInMemEventStore()
+
+func (es *InMemEventStore) StoreEvents(aggregateId string, events []interface{}) error {
+	es.Lock()
+	defer es.Unlock()
+
+	//Get the current set of events
+	allEvents := es.AllEvents[aggregateId]
+
+	//Append the new set of events
+	for _, event := range events {
+		allEvents = append(allEvents, event)
+	}
+
+	es.AllEvents[aggregateId] = allEvents
+
+	return nil
+}
 
 type EventSourced struct {
 	AggregateId string
@@ -52,7 +82,7 @@ func (u *User) UpdateFirstName(first string) error {
 func (u *User) Apply(event interface{}) error {
 	err := u.Route(event)
 	if err == nil {
-		eventStore.Record(event)
+		myEventStore.StoreEvents(u.AggregateId, []interface{}{event})
 	}
 
 	return err
@@ -143,8 +173,6 @@ func NewUserFromHistory(events []interface{}) (*User, error) {
 type EventRecorder struct {
 	events []interface{}
 }
-
-var eventStore = new(EventRecorder)
 
 func (er *EventRecorder) Record(event interface{}) {
 	er.events = append(er.events, event)

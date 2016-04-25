@@ -16,10 +16,11 @@ func TestCreateNew(t *testing.T) {
 	if assert.Nil(t, err) {
 		validateNewUser(t, user)
 
-		events := eventStore.GetEvents()
-		assert.Equal(t, 1, len(events))
-
-		assert.NotEqual(t, "", user.AggregateId)
+		events, err := myEventStore.GetEvents(user.AggregateId)
+		if assert.Nil(t, err) {
+			assert.Equal(t, 1, len(events))
+			assert.NotEqual(t, "", user.AggregateId)
+		}
 	}
 }
 
@@ -35,4 +36,18 @@ func TestNewFromEvents(t *testing.T) {
 		validateNewUser(t, user)
 	}
 
+}
+
+func TestUpdateFirstName(t *testing.T) {
+	user, err := NewUser("first", "last", "user@crazy.net")
+	if assert.Nil(t, err) {
+		err := user.UpdateFirstName("foo")
+		assert.Nil(t, err)
+		assert.Equal(t, "foo", user.FirstName)
+
+		events, err := myEventStore.GetEvents(user.AggregateId)
+		if assert.Nil(t, err) {
+			assert.Equal(t, 2, len(events))
+		}
+	}
 }
