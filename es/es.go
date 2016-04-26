@@ -30,7 +30,7 @@ func NewInMemEventStore(eventStream EventStream) *InMemEventStore {
 			log.Println("reading from event stream...")
 			event := eventStream.Get()
 			log.Println("read event",event)
-			es.StoreEvents(event.AggregateId,[]Event{event})
+			es.StoreEvents([]Event{event})
 		}
 	}()
 	return es
@@ -49,19 +49,16 @@ func (es *InMemEventStore) GetEvents(aggregateId string) ([]Event, error) {
 
 
 
-func (es *InMemEventStore) StoreEvents(aggregateId string, events []Event) error {
+func (es *InMemEventStore) StoreEvents(events []Event) error {
 	es.Lock()
 	defer es.Unlock()
 
-	//Get the current set of events
-	allEvents := es.AllEvents[aggregateId]
-
-	//Append the new set of events
 	for _, event := range events {
+		//Get the current set of events for the aggregate id
+		allEvents := es.AllEvents[event.AggregateId]
 		allEvents = append(allEvents, event)
+		es.AllEvents[event.AggregateId] = allEvents
 	}
-
-	es.AllEvents[aggregateId] = allEvents
 
 	return nil
 }
