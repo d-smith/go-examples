@@ -9,4 +9,5 @@ reliable transport between the aggregate and the event store, so the events
 get flush to the stream, then eventually written to the event store.
 
 The use case is a single app where writes are made, and many readers who want
-to build state from the event store.
+to build state from the event store. Here a write to the read model and a
+write of the event to the event stream can be made, with the event transported to the event store for storage.
