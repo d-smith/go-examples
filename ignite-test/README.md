@@ -4,6 +4,9 @@ A simple program to throw some load at ignite to simulate anticipated access pat
 
 ### Amazon Setup - Cluster Nodes
 
+Note - for a long running test on ec2, I saw the cluster members run out
+of memory on micro instances -- t2.small instances worked fine.
+
 Install docker and pull the grid gain image.
 
 <pre>
