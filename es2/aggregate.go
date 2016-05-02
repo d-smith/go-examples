@@ -1,17 +1,18 @@
 package es2
 
 import (
-    "github.com/nu7hatch/gouuid"
+	"github.com/nu7hatch/gouuid"
 )
 
 type Aggregate struct {
-    ID string
+	ID     string
+	Events []Event
 }
 
 func NewAggregate() *Aggregate {
-    return &Aggregate{
-        ID: GenerateID(),
-    }
+	return &Aggregate{
+		ID: GenerateID(),
+	}
 }
 
 func GenerateID() string {
