@@ -1,3 +1,4 @@
+.vscode/*
 docker-pkg/main
 jwt-hs256/node_modules
 *.out

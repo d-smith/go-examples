@@ -7,11 +7,14 @@ import (
 	"log"
 )
 
+//Event contains the aggregate id the event is associated with and the 
+//event payload
 type Event struct {
 	AggregateId string
 	Payload interface{}
 }
 
+//EventStore defines the interface an Event Store must provide.
 type EventStore interface {
 	GetEvents(aggregateId string) ([]Event, error)
 	StoreEvents(aggregateId string, events []Event) error
