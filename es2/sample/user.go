@@ -9,6 +9,10 @@ import (
 // The Aggregate type must be embedded
 // A constructor for a brand new aggregate is available
 // Constructing an aggregate produces an event
+// Mutations occur via commands, which emit events handled by event handler, with events routed to handlers
+// Events are recorded in event history
+// An apply method routes an event to the event handler, and records the event
+// When applying event history, only the route method is used - side effects occur in the command handlers
 
 type User struct {
 	*es2.Aggregate
