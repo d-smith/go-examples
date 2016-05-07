@@ -68,6 +68,16 @@ type UserLastNameUpdated struct {
 	NewLast string
 }
 
+func (u *User) UpdateFirstName(first string) {
+	u.Apply(
+		es2.Event{
+			Payload: UserFirstNameUpdated{
+				OldFirst: u.FirstName,
+				NewFirst:   first,
+			},
+		})
+}
+
 func (u *User) handleUserCreated(event UserCreated) {
 	u.Aggregate.ID = event.AggregateId
 	u.FirstName = event.FirstName

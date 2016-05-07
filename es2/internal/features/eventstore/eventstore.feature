@@ -13,5 +13,4 @@ Feature: Event Store
         Given two aggregates
         And an event store containing all events for both aggregates
         When the events for an aggregate are retrieved
-        Then only the events assocaited with the specific aggregate are retrieved
-        And the events are ordered
+        Then only the events associated with the specific aggregate are retrieved
