@@ -1,48 +1,63 @@
 package eventstore
 
 import (
+	"errors"
 	"github.com/d-smith/go-examples/es2"
 	"sync"
-	"errors"
 )
 
 //TODO - package error pattern - const or var??
 
+type EventStorage struct {
+	events        []es2.Event
+	currentVersion int
+}
+
 type InMemoryEventStore struct {
 	sync.RWMutex
-	storage map[string][]es2.Event
+	storage map[string]EventStorage
 }
 
 func NewInMemoryEventStore() *InMemoryEventStore {
 	return &InMemoryEventStore{
-		storage:make(map[string][]es2.Event),
+		storage: make(map[string]EventStorage),
 	}
 }
 
 func (im *InMemoryEventStore) StoreEvents(agg *es2.Aggregate) error {
 	im.Lock()
 	defer im.Unlock()
-	aggEvents := im.storage[agg.ID]
-	if aggEvents == nil {
-		aggEvents = make([]es2.Event,0)
+
+	//Do we have events for this aggregate?
+	aggStorage, ok := im.storage[agg.ID]
+	if !ok {
+		aggStorage = EventStorage{}
 	}
 
-	for _, e := range agg.Events {
-		aggEvents = append(aggEvents, e)
+	//Has someone update the aggregate before the current caller?
+	if ! (aggStorage.currentVersion < agg.Version) {
+		return errors.New("Concurrency exception")
 	}
-	im.storage[agg.ID] = aggEvents
+
+	//Set the new version, and append the events
+	aggStorage.currentVersion = agg.Version
+	for _, e := range agg.Events {
+		aggStorage.events = append(aggStorage.events, e)
+	}
+
+	im.storage[agg.ID] = aggStorage
 
 	return nil
 }
 
-func (im *InMemoryEventStore) RetrieveEvents(aggId string) ([]es2.Event,error) {
+func (im *InMemoryEventStore) RetrieveEvents(aggId string) ([]es2.Event, error) {
 	im.RLock()
 	defer im.RUnlock()
 
-	eventSet, ok := im.storage[aggId]
+	eventStorage, ok := im.storage[aggId]
 	if !ok {
 		return nil, errors.New("No events stored for aggregate")
 	}
 
-	return eventSet, nil
+	return eventStorage.events, nil
 }

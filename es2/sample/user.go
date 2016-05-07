@@ -90,6 +90,7 @@ func (u *User) handleUserFirstNameUpdate(event UserFirstNameUpdated) {
 }
 
 func (u *User) Route(event es2.Event) {
+	u.Version += 1
 	switch event.Payload.(type) {
 	case UserCreated:
 		u.handleUserCreated(event.Payload.(UserCreated))
@@ -97,6 +98,7 @@ func (u *User) Route(event es2.Event) {
 		u.handleUserFirstNameUpdate(event.Payload.(UserFirstNameUpdated))
 	default:
 		log.Println("WARN: unknown event routed to User aggregate")
+		u.Version -= 1
 	}
 }
 

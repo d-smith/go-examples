@@ -79,4 +79,41 @@ func init() {
 	})
 
 
+	When(`^I add an event$`, func() {
+		user.UpdateFirstName("new first")
+	})
+
+	Then(`^the aggregate version is incremented$`, func() {
+		assert.Equal(T, 2, user.Version, "Expected user to be at version 2")
+	})
+
+	And(`^the aggregate version is correct when built from event history$`, func() {
+		user.Store(eventStore)
+		events, err := eventStore.RetrieveEvents(user.ID)
+		assert.Nil(T,err)
+		retUser := sample.NewUserFromHistory(events)
+		assert.Equal(T, 2, retUser.Version, "Expected retrieved user to be at version 2")
+
+	})
+
+	var u1, u2 *sample.User
+	When(`^it is modified by two concurrent threads of control$`, func() {
+		u1 = user
+		u2 = user
+		u1.UpdateFirstName("u1 new first")
+		u2.UpdateFirstName("u2 new first")
+
+
+
+	})
+
+	Then(`^the second thread that stored the aggregate gets a concurrency error$`, func() {
+		err := u1.Store(eventStore)
+		assert.Nil(T, err)
+		err = u2.Store(eventStore)
+		assert.NotNil(T,err)
+	})
+
 }
+
+

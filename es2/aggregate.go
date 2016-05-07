@@ -5,8 +5,9 @@ import (
 )
 
 type Aggregate struct {
-	ID     string
-	Events []Event
+	ID      string
+	Events  []Event
+	Version int
 }
 
 func NewAggregate() *Aggregate {
