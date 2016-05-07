@@ -10,12 +10,12 @@ import (
 
 type InMemoryEventStore struct {
 	sync.RWMutex
-	storage map[string][]es2.EventSet
+	storage map[string][]es2.Event
 }
 
 func NewInMemoryEventStore() *InMemoryEventStore {
 	return &InMemoryEventStore{
-		storage:make(map[string][]es2.EventSet),
+		storage:make(map[string][]es2.Event),
 	}
 }
 
@@ -24,16 +24,18 @@ func (im *InMemoryEventStore) StoreEvents(agg *es2.Aggregate) error {
 	defer im.Unlock()
 	aggEvents := im.storage[agg.ID]
 	if aggEvents == nil {
-		aggEvents = make([]es2.EventSet,0)
+		aggEvents = make([]es2.Event,0)
 	}
 
-	aggEvents = append(aggEvents, agg.Events)
+	for _, e := range agg.Events {
+		aggEvents = append(aggEvents, e)
+	}
 	im.storage[agg.ID] = aggEvents
 
 	return nil
 }
 
-func (im *InMemoryEventStore) RetrieveEvents(aggId string) ([]es2.EventSet,error) {
+func (im *InMemoryEventStore) RetrieveEvents(aggId string) ([]es2.Event,error) {
 	im.RLock()
 	defer im.RUnlock()
 

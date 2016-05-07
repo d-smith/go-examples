@@ -40,9 +40,9 @@ func init() {
 	})
 
 	And(`^the aggregate state can be recreated using the events$`, func() {
-		eventSets, err := eventStore.RetrieveEvents(user.ID)
+		events, err := eventStore.RetrieveEvents(user.ID)
 		assert.Nil(T,err)
-		retUser := sample.NewUserFromHistory(eventSets[0])
+		retUser := sample.NewUserFromHistory(events)
 		assert.NotNil(T, retUser)
 		assert.Equal(T, user.FirstName, retUser.FirstName)
 		assert.Equal(T, user.LastName, retUser.LastName)
@@ -62,18 +62,16 @@ func init() {
 	})
 
 	When(`^the events for an aggregate are retrieved$`, func() {
-		eventSets, err := eventStore.RetrieveEvents(user2.ID)
+		events, err := eventStore.RetrieveEvents(user2.ID)
 		assert.Nil(T,err)
-		if assert.Equal(T, 1, len(eventSets), "Expected one event set to be retrieved") {
-			assert.Equal(T, 2, len(eventSets[0]))
-		}
+		assert.Equal(T, 2, len(events))
 
 	})
 
 	Then(`^only the events associated with the specific aggregate are retrieved$`, func() {
-		eventSets, err := eventStore.RetrieveEvents(user2.ID)
+		events, err := eventStore.RetrieveEvents(user2.ID)
 		assert.Nil(T,err)
-		retUser := sample.NewUserFromHistory(eventSets[0])
+		retUser := sample.NewUserFromHistory(events)
 		assert.NotNil(T, retUser)
 		assert.Equal(T, user2.FirstName, retUser.FirstName)
 		assert.Equal(T, user2.LastName, retUser.LastName)
