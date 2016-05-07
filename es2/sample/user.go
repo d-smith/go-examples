@@ -94,3 +94,14 @@ func (u *User) Apply(event es2.Event) {
 	u.Route(event)
 	u.Aggregate.Events = append(u.Aggregate.Events, event)
 }
+
+func (u *User) Store(eventStore es2.EventStore) error {
+	err := eventStore.StoreEvents(u.Aggregate)
+	if err != nil {
+		return err
+	}
+
+	u.Events = make([]es2.Event,0)
+
+	return nil
+}

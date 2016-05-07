@@ -2,11 +2,12 @@
 Feature: Event Store
 
     Scenario: Events for an Aggregate
-        Given an aggregate ID
+        Given an aggregate
         And an event store
         When the aggregate has uncommitted events
         And the events are stored
         Then the events for that aggregate can be retrieved
+        And the aggregate state can be recreated using the events
 
     Scenario: Events for a specific aggregate id can be retrieved
         Given two aggregates
