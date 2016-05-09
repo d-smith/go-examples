@@ -20,6 +20,7 @@ Feature: Event Store
         When I add an event
         Then the aggregate version is incremented
         And the aggregate version is correct when built from event history
+        And all the events in the event history have the aggregate id as their source
 
     Scenario: Concurrency exceptions can occur if an aggregate is modified concurrently
         Given an aggregate

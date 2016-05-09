@@ -25,6 +25,12 @@ func init() {
 	})
 
 	And(`^there's an uncommitted event$`, func() {
-		assert.Equal(T, 1, len(u1.Aggregate.Events))
+		assert.Equal(T, 1, len(u1.Events))
+		assert.Equal(T, 1, len(u2.Events))
+	})
+
+	And(`^the uncommited event's source ID is the aggregate ID$`, func() {
+		assert.Equal(T, u1.ID, u1.Events[0].Source)
+		assert.Equal(T, u2.ID, u2.Events[0].Source)
 	})
 }

@@ -28,8 +28,9 @@ func NewUser(first, last, email string) (*User, error) {
 
 	user.Apply(
 		es2.Event{
+			Source: user.ID,
 			Payload: UserCreated{
-				AggregateId: user.Aggregate.ID,
+				AggregateId: user.ID,
 				FirstName:   first,
 				LastName:    last,
 				Email:       email,
@@ -71,6 +72,7 @@ type UserLastNameUpdated struct {
 func (u *User) UpdateFirstName(first string) {
 	u.Apply(
 		es2.Event{
+			Source: u.ID,
 			Payload: UserFirstNameUpdated{
 				OldFirst: u.FirstName,
 				NewFirst:   first,
@@ -91,6 +93,7 @@ func (u *User) handleUserFirstNameUpdate(event UserFirstNameUpdated) {
 
 func (u *User) Route(event es2.Event) {
 	u.Version += 1
+	event.Version = u.Version
 	switch event.Payload.(type) {
 	case UserCreated:
 		u.handleUserCreated(event.Payload.(UserCreated))

@@ -114,6 +114,14 @@ func init() {
 		assert.NotNil(T,err)
 	})
 
+	And(`^all the events in the event history have the aggregate id as their source$`, func() {
+		events, err := eventStore.RetrieveEvents(user.ID)
+		assert.Nil(T,err)
+		for _, e := range events {
+			assert.Equal(T, user.ID, e.Source)
+		}
+	})
+
 }
 
 
