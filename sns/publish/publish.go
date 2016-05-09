@@ -9,24 +9,28 @@ import (
 )
 
 func main() {
+
 	if len(os.Args) != 3 {
-		fmt.Println("Usage: subscribe <topic arn> <queue arn>")
+		fmt.Println("Usage: publish <topic arn> <message>")
+		os.Exit(1)
 	}
 
 	svc := sns.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
 
-	params := &sns.SubscribeInput{
-		Protocol: aws.String("sqs"),
+	params := &sns.PublishInput{
+		Message:  aws.String(os.Args[2]),
+		Subject:  aws.String("a subject"),
 		TopicArn: aws.String(os.Args[1]),
-		Endpoint: aws.String(os.Args[2]),
 	}
-	resp, err := svc.Subscribe(params)
+	resp, err := svc.Publish(params)
 
 	if err != nil {
+		// Print the error, cast err to awserr.Error to get the Code and
+		// Message from an error.
 		fmt.Println(err.Error())
 		return
 	}
 
+	// Pretty-print the response data.
 	fmt.Println(resp)
-
 }
