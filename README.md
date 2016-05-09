@@ -16,8 +16,11 @@ up automatically by go.
 * concurrent - Two concurrency examples, one using shared memory and synchronization, one using message passing.
 * consul-kv-read - Simple consul api sample for reading a value by key
 * cookies - simple http cookie jar sample
+* ctx-hierarchy - example of wiring in context aware http handlers
+* custom-handler - package for context aware handlers and samples of how to create and use context aware handlers
+* decorate-http-hf - decorator pattern on http handlers
 * docker-list-containers - example use of the docker api to list docker containers
-* decorate-http-hf - add a decorator method to functions with the http handler signature
+* docker-pkg - simple minded example of packaging a golang program as a Docker image
 * dynamo - AWS DynamodDB golang sample
 * errors - customer error sample
 * flags - basic use of the flags package
