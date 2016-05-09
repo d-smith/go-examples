@@ -46,4 +46,8 @@ func init() {
 		assert.Equal(T, 0, len(userFromHistory.Events))
 	})
 
+	And(`^the aggregate version is correct$`, func() {
+		assert.Equal(T, 2, userFromHistory.Version)
+	})
+
 }

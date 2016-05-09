@@ -26,9 +26,11 @@ func NewUser(first, last, email string) (*User, error) {
 	var user = new(User)
 	user.Aggregate = es2.NewAggregate()
 
+	user.Version = 1
 	user.Apply(
 		es2.Event{
-			Source: user.ID,
+			Source:  user.ID,
+			Version: user.Version,
 			Payload: UserCreated{
 				AggregateId: user.ID,
 				FirstName:   first,
@@ -46,6 +48,7 @@ func NewUserFromHistory(events []es2.Event) *User {
 
 	for _, e := range events {
 		log.Println("apply event", e)
+		user.Version += 1
 		user.Route(e)
 	}
 
@@ -70,12 +73,14 @@ type UserLastNameUpdated struct {
 }
 
 func (u *User) UpdateFirstName(first string) {
+	u.Version += 1
 	u.Apply(
 		es2.Event{
-			Source: u.ID,
+			Source:  u.ID,
+			Version: u.Version,
 			Payload: UserFirstNameUpdated{
 				OldFirst: u.FirstName,
-				NewFirst:   first,
+				NewFirst: first,
 			},
 		})
 }
@@ -92,7 +97,6 @@ func (u *User) handleUserFirstNameUpdate(event UserFirstNameUpdated) {
 }
 
 func (u *User) Route(event es2.Event) {
-	u.Version += 1
 	event.Version = u.Version
 	switch event.Payload.(type) {
 	case UserCreated:
@@ -100,14 +104,13 @@ func (u *User) Route(event es2.Event) {
 	case UserFirstNameUpdated:
 		u.handleUserFirstNameUpdate(event.Payload.(UserFirstNameUpdated))
 	default:
-		log.Println("WARN: unknown event routed to User aggregate")
-		u.Version -= 1
+		panic("WARN: unknown event routed to User aggregate")
 	}
 }
 
 func (u *User) Apply(event es2.Event) {
 	u.Route(event)
-	u.Aggregate.Events = append(u.Aggregate.Events, event)
+	u.Events = append(u.Events, event)
 }
 
 func (u *User) Store(eventStore es2.EventStore) error {
@@ -116,7 +119,7 @@ func (u *User) Store(eventStore es2.EventStore) error {
 		return err
 	}
 
-	u.Events = make([]es2.Event,0)
+	u.Events = make([]es2.Event, 0)
 
 	return nil
 }

@@ -9,7 +9,7 @@ import (
 //TODO - package error pattern - const or var??
 
 type EventStorage struct {
-	events        []es2.Event
+	events         []es2.Event
 	currentVersion int
 }
 
@@ -35,7 +35,7 @@ func (im *InMemoryEventStore) StoreEvents(agg *es2.Aggregate) error {
 	}
 
 	//Has someone update the aggregate before the current caller?
-	if ! (aggStorage.currentVersion < agg.Version) {
+	if !(aggStorage.currentVersion < agg.Version) {
 		return errors.New("Concurrency exception")
 	}
 

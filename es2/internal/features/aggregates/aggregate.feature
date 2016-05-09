@@ -13,3 +13,4 @@ Feature: Event Sourced Aggregate
         When I instantiate the aggregate from its history
         Then the instance state is correct
         And there are no uncommitted events
+        And the aggregate version is correct
