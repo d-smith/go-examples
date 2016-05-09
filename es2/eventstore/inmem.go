@@ -8,6 +8,11 @@ import (
 
 //TODO - package error pattern - const or var??
 
+type subscriberStorage struct {
+	subId    es2.SubscriptionID
+	callback es2.EventPublishedCallback
+}
+
 type EventStorage struct {
 	events         []es2.Event
 	currentVersion int
@@ -15,12 +20,19 @@ type EventStorage struct {
 
 type InMemoryEventStore struct {
 	sync.RWMutex
-	storage map[string]EventStorage
+	storage     map[string]EventStorage
+	subscribers []subscriberStorage
 }
 
 func NewInMemoryEventStore() *InMemoryEventStore {
 	return &InMemoryEventStore{
 		storage: make(map[string]EventStorage),
+	}
+}
+
+func (im *InMemoryEventStore) publishEvent(event es2.Event) {
+	for _, sub := range im.subscribers {
+		sub.callback(event)
 	}
 }
 
@@ -43,6 +55,7 @@ func (im *InMemoryEventStore) StoreEvents(agg *es2.Aggregate) error {
 	aggStorage.currentVersion = agg.Version
 	for _, e := range agg.Events {
 		aggStorage.events = append(aggStorage.events, e)
+		im.publishEvent(e)
 	}
 
 	im.storage[agg.ID] = aggStorage
@@ -60,4 +73,25 @@ func (im *InMemoryEventStore) RetrieveEvents(aggId string) ([]es2.Event, error) 
 	}
 
 	return eventStorage.events, nil
+}
+
+func (im *InMemoryEventStore) SubscribeEvents(callback es2.EventPublishedCallback) es2.SubscriptionID {
+	im.Lock()
+	defer im.Unlock()
+	subId := es2.SubscriptionID(es2.GenerateID())
+	im.subscribers = append(im.subscribers, subscriberStorage{subId: subId, callback: callback})
+	return subId
+
+}
+
+func (im *InMemoryEventStore) Unsubscribe(subId es2.SubscriptionID) {
+	im.Lock()
+	remainingSubs := make([]subscriberStorage, 0, len(im.subscribers)-1)
+	for _, sub := range im.subscribers {
+		if sub.subId != subId {
+			remainingSubs = append(remainingSubs, sub)
+		}
+	}
+	im.subscribers = remainingSubs
+	im.Unlock()
 }

@@ -115,7 +115,6 @@ func init() {
 		assert.Nil(T, err)
 		for _, e := range events {
 			assert.Equal(T, user.ID, e.Source)
-			println(e.Version)
 		}
 	})
 
