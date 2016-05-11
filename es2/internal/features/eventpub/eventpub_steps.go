@@ -12,7 +12,9 @@ func init() {
 
 	var user *sample.User
 	var events []es2.Event
-	var eventStore es2.EventStore = eventstore.NewInMemoryEventStore()
+	var inMemEventStore = eventstore.NewInMemoryEventStore()
+	var eventStore es2.EventStore = inMemEventStore
+	var eventPublisher es2.EventPublisher = inMemEventStore
 	var subId es2.SubscriptionID
 
 	var callback = func(event es2.Event) {
@@ -22,7 +24,7 @@ func init() {
 	When(`^I create and modify an instance of the aggregate$`, func() {
 		user, _ = sample.NewUser("first", "last", "email")
 		user.UpdateFirstName("updated")
-		subId = eventStore.SubscribeEvents(callback)
+		subId = eventPublisher.SubscribeEvents(callback)
 		user.Store(eventStore)
 	})
 
@@ -40,7 +42,7 @@ func init() {
 	})
 
 	When(`^the subscriber unsubscribes$`, func() {
-		eventStore.Unsubscribe(subId)
+		eventPublisher.Unsubscribe(subId)
 	})
 
 	Then(`^previously subscribed callback is not invoked when events are published$`, func() {

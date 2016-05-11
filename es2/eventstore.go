@@ -7,6 +7,9 @@ type SubscriptionID string
 type EventStore interface {
 	StoreEvents(*Aggregate) error
 	RetrieveEvents(aggID string) ([]Event, error)
+}
+
+type EventPublisher interface {
 	SubscribeEvents(callback EventPublishedCallback) SubscriptionID
 	Unsubscribe(sub SubscriptionID)
 }
