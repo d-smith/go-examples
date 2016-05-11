@@ -8,9 +8,9 @@ import (
 	"os"
 )
 
-func createQueue(svc *sqs.SQS) (string, error) {
+func createQueue(svc *sqs.SQS, queueName string) (string, error) {
 	params := &sqs.CreateQueueInput{
-		QueueName: aws.String("my-queue"),
+		QueueName: aws.String(queueName),
 	}
 	resp, err := svc.CreateQueue(params)
 	if err != nil {
@@ -37,9 +37,15 @@ func getQueueArn(queueURL string, svc *sqs.SQS) (string, error) {
 }
 
 func main() {
+
+	if len(os.Args) != 2 {
+		fmt.Println("Usage: create <queue name>")
+		return
+	}
+
 	svc := sqs.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
 
-	queueURL, err := createQueue(svc)
+	queueURL, err := createQueue(svc, os.Args[1])
 	if err != nil {
 		fmt.Println(err.Error())
 		os.Exit(1)

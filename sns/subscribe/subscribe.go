@@ -11,6 +11,7 @@ import (
 func main() {
 	if len(os.Args) != 3 {
 		fmt.Println("Usage: subscribe <topic arn> <queue arn>")
+		return
 	}
 
 	svc := sns.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})

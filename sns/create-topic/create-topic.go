@@ -5,13 +5,18 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
+	"os"
 )
 
 func main() {
+	if len(os.Args) != 2 {
+		fmt.Println("Usage: create-topic <topic name>")
+		return
+	}
 	svc := sns.New(session.New(),&aws.Config{Region: aws.String("us-east-1")})
 
 	params := &sns.CreateTopicInput{
-		Name: aws.String("my-topic"),
+		Name: aws.String(os.Args[1]),
 	}
 	resp, err := svc.CreateTopic(params)
 
