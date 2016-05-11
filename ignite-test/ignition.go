@@ -156,8 +156,29 @@ func writeAndRead(numReads, waitTimeMillis int, verbose bool, servers []string) 
 		}
 	}
 
+	err = deleteItem(endpoint,key)
+	if err != nil {
+		handleErr(err)
+		return
+	}
 
 
+}
+
+func deleteItem(endpoint, key string) error {
+	queryString :=fmt.Sprintf("http://%s/ignite?cmd=rmv&key=%s&cacheName=xtSessionCache", endpoint, url.QueryEscape(key))
+	resp, err := http.Get(queryString)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+	_,err = ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func putItem(endpoint, key string, val int) error {
