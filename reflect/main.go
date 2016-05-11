@@ -24,4 +24,6 @@ func main() {
 
 	fmt.Println(reflect.TypeOf(new(Object)))
 
+	var s string = aType.String()
+	fmt.Println(s)
 }
