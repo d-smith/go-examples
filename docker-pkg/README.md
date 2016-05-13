@@ -3,7 +3,7 @@ golang into a very small container.
 
 To use:
 
-1. Build the executable via go build -o main
+1. Build the executable via GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -o main .
 2. Package it using docker build .
 3. Run via docker run
 
