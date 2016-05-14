@@ -36,6 +36,9 @@ samples using the built in testing package and using the testify assert package.
 * http-panic - Sample panic handler for http
 * httpgzip - Sample that shows how to use gzip compression with HTTP on both the client and server sides.
 * https - Sample that shows how to configure a server to use HTTPS
+* id-and-secret - Sample to show how to generate a application id and secret
+* ignite - Simple REST get and put to Apache Ignite/Grid Gain cache
+
 
 
 
