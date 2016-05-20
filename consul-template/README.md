@@ -49,5 +49,16 @@ and make bin
 * Project - https://github.com/hashicorp/consul-template
 * Releases - https://releases.hashicorp.com/consul-template/
 
+## Docker Image
+
+Build thusly:
+
+<pre>
+GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -o service
+docker build .
+</pre>
+
+
+
 
 
