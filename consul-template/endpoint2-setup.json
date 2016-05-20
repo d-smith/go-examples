@@ -1,0 +1,9 @@
+{
+  "port":5555,
+  "protocol":"http",
+  "stubs":[{
+    "responses":[
+      {"is":{"body":"Hello from 5555\n"}}
+    ]
+  }]
+}
