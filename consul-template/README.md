@@ -58,6 +58,12 @@ GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -o service
 docker build .
 </pre>
 
+## Add config
+
+curl -X PUT localhost:8500/v1/kv/env1/
+curl -X PUT localhost:8500/v1/kv/env1/endpoint -d foo:4545
+curl -X PUT localhost:8500/v1/kv/env1/port -d 3000
+
 
 
 
