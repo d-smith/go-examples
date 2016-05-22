@@ -1,0 +1,1 @@
+docker run -e "endpoint={{key "env1/endpoint-host"}}:{{key "env1/endpoint-port"}}" -e "port={{key "env1/port"}}" --link mountebank:{{key "env1/endpoint-host"}} -p {{key "env1/port"}}:{{key "env1/port"}}  cfgsample

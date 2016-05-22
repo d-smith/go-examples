@@ -30,6 +30,10 @@ curl -i -X POST -d@endpoint-setup.json http://127.0.0.1:2525/imposters
 curl -i -X POST -d@endpoint2-setup.json http://127.0.0.1:2525/imposters
 </pre>
 
+## Run with environment variables
+
+docker run -e "endpoint=foo:4545" -e "port=3000" --link mountebank:foo -p 3000:3000  1ac129181e49
+
 ## Golang Setup for Demo
 
 * golang set up - consul.sh
@@ -55,16 +59,25 @@ Build thusly:
 
 <pre>
 GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -o service
-docker build .
+docker build -t cfgsample .
 </pre>
 
 ## Add config
 
 curl -X PUT localhost:8500/v1/kv/env1/
-curl -X PUT localhost:8500/v1/kv/env1/endpoint -d foo:4545
+curl -X PUT localhost:8500/v1/kv/env1/endpoint-host -d foo
+curl -X PUT localhost:8500/v1/kv/env1/endpoint-port -d 4545
 curl -X PUT localhost:8500/v1/kv/env1/port -d 3000
 
+## Consul-template
 
+./consul-template -consul localhost:8500 -template /Users/a045103/goex/src/github.com/d-smith/go-examples/consul-template/demo-template.ctmpl -dry -once
+
+
+## Run mountebank
+
+docker pull dasmith/mb-server-alpine
+docker run -d -p 2525:2525 --name mountebank dasmith/mb-server-alpine
 
 
 
