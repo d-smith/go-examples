@@ -15,7 +15,7 @@ docker run -p 8500:8500 consul agent -dev -client=0.0.0.0
 docker run -d --name=dev-consul -p 8500:8500 consul agent -dev -client=0.0.0.0
 docker run -d consul agent -dev -join=172.17.0.2
 docker run -d consul agent -dev -join=172.17.0.2
-<pre>
+</pre>
 
 * Cluster members
 
@@ -32,7 +32,9 @@ curl -i -X POST -d@endpoint2-setup.json http://127.0.0.1:2525/imposters
 
 ## Run with environment variables
 
+<pre>
 docker run -e "endpoint=foo:4545" -e "port=3000" --link mountebank:foo -p 3000:3000  1ac129181e49
+</pre>
 
 ## Golang Setup for Demo
 
@@ -64,20 +66,24 @@ docker build -t cfgsample .
 
 ## Add config
 
+<pre>
 curl -X PUT localhost:8500/v1/kv/env1/
 curl -X PUT localhost:8500/v1/kv/env1/endpoint-host -d foo
 curl -X PUT localhost:8500/v1/kv/env1/endpoint-port -d 4545
 curl -X PUT localhost:8500/v1/kv/env1/port -d 3000
+</pre>
 
 ## Consul-template
 
+<pre>
 ./consul-template -consul localhost:8500 -template /Users/a045103/goex/src/github.com/d-smith/go-examples/consul-template/demo-template.ctmpl -dry -once
-
+</pre>
 
 ## Run mountebank
 
+<pre>
 docker pull dasmith/mb-server-alpine
 docker run -d -p 2525:2525 --name mountebank dasmith/mb-server-alpine
-
+</pre>
 
 
