@@ -30,6 +30,10 @@ func lookupServiceEndpointOrDie(env string)string {
 		log.Fatal(err.Error())
 	}
 
+	if len(env1Services) == 0 {
+		log.Fatal("No service definition found in consul")
+	}
+
 	env1Service := env1Services[0]
 
 	return fmt.Sprintf("%s:%d", env1Service.ServiceAddress, env1Service.ServicePort)
