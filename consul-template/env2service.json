@@ -1,0 +1,10 @@
+{
+  "ID":"demo-service-env2",
+  "Name":"demo-service",
+  "Tags":[
+    "env2",
+    "v1"
+  ],
+  "Address":"mbhost",
+  "Port":5555
+}

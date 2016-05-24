@@ -41,7 +41,6 @@ func makeHandler(endpoint string) func(rw http.ResponseWriter, req *http.Request
 	}
 }
 
-
 func main() {
 	endpoint, port := getConfigFromEnvOrDieTrying()
 	log.Println("Port:", port, "Endpoint:",endpoint)
