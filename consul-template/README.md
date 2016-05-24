@@ -105,6 +105,8 @@ docker run -d -p 2525:2525 --name mountebank dasmith/mb-server-alpine
 
 ## Service Definition
 
+curl -v -X PUT -d@env1service.json localhost:8500/v1/agent/service/register
+curl -v -X PUT -d@env2service.json localhost:8500/v1/agent/service/register
 
 
 
