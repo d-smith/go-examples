@@ -1,4 +1,7 @@
+## Demo Tags
 
+* Config Binding - cfgBinding
+* Service Binding - svcBinding
 
 ## Consul Setup
 
