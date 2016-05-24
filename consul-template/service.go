@@ -8,15 +8,40 @@ import (
 	"net/http"
 	"fmt"
 	"io"
+	"github.com/hashicorp/consul/api"
 )
 
 var transport = &http.Transport{DisableKeepAlives: false, DisableCompression: false}
 
-func getConfigFromEnvOrDieTrying()(endpoint string, port int) {
-	endpoint = os.Getenv("endpoint")
-	if endpoint == "" {
-		log.Fatal("No endpoint specified")
+//Note this assumes we're running in docker and that the actual hostname has
+//been bound to the logical consul hostname via the --link command line option.
+func lookupServiceEndpointOrDie(env string)string {
+	config := api.DefaultConfig()
+	config.Address = "consul:8500"
+	client,err := api.NewClient(config)
+	if err != nil {
+		log.Fatal(err.Error())
 	}
+
+	catalog := client.Catalog()
+	log.Println("Lookup demo-service for environment",env)
+	env1Services,_,err := catalog.Service("demo-service",env,nil)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+
+	env1Service := env1Services[0]
+
+	return fmt.Sprintf("%s:%d", env1Service.ServiceAddress, env1Service.ServicePort)
+}
+
+func getConfigFromEnvOrDieTrying()(endpoint string, port int) {
+	env := os.Getenv("env")
+	if env == "" {
+		log.Fatal("No environment designation specified via the env envronment variable")
+	}
+
+	endpoint = lookupServiceEndpointOrDie(env)
 
 	port,err := strconv.Atoi(os.Getenv("port"))
 	if err != nil {

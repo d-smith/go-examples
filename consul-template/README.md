@@ -33,10 +33,16 @@ curl -i -X POST -d@endpoint-setup.json http://127.0.0.1:2525/imposters
 curl -i -X POST -d@endpoint2-setup.json http://127.0.0.1:2525/imposters
 </pre>
 
-## Run with environment variables
+## Run with environment variables - cfgBinding
 
 <pre>
 docker run -e "endpoint=foo:4545" -e "port=3000" --link mountebank:foo -p 3000:3000  1ac129181e49
+</pre>
+
+## Run with environment variables - svcBinding
+
+<pre>
+docker run -e "port=3000" -e "env=env1" --link mountebank:mbhost --link dev-consul:consul -p 3000:3000 svcsample
 </pre>
 
 ## Golang Setup for Demo
@@ -60,12 +66,20 @@ and make bin
 
 ## Docker Image
 
-Build thusly:
+Build image for tag cfgBinding thusly:
 
 <pre>
 GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -o service
 docker build -t cfgsample .
 </pre>
+
+Build image for tag svcBinding thusly:
+
+<pre>
+GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -o service
+docker build -t svcsample .
+</pre>
+
 
 ## Add config
 
