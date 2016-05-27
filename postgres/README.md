@@ -31,7 +31,8 @@ create sequence sampleseq increment by 1
 create table sample (
     recno integer default nextval('sampleseq'),
     name varchar(128) primary key,
-    value varchar(256)
+    value varchar(256),
+    dablob bytea
 );
 
 grant select, update, insert, delete on sample to esuser;

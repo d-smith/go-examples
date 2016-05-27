@@ -6,6 +6,7 @@ import (
 	"log"
 	"time"
 	"fmt"
+	"encoding/json"
 )
 
 
@@ -16,12 +17,12 @@ func insertData(db *sql.DB) error {
 	}
 	defer tx.Rollback()
 
-	stmt, err := tx.Prepare("insert into sample (name, value) values ($1, $2)")
+	stmt, err := tx.Prepare("insert into sample (name, value, dablob) values ($1, $2, $3)")
 	if err != nil {
 		return err
 	}
 
-	_,err = stmt.Exec(time.Now().String(), "value yes")
+	_,err = stmt.Exec(time.Now().String(), "value yes", []byte(jsonDoc))
 	stmt.Close()
 	if err != nil {
 		return err
@@ -96,6 +97,7 @@ func queryAndUpdateData(db *sql.DB) error {
 	defer rows.Close()
 	var name, value string
 	var recordNo int
+
 	for rows.Next() {
 		rows.Scan(&recordNo, &name,&value)
 		fmt.Printf("Read row <%d, %s, %s>\n", recordNo, name, value)
@@ -106,6 +108,8 @@ func queryAndUpdateData(db *sql.DB) error {
 			fmt.Println("-> update")
 			updateRecord(db, recordNo)
 		}
+
+
 	}
 	err = rows.Err()
 
@@ -113,7 +117,7 @@ func queryAndUpdateData(db *sql.DB) error {
 }
 
 func queryData(db *sql.DB) error {
-	rows, err := db.Query(`select recno, name, value from sample`)
+	rows, err := db.Query(`select recno, name, value, dablob from sample`)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -121,9 +125,22 @@ func queryData(db *sql.DB) error {
 	defer rows.Close()
 	var name, value string
 	var recordNo int
+	var dablob []byte
+
 	for rows.Next() {
-		rows.Scan(&recordNo, &name,&value)
+		rows.Scan(&recordNo, &name,&value,&dablob)
 		fmt.Printf("<%d, %s, %s>\n", recordNo, name, value)
+
+		if len(dablob) > 0 {
+			fmt.Println("...got some bytes...")
+			ms := new(managedService)
+			err = json.Unmarshal([]byte(jsonDoc), ms)
+			if err != nil {
+				fmt.Println("...can't unmarshall da bytes", err.Error())
+			} else {
+				fmt.Printf("\t%v\n",ms)
+			}
+		}
 	}
 	err = rows.Err()
 
