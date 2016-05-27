@@ -35,17 +35,95 @@ func insertData(db *sql.DB) error {
 	return nil
 }
 
-func queryData(db *sql.DB) error {
-	rows, err := db.Query(`select name, value from sample`)
+func deleteRecord(db *sql.DB, recno int) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare("delete from sample where recno = $1")
+	if err != nil {
+		return err
+	}
+
+	_,err = stmt.Exec(recno)
+	stmt.Close()
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func updateRecord(db *sql.DB, recno int) error {
+	tx, err := db.Begin()
+	if err != nil {
+		return err
+	}
+	defer tx.Rollback()
+
+	stmt, err := tx.Prepare("update sample set value = $1 where recno = $2")
+	if err != nil {
+		return err
+	}
+
+	_,err = stmt.Exec(fmt.Sprintf("updated value for rec %d",recno), recno)
+	stmt.Close()
+	if err != nil {
+		return err
+	}
+
+	err = tx.Commit()
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func queryAndUpdateData(db *sql.DB) error {
+	rows, err := db.Query(`select recno, name, value from sample`)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	defer rows.Close()
 	var name, value string
+	var recordNo int
 	for rows.Next() {
-		rows.Scan(&name,&value)
-		fmt.Printf("<%s, %s>\n", name, value)
+		rows.Scan(&recordNo, &name,&value)
+		fmt.Printf("Read row <%d, %s, %s>\n", recordNo, name, value)
+		if recordNo % 2 == 0 {
+			fmt.Println("-> delete")
+			deleteRecord(db, recordNo)
+		} else {
+			fmt.Println("-> update")
+			updateRecord(db, recordNo)
+		}
+	}
+	err = rows.Err()
+
+	return err
+}
+
+func queryData(db *sql.DB) error {
+	rows, err := db.Query(`select recno, name, value from sample`)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	defer rows.Close()
+	var name, value string
+	var recordNo int
+	for rows.Next() {
+		rows.Scan(&recordNo, &name,&value)
+		fmt.Printf("<%d, %s, %s>\n", recordNo, name, value)
 	}
 	err = rows.Err()
 
@@ -67,6 +145,13 @@ func main() {
 		log.Fatal(err)
 	}
 
+	fmt.Println("query and update...")
+	err = queryAndUpdateData(db)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Println("query...")
 	err = queryData(db)
 	if err != nil {
 		log.Fatal(err)

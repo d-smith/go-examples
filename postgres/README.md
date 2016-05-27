@@ -26,11 +26,15 @@ create database esdb;
 
 \c esdb
 
+create sequence sampleseq increment by 1
+
 create table sample (
+    recno integer default nextval('sampleseq'),
     name varchar(128) primary key,
     value varchar(256)
 );
 
 grant select, update, insert, delete on sample to esuser;
+grant select, update on sampleseq to esuser;
 </pre>
 
