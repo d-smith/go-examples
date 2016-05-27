@@ -21,10 +21,10 @@ docker run -it --rm --link eventstoredb:postgres postgres psql -h postgres -U po
 
 <pre>
 
-create user esuser with password 'password';
-create database esdb;
+create user sampleusr with password 'password';
+create database sampledb;
 
-\c esdb
+\c sampledb
 
 create sequence sampleseq increment by 1
 
@@ -35,7 +35,7 @@ create table sample (
     dablob bytea
 );
 
-grant select, update, insert, delete on sample to esuser;
-grant select, update on sampleseq to esuser;
+grant select, update, insert, delete on sample to sampleusr;
+grant select, update on sampleseq to sampleusr;
 </pre>
 

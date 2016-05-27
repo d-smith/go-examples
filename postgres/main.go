@@ -148,7 +148,7 @@ func queryData(db *sql.DB) error {
 }
 
 func main() {
-	db, err := sql.Open("postgres", "user=esuser dbname=esdb password=password host=localhost sslmode=disable")
+	db, err := sql.Open("postgres", "user=sampleusr dbname=sampledb password=password host=localhost sslmode=disable")
 	if err != nil {
 		log.Fatal(err)
 	}
