@@ -117,7 +117,7 @@ func queryAndUpdateData(db *sql.DB) error {
 }
 
 func queryData(db *sql.DB) error {
-	rows, err := db.Query(`select recno, name, value, dablob from sample`)
+	rows, err := db.Query(`select recno, name, value, dablob from sample  order by recno desc`)
 	if err != nil {
 		log.Fatal(err)
 	}
