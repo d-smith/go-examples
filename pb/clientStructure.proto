@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package main;
+
+message Client {
+    int32 id = 1;
+    string name = 2;
+    string email = 3;
+    string country = 4;
+
+    message Mail {
+        string remoteEmail = 1;
+        string body = 2;
+    }
+
+    repeated Mail inbox = 5;
+}
+
