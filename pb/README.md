@@ -35,3 +35,9 @@ sudo make install
 which protoc
 protoc --version
 </pre>
+
+Then, for go support:
+
+<pre>
+go get -u github.com/golang/protobuf/protoc-gen-go
+</pre>
