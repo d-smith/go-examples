@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"os"
+	"github.com/d-smith/go-examples/awsreg"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	svc := sqs.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
+	svc := sqs.New(session.New(), &aws.Config{Region: awsreg.RegionFromEnvOrDefault("us-east-1")})
 
 	params := &sqs.ReceiveMessageInput{
 		QueueUrl: aws.String(os.Args[1]),

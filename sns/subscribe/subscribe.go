@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
 	"os"
+	"github.com/d-smith/go-examples/awsreg"
 )
 
 func main() {
@@ -14,7 +15,7 @@ func main() {
 		return
 	}
 
-	svc := sns.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
+	svc := sns.New(session.New(), &aws.Config{Region: awsreg.RegionFromEnvOrDefault("us-east-1")})
 
 	params := &sns.SubscribeInput{
 		Protocol: aws.String("sqs"),

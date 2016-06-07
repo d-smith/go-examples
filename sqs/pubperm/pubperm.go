@@ -8,6 +8,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/service/sqs"
+	"github.com/d-smith/go-examples/awsreg"
 )
 
 var policyTemplate = `
@@ -70,7 +71,7 @@ func main() {
 
 	fmt.Println(policy)
 
-	svc := sqs.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
+	svc := sqs.New(session.New(), &aws.Config{Region: awsreg.RegionFromEnvOrDefault("us-east-1")})
 
 	params := &sqs.SetQueueAttributesInput{
 		Attributes: map[string]*string{

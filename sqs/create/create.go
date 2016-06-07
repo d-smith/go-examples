@@ -6,6 +6,7 @@ import (
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"os"
+	"github.com/d-smith/go-examples/awsreg"
 )
 
 func createQueue(svc *sqs.SQS, queueName string) (string, error) {
@@ -43,7 +44,7 @@ func main() {
 		return
 	}
 
-	svc := sqs.New(session.New(), &aws.Config{Region: aws.String("us-east-1")})
+	svc := sqs.New(session.New(), &aws.Config{Region: awsreg.RegionFromEnvOrDefault("us-east-1")})
 
 	queueURL, err := createQueue(svc, os.Args[1])
 	if err != nil {
