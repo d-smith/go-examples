@@ -8,7 +8,9 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
+	"math/rand"
 	"net"
+	"time"
 )
 
 type MyDirectoryServer struct{}
@@ -24,6 +26,9 @@ func LogDestination(ctx context.Context, req interface{}, info *grpc.UnaryServer
 }
 
 func (mds *MyDirectoryServer) LookupPersonByName(context.Context, *NameRequest) (*Person, error) {
+	grpclog.Println("Receieved request... sleep")
+	time.Sleep(randomSleepTime())
+	grpclog.Print("Ok - found it")
 	return &Person{
 		Name:  "flibby",
 		Email: "flibby@dibby-dibby-do.com",
@@ -37,6 +42,12 @@ var (
 func newServer() *MyDirectoryServer {
 	s := new(MyDirectoryServer)
 	return s
+}
+
+func randomSleepTime() time.Duration {
+	millis := rand.Intn(1000) + 1
+	delay := time.Duration(millis) * time.Millisecond
+	return delay
 }
 
 func main() {

@@ -6,10 +6,12 @@ import (
 	"golang.org/x/net/context"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/grpclog"
+	"time"
 )
 
 var (
-	serverAddr = flag.String("server_addr", "127.0.0.1:10000", "The server address in the format of host:port")
+	serverAddr = flag.String("serveraddr", "127.0.0.1:10000", "The server address in the format of host:port")
+	doTimeout  = flag.Bool("dotimeout", false, "set to true for forcing client timeout")
 )
 
 func main() {
@@ -27,7 +29,14 @@ func main() {
 
 	client := NewDirectoryClient(conn)
 
-	person, err := client.LookupPersonByName(context.Background(), nameReq)
+	ctx := context.Background()
+	var cancel context.CancelFunc
+	if *doTimeout == true {
+		ctx, cancel = context.WithTimeout(ctx, 500*time.Millisecond)
+		defer cancel()
+	}
+
+	person, err := client.LookupPersonByName(ctx, nameReq)
 	if err != nil {
 		grpclog.Fatalf("error calling remote service: %v", err)
 	}
