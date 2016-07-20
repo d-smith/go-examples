@@ -59,4 +59,15 @@ go get -v github.com/mattn/go-oci8
 
 Note before go get that the install location and paths in oci8.pc must be aligned.
 
+### Oracle Docker Image
 
+Note: downloading [this image](https://hub.docker.com/r/sath89/oracle-12c/) can be problematic as it is huge. There's an image layer
+that is 2.67 GB!
+
+When running this in a Vagrant environment, I needed a virtual machine definition of 2048 MBytes - I had start up failures
+when running in it a 1GB machine.
+
+<pre>
+docker pull sath89/oracle-12c
+docker run -d -p 8080:8080 -p 1521:1521 sath89/oracle-12c
+</pre>
