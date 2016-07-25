@@ -5,6 +5,9 @@ Note: you need to check the paths in the pkgconfig file you reference via PKG_CO
 Also note: after you compile the binary, the only environment variable needed is
 DYLD_LIBRARY_PATH (or presumably LD_LIBRARY_PATH on Linux)
 
+And another thing... looks like if your oracle config changes you need to update
+the pkgconfig, then remove and reinstall go-oci8
+
 * Grab the oracle instaclient, for example from (here)[http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html] 
 * Make sure to download the 64-bit version
 * Install them in /usr/local
@@ -78,3 +81,10 @@ when running in it a 1GB machine.
 docker pull sath89/oracle-12c
 docker run -d -p 8080:8080 -p 1521:1521 sath89/oracle-12c
 </pre>
+
+With database files that persist across runs:
+
+<pre>
+docker run -p 8080:8080 -p 1521:1521 -v /opt/oradata:/u01/app/oracle sath89/oracle-12c
+</pre>
+
