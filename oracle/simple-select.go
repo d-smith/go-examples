@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	db, err := sql.Open("oci8", "usr/pw@host.domain.com:1521/service-name")
+	db, err := sql.Open("oci8", "system/oracle@//localhost:1521/xe.oracle.docker")
 	if err != nil {
 		fmt.Println(err)
 		return

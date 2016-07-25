@@ -1,4 +1,4 @@
-prefix=/opt/oracle/instantclient_12_1
+prefix=/Users/xxxxxx/tools/elcaro/instantclient_12_1
 includedir=${prefix}/sdk/include
 libdir=${prefix}
 

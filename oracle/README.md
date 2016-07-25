@@ -1,5 +1,7 @@
 ###Setup - Mac
 
+Note: you need to check the paths in the pkgconfig file you reference via PKG_CONFIG_PATH
+
 * Grab the oracle instaclient, for example from (here)[http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html] 
 * Make sure to download the 64-bit version
 * Install them in /usr/local
@@ -28,14 +30,16 @@ Unzip the archives
 sudo mkdir -p /opt/oracle/instantclient_12_1
 cd /opt/oracle
 sudo cp /vagrant/*.zip .
+sudo apt-get install unzip
 sudo unzip instantclient-basic-linux.x64-12.1.0.2.0.zip 
 sudo unzip instantclient-sdk-linux.x64-12.1.0.2.0.zip
-sudo cp /vagrant/instantclient-sqlplus-linux.x64-12.1.0.2.0.zip .
+sudo unzip instantclient-sqlplus-linux.x64-12.1.0.2.0.zip
 </pre>
 
 Make the links as per the instructions on the download page and update paths, e.g.
 
 <pre>
+cd instantclient_12_1
 sudo ln -s libclntsh.so.12.1 libclntsh.so
 sudo ln -s libocci.so.12.1 libocci.so
 export LD_LIBRARY_PATH=/opt/oracle/instantclient_12_1:$LD_LIBRARY_PATH
