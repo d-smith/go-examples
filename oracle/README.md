@@ -2,6 +2,9 @@
 
 Note: you need to check the paths in the pkgconfig file you reference via PKG_CONFIG_PATH
 
+Also note: after you compile the binary, the only environment variable needed is
+DYLD_LIBRARY_PATH (or presumably LD_LIBRARY_PATH on Linux)
+
 * Grab the oracle instaclient, for example from (here)[http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html] 
 * Make sure to download the 64-bit version
 * Install them in /usr/local
