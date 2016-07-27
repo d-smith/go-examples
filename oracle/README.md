@@ -1,5 +1,17 @@
 ###Setup - Mac
 
+Special note:
+
+Junos Pulse updates your /etc/host file each time you connect, which
+means with SQL*Net you will see ORA-21561: OID generation failed
+
+Who knows what the hell an OID is, but the fix is to edit
+/etc/hosts and add your hostname after localhost, e.g.
+
+<pre>
+127.0.0.1 localhost <local computer name>
+</pre>
+
 Note: you need to check the paths in the pkgconfig file you reference via PKG_CONFIG_PATH
 
 Also note: after you compile the binary, the only environment variable needed is
