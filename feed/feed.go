@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"time"
 	. "github.com/gorilla/feeds"
+	"log"
 )
 
 func getFeed() *Feed {
@@ -60,5 +61,8 @@ func main() {
 
 	mux.HandleFunc("/feed", feedHandler)
 
-	http.ListenAndServe(":4000", mux)
+	err := http.ListenAndServeTLS(":4000", "cert.pem", "key.pem", mux)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
 }
