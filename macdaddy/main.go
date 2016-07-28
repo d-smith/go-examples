@@ -1,13 +1,13 @@
 package main
 
 import (
-	"net"
-	"log"
+	"crypto/rand"
+	"crypto/sha256"
+	"fmt"
 	"golang.org/x/crypto/scrypt"
 	"io"
-	"crypto/rand"
-	"fmt"
-	"crypto/sha256"
+	"log"
+	"net"
 )
 
 func fatal(err error) {
@@ -18,12 +18,12 @@ func fatal(err error) {
 
 const (
 	SaltBytes = 32
-	UidBytes = 32
+	UidBytes  = 32
 )
 
 func nonSaltyHash(mac string) string {
 	hash := sha256.Sum256([]byte(mac))
-	return fmt.Sprintf("%x",hash)
+	return fmt.Sprintf("%x", hash)
 }
 
 func saltyHash(mac string) string {
@@ -34,9 +34,8 @@ func saltyHash(mac string) string {
 	hash, err := scrypt.Key([]byte(mac), salt, 16384, 8, 1, UidBytes)
 	fatal(err)
 
-	return fmt.Sprintf("%x",hash)
+	return fmt.Sprintf("%x", hash)
 }
-
 
 func main() {
 	ifaces, err := net.Interfaces()

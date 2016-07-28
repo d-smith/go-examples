@@ -1,9 +1,9 @@
 package main
-import (
-	"reflect"
-	"fmt"
-)
 
+import (
+	"fmt"
+	"reflect"
+)
 
 var fooFactories map[string]FooFactory
 
@@ -23,13 +23,11 @@ func (af AFoo) FooThings(x int) int {
 
 type BFoo struct{}
 
-func(bf BFoo) FooThings(x int) int {
+func (bf BFoo) FooThings(x int) int {
 	return x * 3
 }
 
 type FooFactory func() Foo
-
-
 
 func NewAFoo() Foo {
 	return &AFoo{}
@@ -43,11 +41,9 @@ func RegisterFactory(name string, factory FooFactory) {
 	fooFactories[name] = factory
 }
 
-
 func GetFactory(name string) FooFactory {
 	return fooFactories[name]
 }
-
 
 func main() {
 
@@ -63,7 +59,7 @@ func main() {
 
 	fmt.Printf("Type of theFoo: %v\n", typeOfFoo)
 
-	_,isFoo := valueOfFoo.Interface().(Foo)
+	_, isFoo := valueOfFoo.Interface().(Foo)
 	fmt.Println("Is Foo?", isFoo)
 
 	_, isFooFactory := valueOfFoo.Interface().(FooFactory)

@@ -1,8 +1,8 @@
 package main
 
 import (
-	"reflect"
 	"fmt"
+	"reflect"
 )
 
 type Object interface{}
@@ -10,7 +10,7 @@ type Object interface{}
 type Array []interface{}
 
 type AThing struct {
-	A string
+	A              string
 	SomeOtherStuff string
 }
 

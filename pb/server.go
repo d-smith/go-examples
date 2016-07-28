@@ -1,10 +1,10 @@
 package main
 
 import (
-	"github.com/golang/protobuf/proto"
-	"net/http"
 	"fmt"
+	"github.com/golang/protobuf/proto"
 	"io/ioutil"
+	"net/http"
 )
 
 func main() {

@@ -1,10 +1,10 @@
 package main
 
 import (
-	"net/http"
-	"time"
 	. "github.com/gorilla/feeds"
 	"log"
+	"net/http"
+	"time"
 )
 
 func getFeed() *Feed {

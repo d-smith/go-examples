@@ -25,8 +25,7 @@ type server struct {
 	Up      bool   `json:"up" xml:"xmlUp"`
 }
 
-var jsonDoc =
-`
+var jsonDoc = `
 {
 "address": "0.0.0.0:8080",
 "listenerName": "l1",

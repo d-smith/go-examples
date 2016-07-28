@@ -5,8 +5,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sns"
-	"os"
 	"github.com/d-smith/go-examples/awsreg"
+	"os"
 )
 
 func main() {

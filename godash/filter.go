@@ -7,7 +7,7 @@ import (
 type Collection []interface{}
 
 type PropSpec struct {
-	Name string
+	Name  string
 	Value interface{}
 }
 

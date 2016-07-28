@@ -1,14 +1,14 @@
 package main
 
 import (
-	"text/template"
-	"fmt"
 	"bytes"
-	"os"
-	"github.com/aws/aws-sdk-go/aws/session"
+	"fmt"
 	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
 	"github.com/d-smith/go-examples/awsreg"
+	"os"
+	"text/template"
 )
 
 var policyTemplate = `
@@ -39,22 +39,22 @@ type policyCtx struct {
 func createPolicy(queueArn, topicArn string) (string, error) {
 	tmpl, err := template.New("policyTemplate").Parse(policyTemplate)
 	if err != nil {
-		return "",nil
+		return "", nil
 	}
 
 	ctx := policyCtx{
-		QueueArn:queueArn,
-		TopicArn:topicArn,
+		QueueArn: queueArn,
+		TopicArn: topicArn,
 	}
 
 	b := new(bytes.Buffer)
 
 	err = tmpl.Execute(b, ctx)
 	if err != nil {
-		return "",nil
+		return "", nil
 	}
 
-	return b.String(),nil
+	return b.String(), nil
 }
 
 func main() {

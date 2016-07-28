@@ -2,10 +2,10 @@ package timer
 
 import (
 	"errors"
-	"testing"
-	"sync"
-	"time"
 	"fmt"
+	"sync"
+	"testing"
+	"time"
 )
 
 func TestPostitiveDuration(t *testing.T) {
@@ -83,7 +83,6 @@ func TestMultiBackendRecordings(t *testing.T) {
 
 	wg.Wait()
 
-
 	c3.End(nil)
 
 	c2.End(nil)
@@ -117,19 +116,19 @@ func MultiGoRoutines(t *testing.T) {
 		var wg sync.WaitGroup
 		wg.Add(2)
 
-		go func () {
-		defer wg.Done()
-		c1 := at.StartContributor("c1")
+		go func() {
+			defer wg.Done()
+			c1 := at.StartContributor("c1")
 
-		go func () {
-		defer wg.Done()
-		c2 := at.StartContributor("c2")
-		time.Sleep(50 * time.Millisecond)
-		c2.End(nil)
-		}()
+			go func() {
+				defer wg.Done()
+				c2 := at.StartContributor("c2")
+				time.Sleep(50 * time.Millisecond)
+				c2.End(nil)
+			}()
 
-		time.Sleep(15 * time.Millisecond)
-		c1.End(nil)
+			time.Sleep(15 * time.Millisecond)
+			c1.End(nil)
 
 		}()
 
@@ -141,9 +140,9 @@ func MultiGoRoutines(t *testing.T) {
 
 		wg.Add(1)
 
-		go func () {
-		fmt.Println(at.ToJSONString())
-		wg.Done()
+		go func() {
+			fmt.Println(at.ToJSONString())
+			wg.Done()
 		}()
 
 		wg.Wait()

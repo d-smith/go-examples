@@ -1,27 +1,26 @@
 package main
 
 import (
-	"net/http"
-	"log"
 	"errors"
+	"log"
+	"net/http"
 )
 
 func pingHandler(rw http.ResponseWriter, req *http.Request) {
 	rw.Write([]byte("ping\n"))
 }
 
-
 func pongHandler(rw http.ResponseWriter, req *http.Request) {
 	log.Panic("ah, snap")
 }
 
 type RecoveryContext struct {
-	logFn func (interface{})
+	logFn    func(interface{})
 	errMsgFn func(interface{}) string
 }
 
 func (rc *RecoveryContext) MakeRecoveryWrapper(h http.HandlerFunc) http.Handler {
-	return http.HandlerFunc(func (w http.ResponseWriter, r *http.Request){
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		defer func() {
 			r := recover()
 			if r != nil {
@@ -29,17 +28,15 @@ func (rc *RecoveryContext) MakeRecoveryWrapper(h http.HandlerFunc) http.Handler 
 				http.Error(w, rc.errMsgFn(r), http.StatusInternalServerError)
 			}
 		}()
-		h.ServeHTTP(w,r)
+		h.ServeHTTP(w, r)
 	})
 }
-
-
 
 func main() {
 	mux := http.NewServeMux()
 
 	rc := RecoveryContext{
-		logFn:func(r interface{}) {
+		logFn: func(r interface{}) {
 			var err error
 			switch t := r.(type) {
 			case string:
@@ -49,9 +46,9 @@ func main() {
 			default:
 				err = errors.New("Unknown error")
 			}
-			log.Println("Something went wrong",err.Error())
+			log.Println("Something went wrong", err.Error())
 		},
-		errMsgFn:func(r interface{}) string {
+		errMsgFn: func(r interface{}) string {
 			return "Something went wrong - sorry about that"
 		},
 	}
@@ -61,4 +58,3 @@ func main() {
 
 	http.ListenAndServe(":4000", mux)
 }
-

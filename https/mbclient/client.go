@@ -1,10 +1,11 @@
 package main
+
 import (
-	"net/http"
-	"log"
-	"io/ioutil"
-	"crypto/x509"
 	"crypto/tls"
+	"crypto/x509"
+	"io/ioutil"
+	"log"
+	"net/http"
 )
 
 func fatal(err error) {
@@ -21,17 +22,17 @@ func makeClient() *http.Client {
 		fatal(err)
 	}
 	certs.AppendCertsFromPEM(pemData)
-	tr := &	http.Transport {
-		TLSClientConfig: &tls.Config{RootCAs:certs},
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{RootCAs: certs},
 	}
 
-	return &http.Client{Transport:tr}
+	return &http.Client{Transport: tr}
 }
 
 func main() {
 	client := makeClient()
 
-	req,err := http.NewRequest("GET", "https://hostname:4443",nil)
+	req, err := http.NewRequest("GET", "https://hostname:4443", nil)
 	fatal(err)
 
 	resp, err := client.Do(req)

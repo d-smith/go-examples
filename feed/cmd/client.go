@@ -1,13 +1,13 @@
 package main
 
 import (
-	"net/http"
-	"log"
-	"io/ioutil"
-	"time"
 	"crypto/tls"
 	"crypto/x509"
+	"io/ioutil"
+	"log"
+	"net/http"
 	"os"
+	"time"
 )
 
 func makeClient() *http.Client {
@@ -18,24 +18,23 @@ func makeClient() *http.Client {
 		log.Fatal(err)
 	}
 	certs.AppendCertsFromPEM(pemData)
-	tr := &	http.Transport {
-		TLSClientConfig: &tls.Config{RootCAs:certs},
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{RootCAs: certs},
 	}
 
-	return &http.Client{Transport:tr}
+	return &http.Client{Transport: tr}
 }
-
 
 func main() {
 	client := makeClient()
-	host,_ := os.Hostname()
+	host, _ := os.Hostname()
 	for {
-		req,err  := http.NewRequest("GET","https://" + host + ":4000/feed", nil)
+		req, err := http.NewRequest("GET", "https://"+host+":4000/feed", nil)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
 
-		resp,err := client.Do(req)
+		resp, err := client.Do(req)
 		if err != nil {
 			log.Fatal(err.Error())
 		}
@@ -44,7 +43,7 @@ func main() {
 
 		defer resp.Body.Close()
 
-		rb,err := ioutil.ReadAll(resp.Body)
+		rb, err := ioutil.ReadAll(resp.Body)
 		if err != nil {
 			log.Fatal(err.Error())
 		}

@@ -2,8 +2,8 @@ package timer
 
 import (
 	"encoding/json"
-	"time"
 	"sync"
+	"time"
 )
 
 type ServiceCall struct {

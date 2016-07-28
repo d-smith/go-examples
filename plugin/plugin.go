@@ -10,7 +10,6 @@ type Greeter interface {
 	Greet() string
 }
 
-
 type GreeterPlugin struct{}
 
 type GreeterHello struct{}

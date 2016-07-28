@@ -1,7 +1,8 @@
 package main
+
 import (
-	"os"
 	"io/ioutil"
+	"os"
 )
 
 func main() {
@@ -10,9 +11,9 @@ func main() {
 		os.Exit(1)
 	}
 
-	buf,err := ioutil.ReadFile(os.Args[1])
+	buf, err := ioutil.ReadFile(os.Args[1])
 	if err != nil {
-		println("error opening synopsis file (", os.Args[1], "):",err.Error())
+		println("error opening synopsis file (", os.Args[1], "):", err.Error())
 		os.Exit(1)
 	}
 

@@ -1,9 +1,9 @@
 package main
 
 import (
+	"github.com/d-smith/go-examples/es"
 	"github.com/stretchr/testify/assert"
 	"testing"
-"github.com/d-smith/go-examples/es"
 	"time"
 )
 
@@ -20,7 +20,7 @@ func TestCreateNew(t *testing.T) {
 
 		//Nothing in the event store yet
 		events, err := myEventStore.GetEvents(user.AggregateId)
-		assert.NotNil(t,err)
+		assert.NotNil(t, err)
 
 		//Flush to the event stream
 		user.Flush(myEventStream)
@@ -45,9 +45,9 @@ func TestNewFromEvents(t *testing.T) {
 
 	user, err := NewUserFromHistory(
 		[]es.Event{
-			es.Event {
-				AggregateId:"123",
-				Payload:createEvent,
+			es.Event{
+				AggregateId: "123",
+				Payload:     createEvent,
 			},
 		})
 	if assert.Nil(t, err) {

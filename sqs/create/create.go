@@ -5,8 +5,8 @@ import (
 	"github.com/aws/aws-sdk-go/aws"
 	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
-	"os"
 	"github.com/d-smith/go-examples/awsreg"
+	"os"
 )
 
 func createQueue(svc *sqs.SQS, queueName string) (string, error) {

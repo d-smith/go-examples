@@ -1,11 +1,11 @@
 package main
 
 import (
+	"fmt"
 	p "github.com/d-smith/go-examples/plugin"
 	"github.com/hashicorp/go-plugin"
-	"os/exec"
 	"log"
-	"fmt"
+	"os/exec"
 	//"io/ioutil"
 
 	"time"
@@ -18,7 +18,6 @@ func main() {
 	}
 
 	//log.SetOutput(ioutil.Discard)
-
 
 	// We're a host! Start by launching the plugin process.
 	client := plugin.NewClient(&plugin.ClientConfig{
@@ -44,7 +43,7 @@ func main() {
 	// implementation but is in fact over an RPC connection.
 	greeter := raw.(p.Greeter)
 
-	for i:=0; i < 10; i++ {
+	for i := 0; i < 10; i++ {
 		fmt.Println(greeter.Greet())
 		time.Sleep(time.Second)
 	}
@@ -55,5 +54,3 @@ var handshakeConfig = plugin.HandshakeConfig{
 	MagicCookieKey:   "BASIC_PLUGIN",
 	MagicCookieValue: "hello",
 }
-
-

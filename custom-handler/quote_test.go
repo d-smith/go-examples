@@ -10,12 +10,12 @@ import (
 	"log"
 	"net/http"
 	"net/http/httptest"
+	"net/url"
 	"strings"
 	"testing"
-	"net/url"
 )
 
-	func TestQuote(t *testing.T) {
+func TestQuote(t *testing.T) {
 	soapServer := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, `<SOAP-ENV:Envelope
   xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"
@@ -30,7 +30,7 @@ import (
 
 	defer soapServer.Close()
 
-		soapURL,_ := url.Parse(soapServer.URL)
+	soapURL, _ := url.Parse(soapServer.URL)
 
 	wrapped := quote.Middleware(customctx.ContextHandlerFunc(quote.NewQuoteHandler(soapURL.Host)))
 	wrapped = timing.TimerMiddleware(wrapped)
@@ -42,8 +42,6 @@ import (
 
 	ts := httptest.NewServer(h)
 	defer ts.Close()
-
-
 
 	req, err := http.NewRequest("GET", ts.URL+"/quote/MSFT", nil)
 	if err != nil {

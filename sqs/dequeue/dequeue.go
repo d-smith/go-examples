@@ -1,12 +1,12 @@
 package main
 
 import (
-	"github.com/aws/aws-sdk-go/aws/session"
-	"github.com/aws/aws-sdk-go/aws"
 	"fmt"
+	"github.com/aws/aws-sdk-go/aws"
+	"github.com/aws/aws-sdk-go/aws/session"
 	"github.com/aws/aws-sdk-go/service/sqs"
-	"os"
 	"github.com/d-smith/go-examples/awsreg"
+	"os"
 )
 
 func main() {
@@ -18,10 +18,10 @@ func main() {
 	svc := sqs.New(session.New(), &aws.Config{Region: awsreg.RegionFromEnvOrDefault("us-east-1")})
 
 	params := &sqs.ReceiveMessageInput{
-		QueueUrl: aws.String(os.Args[1]),
+		QueueUrl:            aws.String(os.Args[1]),
 		MaxNumberOfMessages: aws.Int64(1),
-		VisibilityTimeout: aws.Int64(1),
-		WaitTimeSeconds:   aws.Int64(1),
+		VisibilityTimeout:   aws.Int64(1),
+		WaitTimeSeconds:     aws.Int64(1),
 	}
 	resp, err := svc.ReceiveMessage(params)
 

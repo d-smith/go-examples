@@ -1,11 +1,10 @@
-
 package main
 
 import (
+	"bytes"
+	"fmt"
 	"github.com/golang/protobuf/proto"
 	"net/http"
-	"fmt"
-	"bytes"
 )
 
 func main() {
@@ -30,5 +29,3 @@ func main() {
 		return
 	}
 }
-
-

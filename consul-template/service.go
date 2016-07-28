@@ -1,31 +1,31 @@
 package main
 
 import (
-	"os"
-	"log"
-	"strconv"
-	"github.com/gorilla/mux"
-	"net/http"
 	"fmt"
-	"io"
+	"github.com/gorilla/mux"
 	"github.com/hashicorp/consul/api"
+	"io"
+	"log"
+	"net/http"
+	"os"
+	"strconv"
 )
 
 var transport = &http.Transport{DisableKeepAlives: false, DisableCompression: false}
 
 //Note this assumes we're running in docker and that the actual hostname has
 //been bound to the logical consul hostname via the --link command line option.
-func lookupServiceEndpointOrDie(env string)string {
+func lookupServiceEndpointOrDie(env string) string {
 	config := api.DefaultConfig()
 	config.Address = "consul:8500"
-	client,err := api.NewClient(config)
+	client, err := api.NewClient(config)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
 
 	catalog := client.Catalog()
-	log.Println("Lookup demo-service for environment",env)
-	env1Services,_,err := catalog.Service("demo-service",env,nil)
+	log.Println("Lookup demo-service for environment", env)
+	env1Services, _, err := catalog.Service("demo-service", env, nil)
 	if err != nil {
 		log.Fatal(err.Error())
 	}
@@ -39,7 +39,7 @@ func lookupServiceEndpointOrDie(env string)string {
 	return fmt.Sprintf("%s:%d", env1Service.ServiceAddress, env1Service.ServicePort)
 }
 
-func getConfigFromEnvOrDieTrying()(endpoint string, port int) {
+func getConfigFromEnvOrDieTrying() (endpoint string, port int) {
 	env := os.Getenv("env")
 	if env == "" {
 		log.Fatal("No environment designation specified via the env envronment variable")
@@ -47,7 +47,7 @@ func getConfigFromEnvOrDieTrying()(endpoint string, port int) {
 
 	endpoint = lookupServiceEndpointOrDie(env)
 
-	port,err := strconv.Atoi(os.Getenv("port"))
+	port, err := strconv.Atoi(os.Getenv("port"))
 	if err != nil {
 		log.Fatal("No valid port specified")
 	}
@@ -72,12 +72,12 @@ func makeHandler(endpoint string) func(rw http.ResponseWriter, req *http.Request
 
 func main() {
 	endpoint, port := getConfigFromEnvOrDieTrying()
-	log.Println("Port:", port, "Endpoint:",endpoint)
+	log.Println("Port:", port, "Endpoint:", endpoint)
 
 	r := mux.NewRouter()
-	r.HandleFunc("/",makeHandler(endpoint))
-	http.Handle("/",r)
-	err := http.ListenAndServe(fmt.Sprintf(":%d",port), nil)
+	r.HandleFunc("/", makeHandler(endpoint))
+	http.Handle("/", r)
+	err := http.ListenAndServe(fmt.Sprintf(":%d", port), nil)
 	if err != nil {
 		log.Fatal(err.Error())
 	}

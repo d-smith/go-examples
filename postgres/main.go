@@ -2,13 +2,12 @@ package main
 
 import (
 	"database/sql"
+	"encoding/json"
+	"fmt"
 	_ "github.com/lib/pq"
 	"log"
 	"time"
-	"fmt"
-	"encoding/json"
 )
-
 
 func insertData(db *sql.DB) error {
 	tx, err := db.Begin()
@@ -22,7 +21,7 @@ func insertData(db *sql.DB) error {
 		return err
 	}
 
-	_,err = stmt.Exec(time.Now().String(), "value yes", []byte(jsonDoc))
+	_, err = stmt.Exec(time.Now().String(), "value yes", []byte(jsonDoc))
 	stmt.Close()
 	if err != nil {
 		return err
@@ -48,7 +47,7 @@ func deleteRecord(db *sql.DB, recno int) error {
 		return err
 	}
 
-	_,err = stmt.Exec(recno)
+	_, err = stmt.Exec(recno)
 	stmt.Close()
 	if err != nil {
 		return err
@@ -74,7 +73,7 @@ func updateRecord(db *sql.DB, recno int) error {
 		return err
 	}
 
-	_,err = stmt.Exec(fmt.Sprintf("updated value for rec %d",recno), recno)
+	_, err = stmt.Exec(fmt.Sprintf("updated value for rec %d", recno), recno)
 	stmt.Close()
 	if err != nil {
 		return err
@@ -99,16 +98,15 @@ func queryAndUpdateData(db *sql.DB) error {
 	var recordNo int
 
 	for rows.Next() {
-		rows.Scan(&recordNo, &name,&value)
+		rows.Scan(&recordNo, &name, &value)
 		fmt.Printf("Read row <%d, %s, %s>\n", recordNo, name, value)
-		if recordNo % 2 == 0 {
+		if recordNo%2 == 0 {
 			fmt.Println("-> delete")
 			deleteRecord(db, recordNo)
 		} else {
 			fmt.Println("-> update")
 			updateRecord(db, recordNo)
 		}
-
 
 	}
 	err = rows.Err()
@@ -128,7 +126,7 @@ func queryData(db *sql.DB) error {
 	var dablob []byte
 
 	for rows.Next() {
-		rows.Scan(&recordNo, &name,&value,&dablob)
+		rows.Scan(&recordNo, &name, &value, &dablob)
 		fmt.Printf("<%d, %s, %s>\n", recordNo, name, value)
 
 		if len(dablob) > 0 {
@@ -138,7 +136,7 @@ func queryData(db *sql.DB) error {
 			if err != nil {
 				fmt.Println("...can't unmarshall da bytes", err.Error())
 			} else {
-				fmt.Printf("\t%v\n",ms)
+				fmt.Printf("\t%v\n", ms)
 			}
 		}
 	}

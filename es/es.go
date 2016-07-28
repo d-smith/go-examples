@@ -3,15 +3,15 @@ package es
 import (
 	"errors"
 	"github.com/nu7hatch/gouuid"
-	"sync"
 	"log"
+	"sync"
 )
 
-//Event contains the aggregate id the event is associated with and the 
+//Event contains the aggregate id the event is associated with and the
 //event payload
 type Event struct {
 	AggregateId string
-	Payload interface{}
+	Payload     interface{}
 }
 
 //EventStore defines the interface an Event Store must provide.
@@ -32,7 +32,7 @@ func NewInMemEventStore(eventStream EventStream) *InMemEventStore {
 		for {
 			log.Println("reading from event stream...")
 			event := eventStream.Get()
-			log.Println("read event",event)
+			log.Println("read event", event)
 			es.StoreEvents([]Event{event})
 		}
 	}()
@@ -49,8 +49,6 @@ func (es *InMemEventStore) GetEvents(aggregateId string) ([]Event, error) {
 
 	return events, nil
 }
-
-
 
 func (es *InMemEventStore) StoreEvents(events []Event) error {
 	es.Lock()
@@ -70,33 +68,31 @@ type EventSourced struct {
 	AggregateId string
 }
 
-
 type EventRecorder interface {
 	Record(event Event)
 	Flush(es EventStream)
 }
 
-
 type LocalEventRecorder struct {
 	aggregateId string
-	events []Event
+	events      []Event
 }
 
 func NewLocalEventRecorder(aggregateId string) *LocalEventRecorder {
 	return &LocalEventRecorder{
 		aggregateId: aggregateId,
-		events: make([]Event,0),
+		events:      make([]Event, 0),
 	}
 }
 
 func (er *LocalEventRecorder) Record(event Event) {
-	log.Println("record event",event)
+	log.Println("record event", event)
 	er.events = append(er.events, event)
 }
 
 func (er *LocalEventRecorder) Flush(es EventStream) {
 	for _, event := range er.events {
-		log.Println("flush event",event)
+		log.Println("flush event", event)
 		es.Put(event)
 	}
 }
@@ -125,8 +121,8 @@ func NewInMemEventStream() *InMemEventStream {
 	}
 }
 
-func (es *InMemEventStream) Get()Event{
-	return <- es.stream
+func (es *InMemEventStream) Get() Event {
+	return <-es.stream
 }
 
 func (es *InMemEventStream) Put(event Event) {

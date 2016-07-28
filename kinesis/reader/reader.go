@@ -76,7 +76,6 @@ func readRecordsFromStream(svc *kinesis.Kinesis, shardItor *string) (*string, er
 		}
 	}
 
-
 }
 
 func main() {

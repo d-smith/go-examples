@@ -7,8 +7,6 @@ import (
 var mux *http.ServeMux
 var urisMap map[string]string
 
-
-
 func doPut(rw http.ResponseWriter, req *http.Request) {
 	uri := req.FormValue("uri")
 	if uri == "" {
@@ -23,7 +21,7 @@ func doPut(rw http.ResponseWriter, req *http.Request) {
 	}
 
 	urisMap[uri] = uri
-	mux.HandleFunc("/" + uri, func(rw http.ResponseWriter, req *http.Request) {
+	mux.HandleFunc("/"+uri, func(rw http.ResponseWriter, req *http.Request) {
 		rw.Write([]byte("This is the " + uri + " handler\n"))
 	})
 }
@@ -34,7 +32,7 @@ func entryHandler(rw http.ResponseWriter, req *http.Request) {
 		rw.Write([]byte("Try put with single uri query param\n"))
 		break
 	case http.MethodPut:
-		doPut(rw,req)
+		doPut(rw, req)
 		break
 	default:
 		http.Error(rw, "I only support GET and PUT\n", http.StatusMethodNotAllowed)

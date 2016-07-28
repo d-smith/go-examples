@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/d-smith/go-examples/es"
 	"errors"
+	"github.com/d-smith/go-examples/es"
 )
 
 var myEventStream = es.NewInMemEventStream()
@@ -18,7 +18,6 @@ type User struct {
 	Email     string
 }
 
-
 //Commands
 
 func (u *User) UpdateFirstName(first string) error {
@@ -27,9 +26,9 @@ func (u *User) UpdateFirstName(first string) error {
 	}
 
 	return u.Apply(
-		es.Event {
-			AggregateId:u.AggregateId,
-			Payload:UserFirstNameUpdated{
+		es.Event{
+			AggregateId: u.AggregateId,
+			Payload: UserFirstNameUpdated{
 				OldFirst: u.FirstName,
 				NewFirst: first,
 			},
@@ -88,7 +87,6 @@ func (u *User) handleUserLastNameUpdate() {
 
 }
 
-
 // Router
 
 func (u *User) Route(event es.Event) error {
@@ -115,8 +113,8 @@ func NewUser(first, last, email string) (*User, error) {
 
 	err = user.Apply(
 		es.Event{
-			AggregateId:aggId,
-			Payload:UserCreated{
+			AggregateId: aggId,
+			Payload: UserCreated{
 				AggregateId: aggId,
 				FirstName:   first,
 				LastName:    last,

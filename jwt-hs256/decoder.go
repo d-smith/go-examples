@@ -1,12 +1,12 @@
 package main
-import (
-	"os"
-	"log"
-	jwt "github.com/dgrijalva/jwt-go"
-	"fmt"
-	"encoding/base64"
-)
 
+import (
+	"encoding/base64"
+	"fmt"
+	jwt "github.com/dgrijalva/jwt-go"
+	"log"
+	"os"
+)
 
 func checkArgs() {
 	if len(os.Args) != 3 {
@@ -14,16 +14,16 @@ func checkArgs() {
 	}
 }
 
-func decodeToken(secret, tokenString string) (*jwt.Token) {
+func decodeToken(secret, tokenString string) *jwt.Token {
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		// Don't forget to validate the alg is what you expect:
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		key,err := base64.StdEncoding.DecodeString(secret)
+		key, err := base64.StdEncoding.DecodeString(secret)
 		if err != nil {
-			return nil,err
+			return nil, err
 		}
 
 		return key, nil
@@ -39,14 +39,14 @@ func decodeToken(secret, tokenString string) (*jwt.Token) {
 
 func printClaims(token *jwt.Token) {
 	fmt.Println("Token claims...")
-	for k,v := range token.Claims {
-		fmt.Printf("%s -> %v\n",k,v)
+	for k, v := range token.Claims {
+		fmt.Printf("%s -> %v\n", k, v)
 	}
 }
 
 func main() {
-	checkArgs();
+	checkArgs()
 
-	token := decodeToken(os.Args[1],os.Args[2])
+	token := decodeToken(os.Args[1], os.Args[2])
 	printClaims(token)
 }
