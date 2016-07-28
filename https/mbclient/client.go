@@ -31,7 +31,7 @@ func makeClient() *http.Client {
 func main() {
 	client := makeClient()
 
-	req,err := http.NewRequest("GET", "https://MACLB015803:4443",nil)
+	req,err := http.NewRequest("GET", "https://hostname:4443",nil)
 	fatal(err)
 
 	resp, err := client.Do(req)
