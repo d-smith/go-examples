@@ -10,7 +10,7 @@ import (
 )
 
 var soapStart = `
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://xmlns.fmr.com/systems/dev/xtrac/2004/06/" xmlns:ser="http://xmlns.fmr.com/common/headers/2005/12/ServiceProcessingDirectives" xmlns:ser1="http://xmlns.fmr.com/common/headers/2005/12/ServiceCallContext" xmlns:typ="http://xmlns.fmr.com/systems/dev/xtrac/2004/06/types">
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:ns="http://xmlns.foo.com/systems/dev/xtrac/2004/06/" xmlns:ser="http://xmlns.foo.com/common/headers/2005/12/ServiceProcessingDirectives" xmlns:ser1="http://xmlns.foo.com/common/headers/2005/12/ServiceCallContext" xmlns:typ="http://xmlns.foo.com/systems/dev/xtrac/2004/06/types">
    <soapenv:Body>
    	<ns:retrieve>
    		<ns:foo>`

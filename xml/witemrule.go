@@ -3,11 +3,11 @@ package main
 var workItemRuleResponse = `
 <soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
    <soapenv:Header>
-      <xt:AppServer xmlns:xt="http://xmlns.fmr.com/systems/dev/xtrac/2004/06/">server1</xt:AppServer>
+      <xt:AppServer xmlns:xt="http://xmlns.foo.com/systems/dev/xtrac/2004/06/">server1</xt:AppServer>
    </soapenv:Header>
    <soapenv:Body>
-      <p347:retrieveRuntimeWorkItemRuleResponse xmlns:p347="http://xmlns.fmr.com/systems/dev/xtrac/2004/06/">
-         <p347:retrieveRuntimeWorkItemRuleReturn xmlns:p972="http://xmlns.fmr.com/systems/dev/xtrac/2004/06/types">
+      <p347:retrieveRuntimeWorkItemRuleResponse xmlns:p347="http://xmlns.foo.com/systems/dev/xtrac/2004/06/">
+         <p347:retrieveRuntimeWorkItemRuleReturn xmlns:p972="http://xmlns.foo.com/systems/dev/xtrac/2004/06/types">
             <p972:node>XWBViewer</p972:node>
             <p972:itemType>DSPLT1</p972:itemType>
             <p972:requireResolutionNote>0</p972:requireResolutionNote>

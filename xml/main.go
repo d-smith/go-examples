@@ -3,7 +3,7 @@ package main
 func main() {
 
 	xmlLiteral := `
-<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:schemas-xtrac-fmr-com:b2b">
+<soapenv:Envelope xmlns:soapenv="http://schemas.xmlsoap.org/soap/envelope/" xmlns:urn="urn:schemas-xtrac-foo-com:b2b">
    <soapenv:Header>
 	<urn:Cookie>261765034988290296725527451071864505174</urn:Cookie>
    </soapenv:Header>
