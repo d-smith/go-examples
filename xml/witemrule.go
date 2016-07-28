@@ -616,11 +616,11 @@ var workItemRuleResponse = `
                      </p972:runtimeValidValue>
                      <p972:runtimeValidValue>
                         <p972:value>FF</p972:value>
-                        <p972:description>Fidelity Funds</p972:description>
+                        <p972:description>Fido Funds</p972:description>
                      </p972:runtimeValidValue>
                      <p972:runtimeValidValue>
                         <p972:value>FFBF</p972:value>
-                        <p972:description>Fidelity Funds Bond Funds</p972:description>
+                        <p972:description>Fido Funds Bond Funds</p972:description>
                      </p972:runtimeValidValue>
                      <p972:runtimeValidValue>
                         <p972:value>Financial Plans</p972:value>

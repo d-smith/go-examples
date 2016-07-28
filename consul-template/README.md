@@ -93,7 +93,7 @@ curl -X PUT localhost:8500/v1/kv/env1/port -d 3000
 ## Consul-template
 
 <pre>
-./consul-template -consul localhost:8500 -template /Users/a045103/goex/src/github.com/d-smith/go-examples/consul-template/demo-template.ctmpl -dry -once
+./consul-template -consul localhost:8500 -template $HOME/goex/src/github.com/d-smith/go-examples/consul-template/demo-template.ctmpl -dry -once
 </pre>
 
 ## Run mountebank
