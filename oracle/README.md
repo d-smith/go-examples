@@ -24,7 +24,7 @@ the pkgconfig, then remove and reinstall go-oci8
 * Make sure to download the 64-bit version
 * Install them in /usr/local
 * In the instant client directory, create a symbolic link of libtclntsh, e.g. `sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib`
-* export PKG_CONFIG_PATH=$GOPATH/src/github.com/d-smith/go-examples/oracle/pkgconfig/
+* export PKG_CONFIG_PATH=$GOPATH/src/github.com/d-smith/go-examples/oracle/pkgconfig
 * go get github.com/rjeczalik/pkgconfig/cmd/pkg-config
 * go get -v github.com/mattn/go-oci8
 * Note before go get that the install location and paths in oci8.pc must be aligned.
