@@ -6,6 +6,8 @@ includes it before
 you can install the package. This also means that the `github.com/rjeczalik/pkgconfig/cmd/pkg-config`
 package must also be installed in your go path.
 
+PKG_CONFIG_PATH should be an absolute path, and should not end with a trailing slash.
+
 Once the above is done, the rana/ora package can be installed:
 
 <pre>
