@@ -179,6 +179,12 @@ curl -v -X PUT -d@env1service.json localhost:8500/v1/agent/service/register
 curl -v -X PUT -d@env2service.json localhost:8500/v1/agent/service/register
 </pre>
 
+Set up health checks:
+
+<pre>
+curl -v -X PUT -d@env1hc.json localhost:8500/v1/agent/check/register
+</pre>
+
 Run service for env 1:
 
 <pre>
