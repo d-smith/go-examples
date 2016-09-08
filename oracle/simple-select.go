@@ -2,21 +2,18 @@ package main
 
 import (
 	"database/sql"
-	"fmt"
 	_ "github.com/mattn/go-oci8"
-	"time"
 	"log"
+	"strings"
+	"time"
 )
 
-func main() {
-
+func openAndConnectToDb() *sql.DB {
 	log.Println("Open the database")
 	db, err := sql.Open("oci8", "system/oracle@//localhost:1521/xe.oracle.docker")
 	if err != nil {
-		fmt.Println(err)
-		return
+		log.Fatal(err)
 	}
-	defer db.Close()
 
 	log.Println("Ping the db as open might not actually connect")
 
@@ -38,17 +35,31 @@ func main() {
 		log.Fatal(dbError)
 	}
 
+	return db
+}
+
+func connectionErr(err error) bool {
+	errStr := err.Error()
+	return strings.HasPrefix(errStr, "ORA-03114") || strings.HasPrefix(errStr, "ORA-03113")
+}
+
+func main() {
+
+	var db *sql.DB = openAndConnectToDb()
 
 	log.Println("Do select")
-	if err = testSelect(db); err != nil {
-		fmt.Println(err)
-		return
+	if err := testSelect(db); err != nil {
+		log.Println(err)
 	}
 
-	for i:= 0; i < 10000; i++ {
-		if err = testDate(db); err != nil {
-			fmt.Println(err)
-			return
+	for i := 0; i < 10000; i++ {
+		if err := testDate(db); err != nil {
+			log.Println(err)
+
+			if connectionErr(err) {
+				log.Println("Connection to database failed... attempt reconnect.")
+				db = openAndConnectToDb()
+			}
 		}
 
 		time.Sleep(5 * time.Second)
@@ -64,13 +75,11 @@ func testSelect(db *sql.DB) error {
 	}
 	defer rows.Close()
 
-	fmt.Println("rows", rows)
-	fmt.Println(rows.Columns())
 	for rows.Next() {
 		var foo string
 		var three int
 		rows.Scan(&foo, &three)
-		fmt.Println(foo, three)
+		log.Println(foo, three)
 	}
 
 	return nil
@@ -87,7 +96,7 @@ func testDate(db *sql.DB) error {
 	for rows.Next() {
 		var ts time.Time
 		rows.Scan(&ts)
-		fmt.Println(ts)
+		log.Println("systimestamp from dual is ", ts)
 	}
 
 	return nil
