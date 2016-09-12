@@ -1,37 +1,89 @@
-###Setup - Mac
+## Working with Oracle using Golang
 
-Special note:
+To work with Oracle using the `https://github.com/mattn/go-oci8` or
+`https://github.com/rana/ora` drivers, you must:
+
+1. Install the Oracle Instant Client package
+2. Install the golang aware version of pkgconfig from https://godoc.org/github.com/rjeczalik/pkgconfig
+3. Create a package configuration reflecting your Oracle set up
+4. Install the Oracle driver
+5. Optional - run Oracle locally using docker.
+
+### Oracle Instant Client Setup - Mac
+
+* Grab the oracle instaclient, for example from (here)[http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html] 
+* Make sure to download the 64-bit version
+* Install them where ever you want, I installed mine in /opt/oracle, which is the path the rest of these
+instructions assume.
+* In the instant client directory, create a symbolic link of libtclntsh, e.g. `sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib`
+* Edit your .bach_profile or preferred mechanism for setting up your environment to ensure the 
+DYLD_LIBRARY_PATH environment variables includes your instant client directory, for example
+`export DYLD_LIBRARY_PATH=/opt/oracle/instantclient_12_1`
+
+### Pkgconfig
+
+* go get github.com/rjeczalik/pkgconfig/cmd/pkg-config
+* Determine where you want to keep pkgconfig files. For working with the Oracle
+Instant Client, you will need a file named oci8.pc.
+* I keep my oci8.pc file in $HOME/bin, so my golang environment set up includes
+`export PKG_CONFIG_PATH=$HOME/bin`
+
+You can use the pkgconfig/oci8.pc file as a template for your set up. Note the 
+paths in oci8.pc must match your Oracle installation or your set up will fail.
+
+### Oracle Driver Installation
+
+The installation of the Oracle driver depends on the proper installation of Oracle 
+Instant Client and the Pkgconfig. If the driven installation via go get fails because
+of instant client or pkgconfig configuration problems, or if you update or change instant
+client or pkgconfig, you will need to reinstall the driver.
+
+To install the driver:
+
+* go get -v github.com/mattn/go-oci8
+
+
+### Oracle Docker Image
+
+Note: downloading [this image](https://hub.docker.com/r/sath89/oracle-12c/) can be problematic as it is huge. There's an image layer
+that is 2.67 GB!
+
+When running this in a Vagrant environment, I needed a virtual machine definition of 2048 MBytes - I had start up failures
+when running in it a 1GB machine.
+
+<pre>
+docker pull sath89/oracle-12c
+docker run -d -p 8080:8080 -p 1521:1521 sath89/oracle-12c
+</pre>
+
+With database files that persist across runs:
+
+<pre>
+docker run -p 8080:8080 -p 1521:1521 -v /opt/oradata:/u01/app/oracle sath89/oracle-12c
+</pre>
+
+For good measure, when running Oracle in Docker, use docker stop <image id> to 
+cleanly shutdown you Oracle instance. If you are only running Oracle in a dedicated
+Vagrant machine, you can just do the following everytime you wan to shutdown.
+
+<pre>
+docker stop $(docker ps -aq)
+docker rm $(docker ps -aq)
+</pre>
+
+### Note for Junos VPN Users
 
 Junos Pulse updates your /etc/host file each time you connect, which
 means with SQL*Net you will see ORA-21561: OID generation failed
 
-Who knows what the hell an OID is, but the fix is to edit
+To avoid this error, edit
 /etc/hosts and add your hostname after localhost, e.g.
 
 <pre>
-127.0.0.1 localhost <local computer name>
+127.0.0.1 localhost [local computer name]
 </pre>
 
-Note: you need to check the paths in the pkgconfig file you reference via PKG_CONFIG_PATH
-
-Also note: after you compile the binary, the only environment variable needed is
-DYLD_LIBRARY_PATH (or presumably LD_LIBRARY_PATH on Linux)
-
-And another thing... looks like if your oracle config changes you need to update
-the pkgconfig, then remove and reinstall go-oci8
-
-* Grab the oracle instaclient, for example from (here)[http://www.oracle.com/technetwork/topics/intel-macsoft-096467.html] 
-* Make sure to download the 64-bit version
-* Install them in /usr/local
-* In the instant client directory, create a symbolic link of libtclntsh, e.g. `sudo ln -s libclntsh.dylib.11.1 libclntsh.dylib`
-* export PKG_CONFIG_PATH=$GOPATH/src/github.com/d-smith/go-examples/oracle/pkgconfig
-* go get github.com/rjeczalik/pkgconfig/cmd/pkg-config
-* go get -v github.com/mattn/go-oci8
-* Note before go get that the install location and paths in oci8.pc must be aligned.
-
-To run on the mac set the DYLD_LIBRARY_PATH , e.g. `export DYLD_LIBRARY_PATH=/usr/local/instantclient_11_2`
-
-###Setup - Ubuntu 14
+### Oracle Instant Client Setup - Ubuntu 14
 
 Grab the Oracle instant client - I grabbed the following from (here)[http://www.oracle.com/technetwork/topics/linuxx86-64soft-092277.html]
 
@@ -80,23 +132,3 @@ go get -v github.com/mattn/go-oci8
 </pre>
 
 Note before go get that the install location and paths in oci8.pc must be aligned.
-
-### Oracle Docker Image
-
-Note: downloading [this image](https://hub.docker.com/r/sath89/oracle-12c/) can be problematic as it is huge. There's an image layer
-that is 2.67 GB!
-
-When running this in a Vagrant environment, I needed a virtual machine definition of 2048 MBytes - I had start up failures
-when running in it a 1GB machine.
-
-<pre>
-docker pull sath89/oracle-12c
-docker run -d -p 8080:8080 -p 1521:1521 sath89/oracle-12c
-</pre>
-
-With database files that persist across runs:
-
-<pre>
-docker run -p 8080:8080 -p 1521:1521 -v /opt/oradata:/u01/app/oracle sath89/oracle-12c
-</pre>
-
