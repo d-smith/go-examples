@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"os"
 )
 
 func fatal(err error) {
@@ -32,12 +31,9 @@ func makeClient() *http.Client {
 
 func main() {
 
-	hostname, err := os.Hostname()
-	fatal(err)
-
 	client := makeClient()
 
-	req, err := http.NewRequest("GET", "https://"+hostname+":10443", nil)
+	req, err := http.NewRequest("GET", "https://localhost:10443", nil)
 	fatal(err)
 
 	resp, err := client.Do(req)
