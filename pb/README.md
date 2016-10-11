@@ -19,6 +19,9 @@ go run client.go clientStructure.pb.go
 
 ## Protobuf - Mac Setup
 
+See [here](https://github.com/golang/protobuf) for more info on protobufs including how to 
+install the C++ protobuf compiler, etc.
+
 Might need to install xcode and do this first:
 
 <pre>
