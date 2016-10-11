@@ -18,3 +18,12 @@ If behind a proxy, you will probably need to set your http_proxy and
 https_proxy environment variabled before you go get the package. I also
 noticed an absolute path is needed for PKG_CONFIG_PATH.
 
+For the blob sample first create a table like this:
+
+<pre>
+create table blob_sample (
+    id integer,
+    payload blob
+);
+</pre>
+

@@ -30,9 +30,6 @@ func main() {
 	err = db.Ping()
 	fatal(err)
 
-	err = testDate(db)
-	fatal(err)
-
 	id := time.Now().Unix()
 	err = insertBlobData(db, id)
 	fatal(err)
@@ -42,22 +39,6 @@ func main() {
 	fmt.Printf("%v+v\n", abc)
 }
 
-func testDate(db *sql.DB) error {
-	query := "select systimestamp from dual"
-	rows, err := db.Query(query)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		var ts time.Time
-		rows.Scan(&ts)
-		fmt.Println("current timestamp", ts)
-	}
-
-	return nil
-}
 
 func insertBlobData(db *sql.DB, id int64) error {
 	abc := ABC{
@@ -91,6 +72,11 @@ func readBlobData(db *sql.DB, id int64) (ABC, error) {
 			return abc, err
 		}
 	}
+
+	if err = rows.Err(); err != nil {
+		return abc,err
+	}
+
 
 	err = json.Unmarshal(abcBytes, &abc)
 
