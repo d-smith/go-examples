@@ -4,9 +4,10 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	_ "gopkg.in/rana/ora.v3"
+	//_ "gopkg.in/rana/ora.v3"
 	"log"
 	"time"
+	"gopkg.in/rana/ora.v3"
 )
 
 type ABC struct {
@@ -22,6 +23,10 @@ func fatal(err error) {
 }
 
 func main() {
+
+	ora.Cfg().Env.StmtCfg.Rset.SetBlob(ora.B)
+	ora.Cfg().Env.StmtCfg.Rset.SetClob(ora.S)
+
 	db, err := sql.Open("ora", "user/password@//localhost:1521/xe.oracle.docker")
 	fatal(err)
 
