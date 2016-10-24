@@ -1,0 +1,6 @@
+server/*.crt
+server/*.key
+server/*.csr
+client/*.crt
+client/*.key
+client/*.csr
