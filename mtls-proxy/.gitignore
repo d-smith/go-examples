@@ -3,3 +3,4 @@ openssl
 server/*.crt
 server/*.key
 server/server
+client/otherca
