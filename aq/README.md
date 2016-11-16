@@ -65,3 +65,29 @@ BEGIN
 END;
 </pre>
 
+<pre>
+CREATE OR REPLACE PROCEDURE test_proc (
+  outval OUT VARCHAR2
+)
+AS
+BEGIN
+    outval := 'hello';
+END;
+
+SET SERVEROUTPUT ON
+declare
+  testout varchar2(60);
+begin
+TEST_PROC(testout);
+DBMS_OUTPUT.PUT_LINE('testout: '||testout);
+end;
+
+CREATE OR REPLACE function test_function return varchar2 is
+begin
+    return 'yo';
+end;
+
+select esdbo.test_function() from dual
+
+</pre>
+
