@@ -21,8 +21,6 @@ end;
 begin
     dbms_aqadm.start_queue(queue_name=>'pubagg');
 end;
-</pre>
-
 
 begin
 SYS.DBMS_AQADM.STOP_QUEUE('pubagg');
@@ -37,6 +35,10 @@ SYS.DBMS_AQADM.DROP_QUEUE_TABLE('pub_qtab');
 end;
 
 drop type pubagg
+
+</pre>
+
+
 
 Enqueue
 
