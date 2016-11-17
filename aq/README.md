@@ -23,6 +23,21 @@ begin
 end;
 </pre>
 
+
+begin
+SYS.DBMS_AQADM.STOP_QUEUE('pubagg');
+end;
+
+begin
+SYS.DBMS_AQADM.DROP_QUEUE('pubagg');
+end;
+
+begin
+SYS.DBMS_AQADM.DROP_QUEUE_TABLE('pub_qtab');
+end;
+
+drop type pubagg
+
 Enqueue
 
 <pre>
@@ -88,6 +103,14 @@ begin
 end;
 
 select esdbo.test_function() from dual
+
+
+SET SERVEROUTPUT ON
+create or replace function tf3(s varchar2) return int is
+begin
+  DBMS_OUTPUT.PUT_LINE(s);
+  return 0;
+end;
 
 </pre>
 
