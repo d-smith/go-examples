@@ -26,4 +26,9 @@ func main() {
  	db.QueryRow("select esdbo.test_function() from dual").Scan(&fnout)
 
 	log.Printf("fn out: %s",fnout)
+
+	var status int
+	db.QueryRow("select esdbo.tf2(:1) from dual", "foo").Scan(&status)
+
+	log.Printf("fn status: %d",status)
 }
