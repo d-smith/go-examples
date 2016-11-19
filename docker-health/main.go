@@ -3,7 +3,10 @@ package main
 import (
 	"net/http"
 	"strings"
+	"log"
 )
+
+var callCount = 0
 
 func echoHandler(rw http.ResponseWriter, req *http.Request) {
 	uriParts := strings.Split(req.RequestURI, "/")
@@ -12,6 +15,12 @@ func echoHandler(rw http.ResponseWriter, req *http.Request) {
 }
 
 func healthHandler(rw http.ResponseWriter, req *http.Request) {
+	callCount++
+	log.Println("health check called")
+
+	if callCount > 10 {
+		http.Error(rw, "I am broken", http.StatusInternalServerError)
+	}
 }
 
 func main() {
