@@ -40,4 +40,11 @@ func main() {
 	var status int
 	db.QueryRow("select esdbo.tf2(:1) from dual", "foo").Scan(&status)
 	log.Printf("fn status: %d",status)
+
+	_,err = db.Exec("call ENQUEUE_AGG_SPEC(:1)", "123:2")
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		log.Printf("enqueue ok")
+	}
 }

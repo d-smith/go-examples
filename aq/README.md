@@ -156,5 +156,25 @@ BEGIN
     
 END;
 
+CREATE OR REPLACE PROCEDURE ENQUEUE_AGG_SPEC(
+    aggSpec in varchar2
+)
+AS
+
+declare
+   message pubagg;
+   enqueue_options     DBMS_AQ.enqueue_options_t;
+   message_properties  DBMS_AQ.message_properties_t;
+   message_handle      RAW(16);
+begin
+  message := pubagg(aggSpec);
+  DBMS_AQ.ENQUEUE(
+      queue_name              => 'pubagg',
+      enqueue_options         => enqueue_options,
+      message_properties      => message_properties,
+      payload => message,
+      msgid                   => message_handle);
+end;
+
 </pre>
 
