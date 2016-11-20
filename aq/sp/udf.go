@@ -29,6 +29,7 @@ func main() {
 
 	var status int
 	db.QueryRow("select esdbo.tf2(:1) from dual", "foo").Scan(&status)
-
 	log.Printf("fn status: %d",status)
+
+	stmt, err := db.Prepare("")
 }

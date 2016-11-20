@@ -1,20 +1,29 @@
+The premise was could we write a function that could enqueue
+something in Oracle AQ such that we could call it from
+golang via the sql package.
+
+While we can call functions, those functions cannot do any DML statements, which
+the underlying call to the dbms_aq package does.
+
+The next thing to explore is to see if we can just call a procedure via the sql
+interface.
+
 
 <pre>
 create type pubagg as object (
-aggregate_id varchar2(60),
-version integer
+agg_id_and_ver varchar2(60)
 );
 
 begin
     dbms_aqadm.create_queue_table(
-         queue_table=> 'pub_qtab',
+         queue_table=> 'pubagg_qtab',
          queue_payload_type=>'esdbo.PUBAGG');
 end;
 
 begin
     dbms_aqadm.create_queue(
          queue_name=>'pubagg',
-         queue_table=>'pub_qtab'
+         queue_table=>'pubagg_qtab'
     );
 end;
 
@@ -80,6 +89,28 @@ BEGIN
    DBMS_OUTPUT.PUT_LINE('version: '||message.version);
    COMMIT;
 END;
+</pre>
+
+Go callable functions
+<pre>
+---Input should be <aggregate id>:<version> e.g. asdasd-dasd-asdsd:22
+create or replace function enqueue_aggversion(aggAndVer varchar2) return int is 
+begin
+  declare
+     message pubagg;
+     enqueue_options     DBMS_AQ.enqueue_options_t;
+     message_properties  DBMS_AQ.message_properties_t;
+     message_handle      RAW(16);
+  begin
+    message := pubagg(aggAndVer);
+    DBMS_AQ.ENQUEUE(
+        queue_name              => 'pubagg',
+        enqueue_options         => enqueue_options,
+        message_properties      => message_properties,
+        payload => message,
+        msgid                   => message_handle);
+  end;
+end;
 </pre>
 
 <pre>
