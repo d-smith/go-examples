@@ -145,5 +145,16 @@ begin
   return 0;
 end;
 
+CREATE OR REPLACE PROCEDURE kaboom(
+    aggSpec in varchar2
+)
+AS
+BEGIN
+  if aggSpec != 'foo' then
+    raise_application_error(-20345, 'kaboom');
+  end if;
+    
+END;
+
 </pre>
 

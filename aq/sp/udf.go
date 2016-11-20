@@ -22,14 +22,22 @@ func main() {
 	err = db.Ping()
 	fatal(err)
 
-	var fnout string
- 	db.QueryRow("select esdbo.test_function() from dual").Scan(&fnout)
+	_,err = db.Exec("call kaboom(:1)", "bad-input")
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		log.Printf("call ok")
+	}
 
-	log.Printf("fn out: %s",fnout)
+ 	_,err = db.Exec("call kaboom(:1)", "foo")
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		log.Printf("call ok")
+	}
+
 
 	var status int
 	db.QueryRow("select esdbo.tf2(:1) from dual", "foo").Scan(&status)
 	log.Printf("fn status: %d",status)
-
-	stmt, err := db.Prepare("")
 }
