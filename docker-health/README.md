@@ -7,7 +7,7 @@ included.
 For troubleshooting the health check curl, you can use docker inspect, e.g.
 
 <pre>
-docker inspect --format "{{json .State.Health }}" <container name>
+docker inspect --format "{{json .State.Health }}" container-name
 </pre>
 
 If building the image behind an http proxy, copy apt.conf.template to apt.conf and
