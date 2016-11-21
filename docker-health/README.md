@@ -1,8 +1,19 @@
+This project shows how to incorporate a docker health check. For this
+example I can do a get on the endpoint the container exposes, but
+more involved health checks that examine integration dependencies, connection
+status, and other things needed by the app to assess health could also be
+included.
+
+For troubleshooting the health check curl, you can use docker inspect, e.g.
+
+<pre>
 docker inspect --format "{{json .State.Health }}" focused_bohr
+</pre>
 
-Even when building outside a proxy situration I had to run with 
-no_proxy=localhost for the health check to be invoked - probably based 
-on the docker daemon setting.
+If building the image behind an http proxy, copy apt.conf.template to apt.conf and
+edit apt.conf to include your proxy configuration.
 
-docker run -e no_proxy=localhost -p 4000:4000 echo
+Note the use of `--noproxy localhost` in the curl options - this is needed
+if your docker daemon is configured with an http proxy.
+
 
