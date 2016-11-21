@@ -7,6 +7,6 @@ RUN apt-get update && apt-get install -y curl && apt-get clean && rm -rf /var/li
 
 COPY main /opt/
 EXPOSE 4000
-HEALTHCHECK CMD curl --fail http://localhost:4000/health || exit 1
+HEALTHCHECK CMD curl --noproxy localhost --fail http://localhost:4000/health || exit 1
 CMD ["/opt/main"]
 
