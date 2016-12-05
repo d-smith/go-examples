@@ -37,8 +37,14 @@ func main() {
 
 	resp, err := client.Get("https://localhost:8080/hello")
 	if err != nil {
-		fmt.Println(err)
+		log.Fatal(err)
 	}
+	defer resp.Body.Close()
+
 	contents, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	} 
+	
 	fmt.Printf("%s\n", string(contents))
 }

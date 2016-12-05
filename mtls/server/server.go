@@ -10,7 +10,6 @@ import (
 )
 
 func HelloServer(w http.ResponseWriter, req *http.Request) {
-	req.
 	io.WriteString(w, "hello, world!\n")
 }
 
