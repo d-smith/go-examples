@@ -40,5 +40,6 @@ func main() {
 		TLSConfig: tlsConfig,
 	}
 
-	server.ListenAndServeTLS("localhost.crt", "localhost.key") //private cert
+	err = server.ListenAndServeTLS("localhost.crt", "localhost.key") //private cert
+	log.Fatal(err)
 }
