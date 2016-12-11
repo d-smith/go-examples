@@ -14,6 +14,11 @@ func echoHandler(rw http.ResponseWriter, req *http.Request) {
 	rw.Write([]byte("\n"))
 }
 
+func healHandler(rw http.ResponseWriter, req *http.Request) {
+	log.Println("heal")
+	callCount = 0
+}
+
 func healthHandler(rw http.ResponseWriter, req *http.Request) {
 	callCount++
 	log.Println("health check called")
@@ -27,5 +32,6 @@ func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/echo/", echoHandler)
 	mux.HandleFunc("/health", healthHandler)
+	mux.HandleFunc("/heal", healHandler)
 	http.ListenAndServe(":4000", mux)
 }
