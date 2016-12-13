@@ -1,3 +1,5 @@
+main
+apt.conf
 .vscode/*
 docker-pkg/main
 jwt-hs256/node_modules
