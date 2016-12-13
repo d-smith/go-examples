@@ -19,6 +19,7 @@ up automatically by go.
 * concurrency - working example code from Rob Pike's [Go Concurrency Patterns](https://talks.golang.org/2012/concurrency.slide#1) talk
 * concurrent - Two concurrency examples, one using shared memory and synchronization, one using message passing.
 * consul-kv-read - Simple consul api sample for reading a value by key
+* consul-service-reg - Read a service definition from consul
 * cookies - simple http cookie jar sample
 * ctx-hierarchy - example of wiring in context aware http handlers
 * custom-handler - package for context aware handlers and samples of how to create and use context aware handlers
