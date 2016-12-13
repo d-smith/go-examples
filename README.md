@@ -3,6 +3,10 @@ Misc go examples. The structure of this repo is in line with the
 
 Packages
 
+* actors - Experiment with the actor model using golang (incomplete)
+* aq - Experments calling Oracle AQ via the golang sql driver
+* awsreg - Function to return the AWS region from the environment, or a
+default value if nothing specified in the environments
 * base64 - simple base64 encode and decode example
 * bowling - the bowling kata
 * certs - example of decoding a PEM encoded cert, parsing the cert, and extracting the public key
