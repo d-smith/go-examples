@@ -1,0 +1,82 @@
+# Kubernetes Playground
+
+
+<pre>
+minikube start
+
+kubectl get nodes
+kubectl run echo --image dsmith/echo --port=4000
+kubectl get pods
+kubectl describe pod echo-2578494374-sbp6d 
+
+kubectl edit deployments echo
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  annotations:
+    deployment.kubernetes.io/revision: "1"
+  creationTimestamp: 2016-12-14T10:38:58Z
+  generation: 2
+  labels:
+    run: echo
+  name: echo
+  namespace: default
+  resourceVersion: "8072"
+  selfLink: /apis/extensions/v1beta1/namespaces/default/deployments/echo
+  uid: 84e31e52-c1e9-11e6-8d23-ee2ceed51dcf
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: echo
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  template:
+    metadata:
+      creationTimestamp: null
+      labels:
+        run: echo
+    spec:
+      containers:
+      - image: dsmith/echo
+        imagePullPolicy: Always
+        name: echo
+        ports:
+        - containerPort: 4000
+          protocol: TCP
+        resources: {}
+        terminationMessagePath: /dev/termination-log
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+status:
+  observedGeneration: 2
+  replicas: 1
+  unavailableReplicas: 1
+  updatedReplicas: 1
+
+
+kubectl delete deployment/echo
+
+Note: you may need to unset your proxy on the docker daemon ?
+
+kubectl create -f echo.yml 
+
+
+
+
+</pre>
+
+Pull from local machine/cache:
+
+<pre>
+ containers:
+      - name: mycontainer
+        image: acme/custom:latest
+        imagePullPolicy: Never
+</pre>
