@@ -11,6 +11,13 @@ import (
 
 func HelloServer(w http.ResponseWriter, req *http.Request) {
 	io.WriteString(w, "hello, world!\n")
+
+	//Get the TLS context
+	peerCerts := req.TLS.PeerCertificates
+
+	for _,cert := range peerCerts {
+		log.Printf("Common name: %s",cert.Subject.CommonName)
+	}
 }
 
 func main() {
