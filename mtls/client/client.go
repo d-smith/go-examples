@@ -46,4 +46,10 @@ func main() {
 	} 
 	
 	fmt.Printf("%s\n", string(contents))
+
+	peerCerts := resp.TLS.PeerCertificates
+	for _, pc := range peerCerts {
+		log.Printf("organization: %s", pc.Subject.Organization)
+		log.Printf("common name: %s", pc.Subject.CommonName)
+	}
 }
