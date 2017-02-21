@@ -8,9 +8,9 @@ import (
 	"github.com/d-smith/go-examples/primefactors"
 	"log"
 	"net/http"
-	"runtime"
 	"strconv"
 	"strings"
+	"time"
 )
 
 func extractResource(uri string) (string, error) {
@@ -24,7 +24,7 @@ func extractResource(uri string) (string, error) {
 }
 
 func handleCall(w http.ResponseWriter, r *http.Request) {
-	log.Println("Go routines: ", runtime.NumGoroutine())
+	//log.Println("Go routines: ", runtime.NumGoroutine())
 	//pprof.Lookup("goroutine").WriteTo(os.Stdout, 1)
 
 	resourceId, err := extractResource(r.RequestURI)
@@ -42,7 +42,11 @@ func handleCall(w http.ResponseWriter, r *http.Request) {
 	}
 
 	log.Println("Calculate prime factors of ", n)
+	start := time.Now()
 	pf := primefactors.PrimeFactors(n)
+	end:= time.Now()
+
+	log.Printf("Prime factors of %d computed in %v: %v", n, end.Sub(start), pf)
 
 	bytes, _ := json.Marshal(pf)
 	w.Write(bytes)
