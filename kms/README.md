@@ -1,7 +1,7 @@
 Simple KMS example using two roles (encrypter and descrypter).
 
-How to get the role ARNs:
+This assumes the user has encrpyt and decrypt permissions on a CMK
+with an alias named keyalias.
 
-<pre>
-aws iam list-roles
-</pre>
+You will need to set the AWS_REGION envronment variable, and you
+will also want to set AWS_PROFILE as well.
