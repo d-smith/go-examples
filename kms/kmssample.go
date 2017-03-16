@@ -7,25 +7,53 @@ import (
 	"github.com/aws/aws-sdk-go/service/kms"
 )
 
+func encryptStuff(svc *kms.KMS, plainText string) ([]byte,error) {
+	params := &kms.EncryptInput{
+		KeyId:     aws.String("alias/keyalias"),
+		Plaintext: []byte(plainText),
+	}
+
+	resp, err:= svc.Encrypt(params)
+	if err != nil {
+		return nil, err
+	}
+
+	return resp.CiphertextBlob, nil
+}
+
+func decryptStuff(svc *kms.KMS, encrypted []byte) (string, error) {
+	params := &kms.DecryptInput{
+		CiphertextBlob: encrypted, // Required
+	}
+	resp, err := svc.Decrypt(params)
+
+	if err != nil {
+		return "", err
+	}
+
+	return string(resp.Plaintext), nil
+}
+
 func main() {
 
 	sess := session.Must(session.NewSession())
 
 	svc := kms.New(sess)
 
-	params := &kms.EncryptInput{
-		KeyId:     aws.String("alias/keyalias"),
-		Plaintext: []byte("PAYLOAD"),
-	}
-	resp, err := svc.Encrypt(params)
-
+	enc, err := encryptStuff(svc, "My secret stuff")
 	if err != nil {
-		// Print the error, cast err to awserr.Error to get the Code and
-		// Message from an error.
 		fmt.Println(err.Error())
 		return
 	}
 
-	// Pretty-print the response data.
-	fmt.Println(resp)
+	fmt.Println(enc)
+
+	dec, err := decryptStuff(svc,enc)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	fmt.Println(dec)
+
 }
