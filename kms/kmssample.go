@@ -34,12 +34,7 @@ func decryptStuff(svc *kms.KMS, encrypted []byte) (string, error) {
 	return string(resp.Plaintext), nil
 }
 
-func main() {
-
-	sess := session.Must(session.NewSession())
-
-	svc := kms.New(sess)
-
+func basicDemo(svc *kms.KMS) {
 	enc, err := encryptStuff(svc, "My secret stuff")
 	if err != nil {
 		fmt.Println(err.Error())
@@ -55,5 +50,13 @@ func main() {
 	}
 
 	fmt.Println(dec)
+}
+
+func main() {
+
+	sess := session.Must(session.NewSession())
+
+	svc := kms.New(sess)
+	basicDemo(svc)
 
 }
