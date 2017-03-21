@@ -117,15 +117,28 @@ func genKeyDemo(svc *kms.KMS) {
 
 	key := [32]byte{}
 
-	copy(key[:],key[0:32])
+	copy(key[:],resp.Plaintext[0:32])
 
-	encrypted,err := Encrypt([]byte("a test"),&key)
+	encrypted,err := Encrypt([]byte("this is a test ok?"),&key)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
 	}
 
-	decypted, err := Decrypt(encrypted, &key)
+	di := &kms.DecryptInput{
+		CiphertextBlob:resp.CiphertextBlob,
+	}
+	decryptedKey, err := svc.Decrypt(di)
+	if err != nil {
+		fmt.Println(err.Error())
+		return
+	}
+
+	decryptKey := [32]byte{}
+
+	copy(decryptKey[:], decryptedKey.Plaintext[0:32])
+
+	decypted, err := Decrypt(encrypted, &decryptKey)
 	if err != nil {
 		fmt.Println(err.Error())
 		return
