@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/go-redis/redis"
 	"fmt"
+	"time"
 )
 
 func setAndGet(client *redis.Client) error {
@@ -42,6 +43,32 @@ func otherCommonFunctions(client *redis.Client) error {
 	return nil
 }
 
+func keyTTLandExpiration(client *redis.Client) error {
+	const key = "resource:lock"
+
+	err := client.Set(key, "Redis demo", 0).Err()
+	if err != nil {
+		return err
+	}
+
+	boolCmd := client.Expire(key, 120*time.Second)
+	if boolCmd.Err() != nil {
+		return boolCmd.Err()
+	}
+
+	time.Sleep(2*time.Second)
+
+	tc := client.TTL(key)
+	fmt.Println("ttl", tc.Val())
+
+	client.Set(key, "Redis demo 2",0)
+
+	tc = client.TTL(key)
+	fmt.Println("update key ttl", tc.Val())
+
+	return nil
+}
+
 func main() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -54,4 +81,5 @@ func main() {
 
 	setAndGet(client)
 	otherCommonFunctions(client)
+	keyTTLandExpiration(client)
 }
