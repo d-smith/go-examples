@@ -47,4 +47,13 @@ func main() {
 	} else {
 		log.Printf("enqueue ok")
 	}
+
+	var aggSpec string
+	var bind = make([]byte, 100)
+	err = db.QueryRow("call DEQUEUE_AGG_SPEC(:1)",bind).Scan(&aggSpec)
+	if err != nil {
+		log.Println(err.Error())
+	} else {
+		log.Printf("fn status: %d", status)
+	}
 }

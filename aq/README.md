@@ -176,5 +176,24 @@ begin
       msgid                   => message_handle);
 end;
 
+CREATE OR REPLACE FUNCTION DEQUEUE_AGG_SPEC return varchar2 is
+begin
+DECLARE
+dequeue_options     DBMS_AQ.dequeue_options_t;
+message_properties  DBMS_AQ.message_properties_t;
+message_handle      RAW(16);
+message             pubagg;
+BEGIN
+   dequeue_options.navigation := DBMS_AQ.FIRST_MESSAGE;
+   DBMS_AQ.DEQUEUE(
+      queue_name          =>     'pubagg',
+      dequeue_options     =>     dequeue_options,
+      message_properties  =>     message_properties,
+      payload             =>     message,
+      msgid               =>     message_handle);
+    return pubagg.agg_id_and_ver;      
+END;
+end;
+
 </pre>
 

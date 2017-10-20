@@ -24,10 +24,9 @@ func fatal(err error) {
 
 func main() {
 
-	ora.Cfg().Env.StmtCfg.Rset.SetBlob(ora.B)
-	ora.Cfg().Env.StmtCfg.Rset.SetClob(ora.S)
 
-	db, err := sql.Open("ora", "user/password@//localhost:1521/xe.oracle.docker")
+
+	db, err := sql.Open("ora", "esdbo/password@//localhost:1521/xe.oracle.docker")
 	fatal(err)
 
 	defer db.Close()
@@ -41,7 +40,7 @@ func main() {
 
 	abc, err := readBlobData(db, id)
 	fatal(err)
-	fmt.Printf("%v+v\n", abc)
+	fmt.Printf("%+v\n", abc)
 }
 
 
@@ -61,6 +60,10 @@ func insertBlobData(db *sql.DB, id int64) error {
 
 func readBlobData(db *sql.DB, id int64) (ABC, error) {
 	var abc ABC
+
+	oCfg := ora.Cfg().Env.StmtCfg.Rset
+	defer func() { ora.Cfg().Env.StmtCfg.Rset = oCfg }()
+	ora.Cfg().Env.StmtCfg.Rset.SetBlob(ora.Bin)
 
 	rows, err := db.Query("select payload from blob_sample where id = :1", id)
 	if err != nil {
