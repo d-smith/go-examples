@@ -88,6 +88,14 @@ func sortedSets(client *redis.Client)  {
 	fmt.Println("zrange", client.ZRange(key, 2, 4).Val())
 }
 
+func hashes(client *redis.Client)  {
+	client.HSet("user:1000", "name", "john smith")
+	client.HSet("user:1000", "email", "john.smith@example.com")
+	client.HSet("user:1000", "password", "s3cret")
+
+	fmt.Println("user:1000", client.HGetAll("user:1000").Val())
+}
+
 func keyTTLandExpiration(client *redis.Client) error {
 	const key = "resource:lock"
 
@@ -130,4 +138,5 @@ func main() {
 	lists(client)
 	sets(client)
 	sortedSets(client)
+	hashes(client)
 }
