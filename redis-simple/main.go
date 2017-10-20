@@ -43,6 +43,24 @@ func otherCommonFunctions(client *redis.Client) error {
 	return nil
 }
 
+func lists(client *redis.Client)  {
+	const key = "friends"
+	client.RPush(key, "Alice")
+	client.RPush(key, "Bob")
+	client.LPush(key, "Sam")
+
+	//Get all
+	c := client.LRange(key, 0, -1)
+	fmt.Println(c.Val())
+
+	fmt.Println("length", client.LLen(key).Val())
+
+	client.LPop(key)
+	client.RPop(key)
+
+	fmt.Println("post-pop length", client.LLen(key).Val())
+}
+
 func keyTTLandExpiration(client *redis.Client) error {
 	const key = "resource:lock"
 
@@ -82,4 +100,5 @@ func main() {
 	setAndGet(client)
 	otherCommonFunctions(client)
 	keyTTLandExpiration(client)
+	lists(client)
 }
