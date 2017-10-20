@@ -20,6 +20,28 @@ func setAndGet(client *redis.Client) error {
 	return nil
 }
 
+func otherCommonFunctions(client *redis.Client) error {
+	err := client.Set("connection", 10, 0).Err()
+	if err != nil {
+		return err
+	}
+
+	intCmd := client.Incr("connection")
+	if(intCmd.Err() != nil) {
+		return intCmd.Err()
+	}
+
+	intCmd = client.Incr("connection")
+	fmt.Println("two increments of connections yields", intCmd.Val())
+
+	client.Del("connection")
+
+	intCmd = client.Incr("connection")
+	fmt.Println("increment of connection after del yields", intCmd.Val())
+
+	return nil
+}
+
 func main() {
 	client := redis.NewClient(&redis.Options{
 		Addr:     "localhost:6379",
@@ -31,5 +53,5 @@ func main() {
 	//fmt.Println(pong, err)
 
 	setAndGet(client)
-
+	otherCommonFunctions(client)
 }
