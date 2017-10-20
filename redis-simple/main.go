@@ -61,6 +61,19 @@ func lists(client *redis.Client)  {
 	fmt.Println("post-pop length", client.LLen(key).Val())
 }
 
+func sets(client *redis.Client)  {
+	const key = "superpowers"
+	client.SAdd(key, "flight", "x-ray vision", "reflexes")
+	fmt.Println(key, client.SMembers(key).Val())
+
+	fmt.Println("set has flight?", client.SIsMember(key, "flight").Val())
+	fmt.Println("set has focus?", client.SIsMember(key, "focus").Val())
+
+	client.SAdd("bird powers", "flight", "song")
+
+	fmt.Println("union of bird powers and super powers", client.SUnion("bird powers", key).Val())
+}
+
 func keyTTLandExpiration(client *redis.Client) error {
 	const key = "resource:lock"
 
@@ -101,4 +114,5 @@ func main() {
 	otherCommonFunctions(client)
 	keyTTLandExpiration(client)
 	lists(client)
+	sets(client)
 }
