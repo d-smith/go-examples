@@ -96,6 +96,19 @@ func hashes(client *redis.Client)  {
 	fmt.Println("user:1000", client.HGetAll("user:1000").Val())
 }
 
+func hashFieldNumbers(client *redis.Client)  {
+	client.HSet("user:1000", "visits", 10)
+	client.HIncrBy("user:1000", "visits", 1)
+	client.HIncrBy("user:1000", "visits", 10)
+
+	fmt.Println("visits", client.HGet("user:1000", "visits").Val())
+
+	client.HDel("user:1000", "visits")
+	client.HIncrBy("user:1000", "visits", 1)
+	fmt.Println("visits - inc after delete", client.HGet("user:1000", "visits").Val())
+
+}
+
 func keyTTLandExpiration(client *redis.Client) error {
 	const key = "resource:lock"
 
@@ -139,4 +152,5 @@ func main() {
 	sets(client)
 	sortedSets(client)
 	hashes(client)
+	hashFieldNumbers(client)
 }
