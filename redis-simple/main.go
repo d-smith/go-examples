@@ -74,6 +74,20 @@ func sets(client *redis.Client)  {
 	fmt.Println("union of bird powers and super powers", client.SUnion("bird powers", key).Val())
 }
 
+func sortedSets(client *redis.Client)  {
+	const key = "hackers"
+	client.ZAdd(key, redis.Z{1940, "Alan Kay"})
+	client.ZAdd(key, redis.Z{1906, "Grace Hopper"})
+	client.ZAdd(key, redis.Z{1953, "Richard Stallman"})
+	client.ZAdd(key, redis.Z{1965, "Yukihiro Matsumoto"})
+	client.ZAdd(key, redis.Z{1916, "Claude Shannon"})
+	client.ZAdd(key, redis.Z{1969, "Linus Torvalds"})
+	client.ZAdd(key, redis.Z{1957, "Sophie Wilson"})
+	client.ZAdd(key, redis.Z{1912, "Alan Turing"})
+
+	fmt.Println("zrange", client.ZRange(key, 2, 4).Val())
+}
+
 func keyTTLandExpiration(client *redis.Client) error {
 	const key = "resource:lock"
 
@@ -115,4 +129,5 @@ func main() {
 	keyTTLandExpiration(client)
 	lists(client)
 	sets(client)
+	sortedSets(client)
 }
