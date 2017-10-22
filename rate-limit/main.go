@@ -5,8 +5,8 @@ import (
 	"github.com/go-redis/redis"
 	"fmt"
 	"crypto/rand"
-	"reflect"
 	"strings"
+	"strconv"
 )
 
 func GenerateRandomBytes(n int) ([]byte, error) {
@@ -55,16 +55,19 @@ func NewRateLimiter(intervalInMillis int64, maxInInterval int, client *redis.Cli
 }
 
 func (rl *RateLimiter) timeLeft(id string) (int,error) {
-	now := time.Now().UnixNano()/1e6
+	now := time.Now().UnixNano()/1000 //microseconds
 	fmt.Println("now", now)
-	clearBefore := now - (rl.intervalInMillis*1000)
+	clearBefore := now - (rl.intervalInMillis*1000) //microseconds
 	fmt.Println("clearBefore", clearBefore)
 
+
+	element := uuid()
+	fmt.Println("new element", element)
 
 	pipeline := rl.client.TxPipeline()
 	pipeline.ZRemRangeByScore(id,"0",fmt.Sprintf("%d",clearBefore))
 	pipeline.ZRangeWithScores(id, 0, -1)
-	pipeline.ZAdd(id,redis.Z{float64(now), uuid()})
+	pipeline.ZAdd(id,redis.Z{float64(now), element})
 	pipeline.Expire(id, time.Duration(rl.intervalInMillis/1000)* time.Second)
 
 	var cmdErr []redis.Cmder
@@ -74,19 +77,52 @@ func (rl *RateLimiter) timeLeft(id string) (int,error) {
 		return -1,pipelineErr
 	}
 
+	fmt.Println("rem range result", cmdErr[0])
 	rangeWithScoresResult := cmdErr[1]
-	fmt.Println("rwsr name",rangeWithScoresResult.Name())
-	fmt.Println("rwsr args",rangeWithScoresResult.Args())
-	fmt.Println("rwsr strings",rangeWithScoresResult.String())
 
-	fmt.Println(reflect.TypeOf(rangeWithScoresResult.String()).String())
-	parts := strings.Split(rangeWithScoresResult.String(), " ")
-	for _,p := range parts {
-		fmt.Println(p)
-	}
+	zparts(rangeWithScoresResult.String())
+
 
 
 	return 1,nil
+}
+
+
+//Looks like [{1.508595813639e+12 1a2942d7-f536-4b6b-a312-88c1465c18c5} {1.508595815287e+12 6bc8a7a7-1435-4a33-8b7d-32edabedd61b}]
+func zparts(zstring string) {
+	parts := strings.Split(zstring, ":")
+
+	if len(parts) < 2 {
+		return
+	}
+
+	zslice := strings.TrimSpace(parts[1])
+	if zslice == "[]" {
+		return
+	}
+
+	zslice = strings.Trim(zslice,"[]")
+	zpairs := strings.Split(zslice, " ")
+
+	var elements []redis.Z
+
+
+	for i := 0; i < len(zpairs); i += 2 {
+		rawScore := zpairs[i]
+		rawElement := zpairs[i+1]
+
+		score,_ := strconv.ParseFloat(strings.Trim(rawScore, "{"),64)
+		element := strings.Trim(rawElement,"}")
+
+		z := redis.Z{
+			Score:score,
+			Member:element,
+		}
+
+		elements = append(elements,z)
+	}
+
+	fmt.Println(elements)
 }
 
 
