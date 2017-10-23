@@ -80,8 +80,20 @@ func (rl *RateLimiter) timeLeft(id string) (int,error) {
 	fmt.Println("rem range result", cmdErr[0])
 	rangeWithScoresResult := cmdErr[1]
 
-	zparts(rangeWithScoresResult.String())
+	elements := zparts(rangeWithScoresResult.String())
+	fmt.Println(elements)
 
+	//Ok to keep making requests?
+	if len(elements) < rl.maxInInterval {
+		return 0, nil
+	}
+
+	//Since the max requests for the interval have been made, the next time a request
+	//can be made is when a slot opens up in the zparts. That will the difference between
+	//the timestamp of the oldest element and the length of the interval.
+	timeleft := (int64(elements[0].Score) - clearBefore)/1000  //divide by 1000 to return time left in ms
+
+	fmt.Println("timeleft", timeleft)
 
 
 	return 1,nil
@@ -89,22 +101,24 @@ func (rl *RateLimiter) timeLeft(id string) (int,error) {
 
 
 //Looks like [{1.508595813639e+12 1a2942d7-f536-4b6b-a312-88c1465c18c5} {1.508595815287e+12 6bc8a7a7-1435-4a33-8b7d-32edabedd61b}]
-func zparts(zstring string) {
+func zparts(zstring string) []redis.Z {
+	var elements []redis.Z
+
 	parts := strings.Split(zstring, ":")
 
 	if len(parts) < 2 {
-		return
+		return elements
 	}
 
 	zslice := strings.TrimSpace(parts[1])
 	if zslice == "[]" {
-		return
+		return elements
 	}
 
 	zslice = strings.Trim(zslice,"[]")
 	zpairs := strings.Split(zslice, " ")
 
-	var elements []redis.Z
+
 
 
 	for i := 0; i < len(zpairs); i += 2 {
@@ -122,7 +136,7 @@ func zparts(zstring string) {
 		elements = append(elements,z)
 	}
 
-	fmt.Println(elements)
+	return elements
 }
 
 
