@@ -76,25 +76,13 @@ func (rl *RateLimiter) allowRequest(id string) (bool,error) {
 	}
 
 	cmdOutput := cmd.Val()
-//	fmt.Println(reflect.TypeOf(cmdOutput).String())
 	outputSlice, ok := cmdOutput.([]interface{})
 	if !ok {
 		return false, errors.New("Unexcepted result type from Redis script execution")
 	}
 
 	return outputSlice[0] != nil, nil
-//	fmt.Println(outputSlice)
-//	if outputSlice[0] != nil {
-//		fmt.Println("output 1 type", reflect.TypeOf(outputSlice[0]).String())
-//	}
 
-
-//	pipeline := rl.client.TxPipeline()
-//	pipeline.ZRemRangeByScore(id,"0",fmt.Sprintf("%d",clearBefore))
-//	pipeline.ZRangeWithScores(id, 0, -1)
-//	pipeline.ZAdd(id,redis.Z{float64(now), element})
-
-//	return true,nil
 }
 
 
