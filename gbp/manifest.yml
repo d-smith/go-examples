@@ -1,0 +1,7 @@
+---
+applications:
+ - name: gbp
+   command: gbp
+   env:
+     GOVERSION: go1.8
+     GOPACKAGENAME: main
