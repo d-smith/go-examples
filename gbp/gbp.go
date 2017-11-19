@@ -7,7 +7,10 @@ import (
 )
 
 func buildPackHandler(res http.ResponseWriter, req *http.Request) {
-	res.Write([]byte("hey yo from cf"))
+
+	for _, e := range os.Environ() {
+		res.Write([]byte(fmt.Sprintf("%s\n",e)))
+	}
 }
 
 
