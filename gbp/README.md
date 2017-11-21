@@ -4,10 +4,7 @@ Push and run a simple go app.
 
 cf push gbp
 
+Or, to push a binary:
 
-To use golang 1.9.2, use the build pack from github - see
-https://github.com/cloudfoundry/go-buildpack
-
-
-cf push gbp -b https://github.com/cloudfoundry/go-buildpack.git#v1.8.13
-
+* Build the binary e.g. GOOS=linux GOARCH=amd64 CGO_ENABLED=0 go build
+* Push via cf push my_app -c './executable-file' -b binary-buildpack
